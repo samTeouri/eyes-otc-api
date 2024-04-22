@@ -9,10 +9,6 @@ export const Incident = sequelize.define('Incident',
             type: DataTypes.STRING,
             primaryKey: true,
         },
-        date: {
-            type: DataTypes.DATE,
-            allowNull: false,
-        },
         state: {
             type: DataTypes.ENUM('traitement en cours', 'en attente de traitement', 'résolu'),
             allowNull: false,
@@ -41,7 +37,7 @@ export const Incident = sequelize.define('Incident',
     },
     {
         modelName: 'Incident',
+        tableName: 'incidents'
     }
 );
 
-Incident.belongsToMany(SupportCenter, { through: Notification });

@@ -1,11 +1,12 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../config/database';
+import { Incident } from './Incident';
+import { SupportCenter } from './SupportCenter';
 
 export const Notification = sequelize.define('Notification',
     {
         id: {
             type: DataTypes.INTEGER,
-            autoIncrement: true,
             primaryKey: true,
         },
         isReaded: {
@@ -24,5 +25,6 @@ export const Notification = sequelize.define('Notification',
     },
     {
         modelName: 'Notification',
+        tableName: 'notifications'
     }
 );
