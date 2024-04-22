@@ -12,7 +12,6 @@ export const sequelize = new Sequelize(process.env.DB_NAME as string, process.en
 export const connect = async () => {
     try {
         await sequelize.authenticate();
-        sequelize.sync();
         console.log('Connexion à la base de données effectuée avec succès.');
     } catch (error) {
         console.error("Connexion à la base de données échouée.\nfermeture du processus ...", error);

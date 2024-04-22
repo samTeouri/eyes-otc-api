@@ -6,8 +6,7 @@ import { Notification } from './Notification';
 export const SupportCenter = sequelize.define('SupportCenter',
     {
         id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
+            type: DataTypes.STRING,
             primaryKey: true,
         },
         type: {
@@ -33,7 +32,6 @@ export const SupportCenter = sequelize.define('SupportCenter',
     },
     {
         modelName: 'SupportCenter',
+        tableName: 'supportCenters',
     }
 );
-
-SupportCenter.belongsToMany(Incident, { through: Notification });
