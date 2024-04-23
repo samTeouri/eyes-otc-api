@@ -6,6 +6,8 @@ import { Notification } from './models/Notification';
 import * as http from 'http';
 import { Location } from './models/Location';
 import { User } from './models/User';
+import { Trouble } from './models/Trouble';
+import { IncidentTrouble } from './models/IncidentTrouble';
 
 connect();
 
@@ -15,6 +17,15 @@ Incident.belongsToMany(SupportCenter, {
 });
 SupportCenter.belongsToMany(Incident, {
     through: Notification,
+    foreignKey: 'incidentId'
+});
+
+Incident.belongsToMany(Trouble, {
+    through: IncidentTrouble,
+    foreignKey: 'troubleId'
+});
+Trouble.belongsToMany(Incident, {
+    through: IncidentTrouble,
     foreignKey: 'incidentId'
 });
 
