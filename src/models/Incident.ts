@@ -1,13 +1,12 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../config/database';
-import { SupportCenter } from './SupportCenter';
-import { Notification } from './Notification';
 
 export const Incident = sequelize.define('Incident',
     {
         id: {
-            type: DataTypes.STRING,
+            type: DataTypes.BIGINT,
             primaryKey: true,
+            autoIncrement: true,
         },
         state: {
             type: DataTypes.ENUM('traitement en cours', 'en attente de traitement', 'résolu'),

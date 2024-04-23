@@ -1,24 +1,16 @@
-import { DataTypes } from 'sequelize';
-import { sequelize } from '../config/database';
+import { DataTypes } from "sequelize";
+import { sequelize } from "../config/database";
 
-export const SupportCenter = sequelize.define('SupportCenter',
+export const Service = sequelize.define('Service',
     {
         id: {
             type: DataTypes.BIGINT,
             primaryKey: true,
             autoIncrement: true,
         },
-        type: {
-            type: DataTypes.ENUM('hôpital', 'pompier', 'gendarmerie'),
-            allowNull: false,
-        },
         name: {
             type: DataTypes.STRING,
             allowNull: false,
-        },
-        telephone: {
-            type: DataTypes.BIGINT,
-            allowNull: false
         },
         createdAt: {
             type: DataTypes.DATE,
@@ -30,7 +22,7 @@ export const SupportCenter = sequelize.define('SupportCenter',
         }
     },
     {
-        modelName: 'SupportCenter',
-        tableName: 'support_centers',
+        modelName: 'Service',
+        tableName: 'services'
     }
-);
+)
