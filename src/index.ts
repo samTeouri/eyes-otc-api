@@ -8,6 +8,7 @@ import { Location } from './models/Location';
 import { User } from './models/User';
 import { Trouble } from './models/Trouble';
 import { IncidentTrouble } from './models/IncidentTrouble';
+import { Service } from './models/Service';
 
 connect();
 
@@ -39,6 +40,10 @@ Location.hasOne(SupportCenter, {
 
 Incident.belongsTo(User,{
     foreignKey: 'userId'
+});
+
+SupportCenter.belongsTo(Service,{
+    foreignKey: 'serviceId'
 });
 
 sequelize.sync({force: true})
