@@ -1,7 +1,5 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database";
-import { Incident } from "./Incident";
-import { SupportCenter } from "./SupportCenter";
 
 export const Location = sequelize.define('Location',
     {
