@@ -7,13 +7,13 @@ import * as http from 'http';
 
 connect();
 
-Incident.sync({ force: true });
-SupportCenter.sync({ force: true });
+// Incident.sync({ force: true });
+// SupportCenter.sync({ force: true });
 
 Incident.belongsToMany(SupportCenter, { through: Notification });
 SupportCenter.belongsToMany(Incident, { through: Notification });
 
-Notification.sync({ force: true });
+//Notification.sync({ force: true });
 
 const httpServer = http.createServer(app);
 const port = process.env.PORT;
