@@ -1,17 +1,12 @@
-import { DataTypes } from 'sequelize';
-import { sequelize } from '../config/database';
+import { DataTypes } from "sequelize";
+import { sequelize } from "../config/database";
 
-export const Notification = sequelize.define('Notification',
+export const Support = sequelize.define('Support', 
     {
         id: {
             type: DataTypes.BIGINT,
             primaryKey: true,
             autoIncrement: true
-        },
-        isReaded: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
         },
         createdAt: {
             type: DataTypes.DATE,
@@ -23,7 +18,7 @@ export const Notification = sequelize.define('Notification',
         }
     },
     {
-        modelName: 'Notification',
-        tableName: 'notifications'
+        modelName: 'Support',
+        tableName: 'supports',
     }
-);
+)

@@ -4,8 +4,9 @@ import { sequelize } from "../config/database";
 export const Trouble = sequelize.define('Trouble',
     {
         id: {
-            type: DataTypes.STRING,
+            type: DataTypes.BIGINT,
             primaryKey: true,
+            autoIncrement: true,
         },
         name: {
             type: DataTypes.STRING,

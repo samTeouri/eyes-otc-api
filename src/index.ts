@@ -9,25 +9,26 @@ import { User } from './models/User';
 import { Trouble } from './models/Trouble';
 import { IncidentTrouble } from './models/IncidentTrouble';
 import { Service } from './models/Service';
+import { Support } from './models/Support';
 
 connect();
 
 Incident.belongsToMany(SupportCenter, {
     through: Notification,
-    foreignKey: 'supportCenterId'
+    foreignKey: 'incidentId'
 });
 SupportCenter.belongsToMany(Incident, {
     through: Notification,
-    foreignKey: 'incidentId'
+    foreignKey: 'supportCenterId'
 });
 
 Incident.belongsToMany(Trouble, {
     through: IncidentTrouble,
-    foreignKey: 'troubleId'
+    foreignKey: 'incidentId'
 });
 Trouble.belongsToMany(Incident, {
     through: IncidentTrouble,
-    foreignKey: 'incidentId'
+    foreignKey: 'troubleId'
 });
 
 Location.hasOne(Incident, {
@@ -44,6 +45,15 @@ Incident.belongsTo(User,{
 
 SupportCenter.belongsTo(Service,{
     foreignKey: 'serviceId'
+});
+
+Service.belongsToMany(Trouble, {
+    through: Support,
+    foreignKey: 'serviceId'
+});
+Trouble.belongsToMany(Service, {
+    through: Support,
+    foreignKey: 'troubleId'
 });
 
 sequelize.sync({force: true})

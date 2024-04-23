@@ -4,8 +4,9 @@ import { sequelize } from '../config/database';
 export const SupportCenter = sequelize.define('SupportCenter',
     {
         id: {
-            type: DataTypes.STRING,
+            type: DataTypes.BIGINT,
             primaryKey: true,
+            autoIncrement: true,
         },
         type: {
             type: DataTypes.ENUM('hôpital', 'pompier', 'gendarmerie'),
