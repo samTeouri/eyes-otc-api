@@ -4,16 +4,34 @@ import { Incident } from './models/Incident';
 import { SupportCenter } from './models/SupportCenter';
 import { Notification } from './models/Notification';
 import * as http from 'http';
+import { Location } from './models/Location';
 
 connect();
 
-// Incident.sync({ force: true });
-// SupportCenter.sync({ force: true });
+Incident.belongsToMany(SupportCenter, {
+    through: Notification,
+    foreignKey: 'supportCenterId'
+});
+SupportCenter.belongsToMany(Incident, {
+    through: Notification,
+    foreignKey: 'incidentId'
+});
 
-Incident.belongsToMany(SupportCenter, { through: Notification });
-SupportCenter.belongsToMany(Incident, { through: Notification });
+Location.hasOne(Incident, {
+    foreignKey: 'locationId'
+});
 
-//Notification.sync({ force: true });
+Location.hasOne(SupportCenter, {
+    foreignKey: 'locationId'
+});
+
+sequelize.sync({force: true})
+    .then(() => {
+        console.log('Database synchronised successfully');
+    })
+    .catch((error) => {
+        console.error(`Database synchronisation failed : ${error}`);
+    });
 
 const httpServer = http.createServer(app);
 const port = process.env.PORT;

@@ -1,7 +1,5 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../config/database';
-import { SupportCenter } from './SupportCenter';
-import { Notification } from './Notification';
 
 export const Incident = sequelize.define('Incident',
     {

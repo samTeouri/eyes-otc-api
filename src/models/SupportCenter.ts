@@ -1,7 +1,5 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../config/database';
-import { Incident } from './Incident';
-import { Notification } from './Notification';
 
 export const SupportCenter = sequelize.define('SupportCenter',
     {
@@ -32,6 +30,6 @@ export const SupportCenter = sequelize.define('SupportCenter',
     },
     {
         modelName: 'SupportCenter',
-        tableName: 'supportCenters',
+        tableName: 'support_centers',
     }
 );
