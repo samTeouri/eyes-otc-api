@@ -5,6 +5,7 @@ import { SupportCenter } from './models/SupportCenter';
 import { Notification } from './models/Notification';
 import * as http from 'http';
 import { Location } from './models/Location';
+import { User } from './models/User';
 
 connect();
 
@@ -23,6 +24,10 @@ Location.hasOne(Incident, {
 
 Location.hasOne(SupportCenter, {
     foreignKey: 'locationId'
+});
+
+Incident.belongsTo(User,{
+    foreignKey: 'userId'
 });
 
 sequelize.sync({force: true})
