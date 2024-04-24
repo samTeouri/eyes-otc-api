@@ -41,3 +41,8 @@ Service.belongsToMany(Trouble, {
     through: Support,
     foreignKey: 'serviceId'
 });
+
+Trouble.belongsToMany(Service, {
+    through: Support,
+    foreignKey: 'troubleId'
+});

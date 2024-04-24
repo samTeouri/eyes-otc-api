@@ -69,3 +69,13 @@ Incident.belongsToMany(Trouble, {
 Incident.belongsTo(User, {
     foreignKey: 'userId'
 });
+
+SupportCenter.belongsToMany(Incident, {
+    through: Notification,
+    foreignKey: 'supportCenterId'
+});
+
+Trouble.belongsToMany(Incident, {
+    through: IncidentTrouble,
+    foreignKey: 'troubleId'
+});
