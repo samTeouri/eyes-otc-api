@@ -1,7 +1,13 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../config/database";
 
-export const Support = sequelize.define('Support', 
+export class Support extends Model {
+    declare id: BigInteger;
+    declare createdAt: Date;
+    declare updatedAt: Date;
+}
+
+Support.init( 
     {
         id: {
             type: DataTypes.BIGINT,
@@ -18,6 +24,7 @@ export const Support = sequelize.define('Support',
         }
     },
     {
+        sequelize: sequelize,
         modelName: 'Support',
         tableName: 'supports',
     }

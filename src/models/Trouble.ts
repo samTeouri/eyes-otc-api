@@ -1,7 +1,14 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../config/database";
 
-export const Trouble = sequelize.define('Trouble',
+export class Trouble extends Model {
+    declare id: BigInteger;
+    declare name: string;
+    declare createdAt: Date;
+    declare updatedAt: Date;
+}
+
+Trouble.init(
     {
         id: {
             type: DataTypes.BIGINT,
@@ -22,6 +29,7 @@ export const Trouble = sequelize.define('Trouble',
         },
     },
     {
+        sequelize: sequelize,
         modelName: 'Trouble',
         tableName: 'troubles'
     }

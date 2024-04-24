@@ -5,7 +5,7 @@ export class User extends Model {
     declare id: string;
     declare firstName: string;
     declare lastName: string;
-    declare phone: BigInt;
+    declare phone: BigInteger;
     declare email: string;
     declare address: string;
     declare password: string;
