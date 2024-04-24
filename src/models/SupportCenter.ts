@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../config/database';
+import { Service } from './Service';
 
 export const SupportCenter = sequelize.define('SupportCenter',
     {
@@ -34,3 +35,7 @@ export const SupportCenter = sequelize.define('SupportCenter',
         tableName: 'support_centers',
     }
 );
+
+SupportCenter.belongsTo(Service, {
+    foreignKey: 'serviceId'
+});

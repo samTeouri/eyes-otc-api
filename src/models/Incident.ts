@@ -1,5 +1,10 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../config/database';
+import { SupportCenter } from './SupportCenter';
+import { Notification } from './Notification';
+import { Trouble } from './Trouble';
+import { IncidentTrouble } from './IncidentTrouble';
+import { User } from './User';
 
 export const Incident = sequelize.define('Incident',
     {
@@ -40,3 +45,16 @@ export const Incident = sequelize.define('Incident',
     }
 );
 
+Incident.belongsToMany(SupportCenter, {
+    through: Notification,
+    foreignKey: 'incidentId'
+});
+
+Incident.belongsToMany(Trouble, {
+    through: IncidentTrouble,
+    foreignKey: 'incidentId'
+});
+
+Incident.belongsTo(User, {
+    foreignKey: 'userId'
+});

@@ -1,5 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database";
+import { Trouble } from "./Trouble";
+import { Support } from "./Support";
 
 export const Service = sequelize.define('Service',
     {
@@ -25,4 +27,9 @@ export const Service = sequelize.define('Service',
         modelName: 'Service',
         tableName: 'services'
     }
-)
+);
+
+Service.belongsToMany(Trouble, {
+    through: Support,
+    foreignKey: 'serviceId'
+});

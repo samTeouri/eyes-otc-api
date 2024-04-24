@@ -1,5 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database";
+import { Incident } from "./Incident";
+import { SupportCenter } from "./SupportCenter";
 
 export const Location = sequelize.define('Location',
     {
@@ -34,3 +36,11 @@ export const Location = sequelize.define('Location',
         tableName: 'locations'
     }
 );
+
+Location.hasOne(Incident, {
+    foreignKey: 'locationId'
+});
+
+Location.hasOne(SupportCenter, {
+    foreignKey: 'locationId'
+});
