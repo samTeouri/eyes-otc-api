@@ -26,13 +26,15 @@ Trouble.belongsToMany(Service, {
     foreignKey: 'troubleId'
 });
 
-database.sequelize.sync({force: true})
-    .then(() => {
-        console.log('Database synchronised successfully');
-    })
-    .catch((error) => {
-        console.error(`Database synchronisation failed : ${error}`);
-    });
+(async () => {
+    await database.sequelize.sync({force: true})
+        .then(() => {
+            console.log('Database synchronised successfully');
+        })
+        .catch((error) => {
+            console.error(`Database synchronisation failed : ${error}`);
+        });
+})();
 
 const httpServer = http.createServer(app);
 const port = process.env.PORT;
