@@ -12,20 +12,22 @@ export class User extends Model {
     declare createdAt: Date;
     declare upadtedAt: Date;
 
-    createId(): string {        
-        var i = 1;
-        var id: string;
+    async createId(): Promise<string> {
+        let i = 1;
+        let id: string;
+      
         while (true) {
-            id = this.lastName.slice(0, 1) + this.firstName[0] + i as string;
-            User.findByPk(id)
-                .then((user) => {
-                    if (user) {
-                        i++;
-                        id = this.lastName.slice(0, 1) + this.firstName[0] + i as string;
-                    } else {
-                        return id;
-                    }
-                });
+            id = this.lastName.slice(0, 3) + this.firstName[0] + new Date().getFullYear() + i.toString();
+            try {
+                const user = await User.findByPk(id);
+                if (user) {
+                    i++;
+                    continue;
+                }
+                return id;
+            } catch (error) {
+                console.error("Error finding user:", error);
+            }
         }
     }
 }
