@@ -1,6 +1,6 @@
 import express, { Application } from 'express';
-import { incidentRouter } from "./routes/incidentRoutes";
-import { authRoutes } from './routes/authRoutes';
+import { incidentRouter } from "./routes/IncidentRoutes";
+import { authRoutes } from './routes/AuthRoutes';
 import cors from 'cors';
 
 export const app: Application = express();

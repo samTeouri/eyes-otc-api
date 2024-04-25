@@ -47,5 +47,5 @@ SupportCenter.init(
 );
 
 SupportCenter.belongsTo(Service, {
-    foreignKey: 'serviceId'
+    foreignKey: 'service_id'
 });
