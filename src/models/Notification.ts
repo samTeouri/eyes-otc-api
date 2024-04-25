@@ -1,7 +1,14 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../config/database';
 
-export const Notification = sequelize.define('Notification',
+export class Notification extends Model {
+    declare id: BigInteger;
+    declare isReaded: boolean;
+    declare createdAt: Date;
+    declare updatedAt: Date;
+}
+
+Notification.init(
     {
         id: {
             type: DataTypes.BIGINT,
@@ -23,6 +30,7 @@ export const Notification = sequelize.define('Notification',
         }
     },
     {
+        sequelize: sequelize,
         modelName: 'Notification',
         tableName: 'notifications'
     }

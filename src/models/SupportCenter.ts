@@ -1,7 +1,17 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import { sequelize } from '../config/database';
+import { Service } from './Service';
 
-export const SupportCenter = sequelize.define('SupportCenter',
+export class SupportCenter extends Model {
+    declare id: BigInteger;
+    declare type: string;
+    declare name: string;
+    declare telephone: BigInteger;
+    declare createdAt: Date;
+    declare updatedAt: Date;
+}
+
+SupportCenter.init(
     {
         id: {
             type: DataTypes.BIGINT,
@@ -30,7 +40,12 @@ export const SupportCenter = sequelize.define('SupportCenter',
         }
     },
     {
+        sequelize: sequelize,
         modelName: 'SupportCenter',
         tableName: 'support_centers',
     }
 );
+
+SupportCenter.belongsTo(Service, {
+    foreignKey: 'serviceId'
+});

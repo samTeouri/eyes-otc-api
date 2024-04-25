@@ -1,7 +1,16 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../config/database";
+import { Trouble } from "./Trouble";
+import { Support } from "./Support";
 
-export const Service = sequelize.define('Service',
+export class Service extends Model {
+    declare id: BigInteger;
+    declare name: string;
+    declare createdAt: Date;
+    declare updatedAt: Date;
+}
+
+Service.init(
     {
         id: {
             type: DataTypes.BIGINT,
@@ -22,7 +31,18 @@ export const Service = sequelize.define('Service',
         }
     },
     {
+        sequelize: sequelize,
         modelName: 'Service',
         tableName: 'services'
     }
-)
+);
+
+Service.belongsToMany(Trouble, {
+    through: Support,
+    foreignKey: 'serviceId'
+});
+
+Trouble.belongsToMany(Service, {
+    through: Support,
+    foreignKey: 'troubleId'
+});

@@ -1,7 +1,18 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../config/database";
+import { Incident } from "./Incident";
+import { SupportCenter } from "./SupportCenter";
 
-export const Location = sequelize.define('Location',
+export class Location extends Model {
+    declare id: BigInteger;
+    declare latitude: Float32Array;
+    declare longitude: Float32Array;
+    declare type: string;
+    declare createdAt: Date;
+    declare updatedAt: Date;
+}
+
+Location.init(
     {
         id: {
             type: DataTypes.BIGINT,
@@ -9,11 +20,11 @@ export const Location = sequelize.define('Location',
             autoIncrement: true,
         },
         latitude: {
-            type: DataTypes.DOUBLE,
+            type: DataTypes.FLOAT,
             allowNull: false,
         },
         longitude: {
-            type: DataTypes.DOUBLE,
+            type: DataTypes.FLOAT,
             allowNull: false,
         },
         type: {
@@ -30,7 +41,16 @@ export const Location = sequelize.define('Location',
         },
     },
     {
+        sequelize: sequelize,
         modelName: 'Location',
         tableName: 'locations'
     }
 );
+
+Location.hasOne(Incident, {
+    foreignKey: 'locationId'
+});
+
+Location.hasOne(SupportCenter, {
+    foreignKey: 'locationId'
+});
