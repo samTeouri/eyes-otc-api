@@ -14,6 +14,10 @@ export class Incident extends Model {
     declare video: string;
     declare createdAt: Date;
     declare updateAt: Date;
+
+    // async getDistanceToSupportCenter(supporterCenter: SupportCenter): Promise<number> {
+
+    // } 
 }
 
 Incident.init(
@@ -58,24 +62,24 @@ Incident.init(
 
 Incident.belongsToMany(SupportCenter, {
     through: Notification,
-    foreignKey: 'incidentId'
+    foreignKey: 'incident_id'
 });
 
 Incident.belongsToMany(Trouble, {
     through: IncidentTrouble,
-    foreignKey: 'incidentId'
+    foreignKey: 'incident_id'
 });
 
 Incident.belongsTo(User, {
-    foreignKey: 'userId'
+    foreignKey: 'user_id'
 });
 
 SupportCenter.belongsToMany(Incident, {
     through: Notification,
-    foreignKey: 'supportCenterId'
+    foreignKey: 'support_center_id'
 });
 
 Trouble.belongsToMany(Incident, {
     through: IncidentTrouble,
-    foreignKey: 'troubleId'
+    foreignKey: 'trouble_id'
 });

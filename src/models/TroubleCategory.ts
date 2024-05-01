@@ -1,16 +1,15 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../config/database";
 import { Trouble } from "./Trouble";
-import { Support } from "./Support";
 
-export class Service extends Model {
+export class TroubleCategory extends Model {
     declare id: BigInteger;
     declare name: string;
     declare createdAt: Date;
     declare updatedAt: Date;
 }
 
-Service.init(
+TroubleCategory.init(
     {
         id: {
             type: DataTypes.BIGINT,
@@ -28,21 +27,15 @@ Service.init(
         updatedAt: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW
-        }
+        },
     },
     {
         sequelize: sequelize,
-        modelName: 'Service',
-        tableName: 'services'
+        modelName: 'TroubleCategory',
+        tableName: 'trouble_categories'
     }
 );
 
-Service.belongsToMany(Trouble, {
-    through: Support,
-    foreignKey: 'service_id'
-});
-
-Trouble.belongsToMany(Service, {
-    through: Support,
-    foreignKey: 'trouble_id'
+TroubleCategory.hasMany(Trouble, {
+    foreignKey: 'trouble_categorie_id'
 });

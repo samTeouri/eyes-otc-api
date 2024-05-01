@@ -1,9 +1,9 @@
-import { DataTypes, Model } from 'sequelize';
+import { DataTypes } from 'sequelize';
 import { sequelize } from '../config/database';
 import { Service } from './Service';
+import { User } from './User';
 
-export class SupportCenter extends Model {
-    declare id: BigInteger;
+export class SupportCenter extends User {
     declare type: string;
     declare name: string;
     declare telephone: BigInteger;
@@ -47,5 +47,5 @@ SupportCenter.init(
 );
 
 SupportCenter.belongsTo(Service, {
-    foreignKey: 'serviceId'
+    foreignKey: 'service_id'
 });

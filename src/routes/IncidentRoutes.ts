@@ -1,6 +1,6 @@
 import * as express from 'express';
 import { body } from "express-validator";
-import * as incidentController from '../controllers/incidentController';
+import * as incidentController from '../controllers/IncidentController';
 
 export const incidentRouter = express.Router();
 

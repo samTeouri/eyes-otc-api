@@ -48,9 +48,9 @@ Location.init(
 );
 
 Location.hasOne(Incident, {
-    foreignKey: 'locationId'
+    foreignKey: 'location_id'
 });
 
 Location.hasOne(SupportCenter, {
-    foreignKey: 'locationId'
+    foreignKey: 'location_id'
 });

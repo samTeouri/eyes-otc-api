@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { User } from '../models/User';
-import { Op } from 'sequelize';
 import { validationResult } from 'express-validator';
 import { AuthService } from '../services/AuthService';
+import { Role } from '../models/Role';
 
 const authService = new AuthService();
 
@@ -30,11 +30,17 @@ export const register = async (req: Request, res: Response) => {
             password: await bcrypt.hash(password, 15),
         });
 
+        const citizenRole = await Role.findOne({ where: { name: 'citizen' } });
+
         // Setting user id
         user.id = (await user.createId()).toString();
 
         // Store user in database
-        user.save()
+        await user.save()
+
+        // Set user citizen role
+        await user.addRole(citizenRole as Role);
+
         return res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
         console.log(error);
