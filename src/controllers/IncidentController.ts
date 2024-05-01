@@ -11,4 +11,5 @@ export const reportIncident = async (req: Request, res: Response) => {
 
     // Get form values from body
     const { state, description, picture, video } = req.body;
+    
 }

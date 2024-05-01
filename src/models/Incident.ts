@@ -14,6 +14,10 @@ export class Incident extends Model {
     declare video: string;
     declare createdAt: Date;
     declare updateAt: Date;
+
+    // async getDistanceToSupportCenter(supporterCenter: SupportCenter): Promise<number> {
+
+    // } 
 }
 
 Incident.init(

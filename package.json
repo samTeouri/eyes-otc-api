@@ -7,6 +7,7 @@
     "express": "^4.19.2",
     "express-validator": "^7.0.1",
     "jsonwebtoken": "^9.0.2",
+    "osrm-rest-client": "^0.1.7",
     "sequelize-typescript": "^2.1.6"
   },
   "devDependencies": {

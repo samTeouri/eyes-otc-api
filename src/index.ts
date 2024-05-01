@@ -1,9 +1,11 @@
 import { app } from './app';
 import * as http from 'http';
 
-const httpServer = http.createServer(app);
-const port = process.env.PORT;
+(async () => {
+    const httpServer = await http.createServer(app);
+    const port = process.env.PORT;
 
-httpServer.listen(port, () => {
-    console.log(`Serveur disponible sur le port ${port}`);
-});
+    httpServer.listen(port, () => {
+        console.log(`Serveur disponible sur le port ${port}`);
+    });
+})();
