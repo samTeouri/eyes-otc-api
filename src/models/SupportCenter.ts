@@ -1,7 +1,8 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, HasOneSetAssociationMixin } from 'sequelize';
 import { sequelize } from '../config/database';
 import { Service } from './Service';
 import { User } from './User';
+import { Location } from './Location';
 
 export class SupportCenter extends User {
     declare type: string;
@@ -9,6 +10,10 @@ export class SupportCenter extends User {
     declare telephone: BigInteger;
     declare createdAt: Date;
     declare updatedAt: Date;
+
+    declare getLocation: HasOneGetAssociationMixin<Location>;
+    declare setLocation: HasOneSetAssociationMixin<Location, number>;
+    declare createLocation: HasOneCreateAssociationMixin<Location>;
 }
 
 SupportCenter.init(

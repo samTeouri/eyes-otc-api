@@ -1,6 +1,7 @@
 import { BelongsToManyAddAssociationMixin, BelongsToManyAddAssociationsMixin, BelongsToManyCreateAssociationMixin, BelongsToManyGetAssociationsMixin, BelongsToManyHasAssociationMixin, BelongsToManyHasAssociationsMixin, BelongsToManyRemoveAssociationMixin, BelongsToManyRemoveAssociationsMixin, BelongsToManySetAssociationsMixin, DataTypes, Model } from "sequelize";
 import { sequelize } from "../config/database";
 import { Role } from "./Role";
+import { Incident } from "./Incident";
 
 export class User extends Model {
     declare id: string;
@@ -23,6 +24,16 @@ export class User extends Model {
     declare removeRoles: BelongsToManyRemoveAssociationsMixin<Role, number>;
     declare createRole: BelongsToManyCreateAssociationMixin<Role>;
 
+    declare getIncidents: BelongsToManyGetAssociationsMixin<Incident>;
+    declare setIncidents: BelongsToManySetAssociationsMixin<Incident, number>;
+    declare hasIncident: BelongsToManyHasAssociationMixin<Incident, number>;
+    declare hasIncidents: BelongsToManyHasAssociationsMixin<Incident, number>;
+    declare addIncident: BelongsToManyAddAssociationMixin<Incident, number>;
+    declare addIncidents: BelongsToManyAddAssociationsMixin<Incident, number>;
+    declare removeIncident: BelongsToManyRemoveAssociationMixin<Incident, number>;
+    declare removeIncidents: BelongsToManyRemoveAssociationsMixin<Incident, number>;
+    declare createIncident: BelongsToManyCreateAssociationMixin<Incident>;
+
     async createId(): Promise<string> {
         let i = 1;
         let id: string;
@@ -37,7 +48,7 @@ export class User extends Model {
                 }
                 return id;
             } catch (error) {
-                console.error("Error finding user:", error);
+                throw error;
             }
         }
     }

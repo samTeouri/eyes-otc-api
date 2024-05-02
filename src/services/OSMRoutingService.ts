@@ -8,17 +8,16 @@ export class OSMRoutingService {
         this.#osrmEngine = _osrmEngine;
     }
 
-    getDistance = async (startLng: number, startLat: number, destLng: number, destLat: number) => {
+    getDistance = async (startCoords: [number, number], destCoords: [number, number]): Promise<number | void> => {
         this.#osrmEngine.route(
             {
-                coordinates: [[startLng, startLat], [destLng, destLat]],
+                coordinates: [startCoords, destCoords],
             },
             async (error: Error | null, results: IOsrmRouteResult | undefined) => {
                 if (error) {
                     throw error;
-                };
+                }
                 if (results) {
-                    console.log("distance", results.routes[0].distance);
                     return results.routes[0].distance;
                 }
             }

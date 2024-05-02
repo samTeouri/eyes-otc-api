@@ -1,12 +1,12 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model, NUMBER } from "sequelize";
 import { sequelize } from "../config/database";
 import { Incident } from "./Incident";
 import { SupportCenter } from "./SupportCenter";
 
 export class Location extends Model {
     declare id: BigInteger;
-    declare latitude: Float32Array;
-    declare longitude: Float32Array;
+    declare latitude: number;
+    declare longitude: number;
     declare type: string;
     declare createdAt: Date;
     declare updatedAt: Date;
@@ -20,11 +20,11 @@ Location.init(
             autoIncrement: true,
         },
         latitude: {
-            type: DataTypes.FLOAT,
+            type: DataTypes.NUMBER,
             allowNull: false,
         },
         longitude: {
-            type: DataTypes.FLOAT,
+            type: DataTypes.NUMBER,
             allowNull: false,
         },
         type: {

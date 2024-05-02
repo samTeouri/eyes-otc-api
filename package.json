@@ -1,12 +1,14 @@
 {
   "dependencies": {
     "@types/express": "^4.17.21",
+    "@types/multer": "^1.4.11",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-validator": "^7.0.1",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
     "osrm-rest-client": "^0.1.7",
     "sequelize-typescript": "^2.1.6"
   },
