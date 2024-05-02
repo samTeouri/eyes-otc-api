@@ -7,8 +7,7 @@ export const incidentRouter = express.Router();
 // Report an incident
 incidentRouter.post('/report',
     [
-        body('date').notEmpty(),
-        body('state').notEmpty()
+        body('description').isEmpty()
     ],
     incidentController.reportIncident,
 );
