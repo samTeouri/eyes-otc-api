@@ -42,11 +42,14 @@ const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
             yield incident.setTroubles(troubles);
             const supportCenters = yield incident.getConcernedSupportCenters();
             yield incident.setSupportCenters(supportCenters);
+            res.status(201).json({ message: "Incident reported succesfully !" });
         })).catch((reason) => {
             console.log(`Error : ${reason}`);
+            return res.status(500).json({ error: 'Error while reporting incident' });
         });
     }
     else {
+        return res.status(404).json({ error: 'User not found' });
     }
 });
 exports.reportIncident = reportIncident;
