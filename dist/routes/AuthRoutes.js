@@ -17,6 +17,7 @@ const express_1 = __importDefault(require("express"));
 const express_validator_1 = require("express-validator");
 const AuthController_1 = require("../controllers/AuthController");
 const User_1 = require("../models/User");
+const AuthMiddleware_1 = require("../middlewares/AuthMiddleware");
 exports.authRoutes = express_1.default.Router();
 // Ctizen Register route
 exports.authRoutes.post('/register', [
@@ -37,23 +38,19 @@ exports.authRoutes.post('/register', [
     })),
 ], AuthController_1.citizenRegister);
 // Admin Register route
-exports.authRoutes.post('/admin/register', [
-    (0, express_validator_1.body)('lastName').isString().notEmpty(),
-    (0, express_validator_1.body)('firstName').isString().notEmpty(),
-    (0, express_validator_1.body)('email').isString().notEmpty().custom((value) => __awaiter(void 0, void 0, void 0, function* () {
-        const user = yield User_1.User.findOne({ where: { email: value } });
-        if (user) {
-            return Promise.reject('Email already registered');
-        }
-    })),
-    (0, express_validator_1.body)('password').isAlphanumeric().notEmpty().isLength({ min: 8 }),
-    (0, express_validator_1.body)('phone').isNumeric().notEmpty().custom((value) => __awaiter(void 0, void 0, void 0, function* () {
-        const user = yield User_1.User.findOne({ where: { phone: value } });
-        if (user) {
-            return Promise.reject('Phone already registered');
-        }
-    })),
-], AuthController_1.adminRegister);
+exports.authRoutes.post('/admin/register', 
+// [
+//     body('lastName').isString().notEmpty(),
+//     body('firstName').isString().notEmpty(),
+//     body('email').isString().notEmpty().custom(async (value) => {
+//         const user =  await User.findOne({ where: {email: value} });
+//         if (user) {
+//             return Promise.reject('Email already registered');
+//         }
+//     }),
+//     body('password').isAlphanumeric().notEmpty().isLength({min: 8}),
+// ],
+AuthController_1.adminRegister);
 // Citizen Login route
 exports.authRoutes.post('/login', [
     (0, express_validator_1.body)('identifier').notEmpty(),
@@ -64,3 +61,7 @@ exports.authRoutes.post('/admin/login/', [
     (0, express_validator_1.body)('identifier').notEmpty(),
     (0, express_validator_1.body)('password').notEmpty().isString(),
 ], AuthController_1.adminLogin);
+// Admin auth page
+exports.authRoutes.get('/admin/login/', AuthController_1.adminGetLogin);
+// Show dashboard
+exports.authRoutes.get('/admin/dashboard', AuthMiddleware_1.authVerifyToken, AuthController_1.getDashboard);

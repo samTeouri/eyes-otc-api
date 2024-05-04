@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adminLogin = exports.citizenLogin = exports.adminRegister = exports.citizenRegister = void 0;
+exports.getDashboard = exports.adminGetLogin = exports.adminLogin = exports.citizenLogin = exports.adminRegister = exports.citizenRegister = void 0;
 const bcrypt = __importStar(require("bcrypt"));
 const jwt = __importStar(require("jsonwebtoken"));
 const User_1 = require("../models/User");
@@ -83,13 +83,12 @@ const adminRegister = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             return res.status(400).json({ errors: errors.array() });
         }
         // Get user register form values from body
-        const { firstName, lastName, email, phone, address, password } = req.body;
+        const { firstName, lastName, email, address, password } = req.body;
         // Create an instance of user
         const user = yield User_1.User.build({
             firstName: firstName,
             lastName: lastName,
             email: email,
-            phone: phone,
             address: address,
             password: yield bcrypt.hash(password, 15),
         });
@@ -186,3 +185,11 @@ const adminLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.adminLogin = adminLogin;
+const adminGetLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.render('index');
+});
+exports.adminGetLogin = adminGetLogin;
+const getDashboard = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.render('dashbord1');
+});
+exports.getDashboard = getDashboard;

@@ -10,11 +10,6 @@ export class Notification extends Model {
 
 Notification.init(
     {
-        id: {
-            type: DataTypes.BIGINT,
-            primaryKey: true,
-            autoIncrement: true
-        },
         isReaded: {
             type: DataTypes.BOOLEAN,
             allowNull: false,

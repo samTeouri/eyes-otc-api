@@ -41,6 +41,7 @@ const IncidentRoutes_1 = require("./routes/IncidentRoutes");
 const AuthRoutes_1 = require("./routes/AuthRoutes");
 const database = __importStar(require("./config/database"));
 const cors_1 = __importDefault(require("cors"));
+const path_1 = __importDefault(require("path"));
 exports.app = (0, express_1.default)();
 (() => __awaiter(void 0, void 0, void 0, function* () {
     yield database.connect();
@@ -52,9 +53,12 @@ exports.app = (0, express_1.default)();
         console.error(`Database synchronisation failed : ${error}`);
     });
 }))();
+exports.app.set('view engine', 'ejs');
+exports.app.set('views', path_1.default.join(__dirname, '../views'));
 // Middlewares
 exports.app.use(express_1.default.json());
 exports.app.use((0, cors_1.default)());
+exports.app.use(express_1.default.static(path_1.default.join(__dirname, '/public')));
 // Routes
 // Incident routes
 exports.app.use('/incidents', IncidentRoutes_1.incidentRouter);

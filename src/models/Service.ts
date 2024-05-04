@@ -58,12 +58,12 @@ Service.init(
     }
 );
 
-Service.belongsToMany(Trouble, {
-    through: Support,
-    foreignKey: 'service_id'
-});
-
 Trouble.belongsToMany(Service, {
     through: Support,
     foreignKey: 'trouble_id'
+});
+
+Service.belongsToMany(Trouble, {
+    through: Support,
+    foreignKey: 'service_id'
 });

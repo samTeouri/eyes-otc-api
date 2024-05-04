@@ -7,11 +7,6 @@ class IncidentTrouble extends sequelize_1.Model {
 }
 exports.IncidentTrouble = IncidentTrouble;
 IncidentTrouble.init({
-    id: {
-        type: sequelize_1.DataTypes.BIGINT,
-        primaryKey: true,
-        autoIncrement: true,
-    },
     createdAt: {
         type: sequelize_1.DataTypes.DATE,
         defaultValue: sequelize_1.DataTypes.NOW

@@ -31,11 +31,11 @@ Service.init({
     modelName: 'Service',
     tableName: 'services'
 });
-Service.belongsToMany(Trouble_1.Trouble, {
-    through: Support_1.Support,
-    foreignKey: 'service_id'
-});
 Trouble_1.Trouble.belongsToMany(Service, {
     through: Support_1.Support,
     foreignKey: 'trouble_id'
+});
+Service.belongsToMany(Trouble_1.Trouble, {
+    through: Support_1.Support,
+    foreignKey: 'service_id'
 });
