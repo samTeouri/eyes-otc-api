@@ -1,7 +1,8 @@
 import express from "express";
 import { body, header } from "express-validator";
-import { citizenLogin, adminLogin, adminRegister, citizenRegister } from "../controllers/AuthController";
+import { citizenLogin, adminLogin, adminRegister, citizenRegister, adminGetLogin, getDashboard } from "../controllers/AuthController";
 import { User } from "../models/User";
+import { authVerifyToken } from "../middlewares/AuthMiddleware";
 
 export const authRoutes = express.Router();
 
@@ -29,23 +30,17 @@ authRoutes.post('/register',
 
 // Admin Register route
 authRoutes.post('/admin/register',
-    [
-        body('lastName').isString().notEmpty(),
-        body('firstName').isString().notEmpty(),
-        body('email').isString().notEmpty().custom(async (value) => {
-            const user =  await User.findOne({ where: {email: value} });
-            if (user) {
-                return Promise.reject('Email already registered');
-            }
-        }),
-        body('password').isAlphanumeric().notEmpty().isLength({min: 8}),
-        body('phone').isNumeric().notEmpty().custom(async (value) => {
-            const user =  await User.findOne({ where: {phone: value} });
-            if (user) {
-                return Promise.reject('Phone already registered');
-            }
-        }),
-    ],
+    // [
+    //     body('lastName').isString().notEmpty(),
+    //     body('firstName').isString().notEmpty(),
+    //     body('email').isString().notEmpty().custom(async (value) => {
+    //         const user =  await User.findOne({ where: {email: value} });
+    //         if (user) {
+    //             return Promise.reject('Email already registered');
+    //         }
+    //     }),
+    //     body('password').isAlphanumeric().notEmpty().isLength({min: 8}),
+    // ],
     adminRegister,
 );
 
@@ -65,4 +60,15 @@ authRoutes.post('/admin/login/',
         body('password').notEmpty().isString(),
     ],
     adminLogin,
+);
+
+// Admin auth page
+authRoutes.get('/admin/login/',
+    adminGetLogin,
+);
+
+// Show dashboard
+authRoutes.get('/admin/dashboard',
+    authVerifyToken,
+    getDashboard,
 );

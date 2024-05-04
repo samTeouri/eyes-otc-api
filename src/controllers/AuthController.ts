@@ -6,6 +6,7 @@ import { validationResult } from 'express-validator';
 import { AuthService } from '../services/AuthService';
 import { Role } from '../models/Role';
 import { SupportCenter } from '../models/SupportCenter';
+import path from 'path';
 
 const authService = new AuthService();
 
@@ -59,14 +60,13 @@ export const adminRegister = async (req: Request, res: Response) => {
         }
 
         // Get user register form values from body
-        const { firstName, lastName, email, phone, address, password } = req.body;
+        const { firstName, lastName, email, address, password } = req.body;
 
         // Create an instance of user
         const user = await User.build({
             firstName: firstName,
             lastName: lastName,
             email: email,
-            phone: phone,
             address: address,
             password: await bcrypt.hash(password, 15),
         });
@@ -175,4 +175,12 @@ export const adminLogin = async (req: Request, res: Response) => {
         console.log(error);
         return res.status(500).json({ error: 'Login failed' });
     }
+}
+
+export const adminGetLogin = async (req: Request, res: Response) => {
+    res.render('index');
+}
+
+export const getDashboard = async (req: Request, res: Response) => {
+    res.render('dashbord1');
 }

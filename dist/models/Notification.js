@@ -7,11 +7,6 @@ class Notification extends sequelize_1.Model {
 }
 exports.Notification = Notification;
 Notification.init({
-    id: {
-        type: sequelize_1.DataTypes.BIGINT,
-        primaryKey: true,
-        autoIncrement: true
-    },
     isReaded: {
         type: sequelize_1.DataTypes.BOOLEAN,
         allowNull: false,

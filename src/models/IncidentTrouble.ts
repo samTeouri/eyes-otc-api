@@ -9,11 +9,6 @@ export class IncidentTrouble extends Model {
 
 IncidentTrouble.init(
     {
-        id: {
-            type: DataTypes.BIGINT,
-            primaryKey: true,
-            autoIncrement: true,
-        },
         createdAt: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW

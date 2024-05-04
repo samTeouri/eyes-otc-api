@@ -3,6 +3,8 @@ import { incidentRouter } from "./routes/IncidentRoutes";
 import { authRoutes } from './routes/AuthRoutes';
 import * as database from './config/database';
 import cors from 'cors';
+import path from 'path';
+import ejs from 'ejs';
 
 export const app: Application = express();
 
@@ -18,9 +20,13 @@ export const app: Application = express();
             });
 })();
 
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, '../views'));
+
 // Middlewares
 app.use(express.json());
 app.use(cors());
+app.use(express.static(path.join(__dirname, '/public')));
 
 // Routes
 // Incident routes
