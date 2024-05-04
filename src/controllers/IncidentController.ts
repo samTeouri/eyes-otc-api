@@ -7,6 +7,7 @@ import { UploadedFile } from "../utils/UploadedFile";
 import { Trouble } from "../models/Trouble";
 import { User } from "../models/User";
 import { Notification } from "../models/Notification";
+import { SupportCenter } from "../models/SupportCenter";
 
 export const reportIncident = async (req: Request, res: Response) => {
     // Validate form values and manage errors
@@ -93,4 +94,16 @@ export const handleIncident = async (req: Request, res: Response) => {
         
     }
 
+}
+
+export const getSupportCenterIncidents = async (req: Request, res: Response) => {
+    const user = await User.findByPk(req.body.user);
+
+    if (user?.hasRole(1)) {
+        return res.status(403).json({ error: 'You are not authorized to perform this action' });
+    }
+    
+    const supportCenter = await SupportCenter.findByPk(req.params.supportCenterId);
+    const incidents = await supportCenter?.getIncidents();
+    return res.json({ incidents: incidents })
 }

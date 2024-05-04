@@ -22,3 +22,9 @@ incidentRouter.post('/handle/:incidentId',
     authVerifyToken,
     incidentController.handleIncident,
 );
+
+// Handle an incident
+incidentRouter.post('/index/:supportCenterId',
+    authVerifyToken,
+    incidentController.getSupportCenterIncidents,
+);

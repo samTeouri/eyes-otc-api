@@ -9,13 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleIncident = exports.reportIncident = void 0;
+exports.getSupportCenterIncidents = exports.handleIncident = exports.reportIncident = void 0;
 const express_validator_1 = require("express-validator");
 const Incident_1 = require("../models/Incident");
 const UploadImage_1 = require("../utils/UploadImage");
 const UploadVideo_1 = require("../utils/UploadVideo");
 const User_1 = require("../models/User");
 const Notification_1 = require("../models/Notification");
+const SupportCenter_1 = require("../models/SupportCenter");
 const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Validate form values and manage errors
     const errors = (0, express_validator_1.validationResult)(req);
@@ -90,3 +91,13 @@ const handleIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.handleIncident = handleIncident;
+const getSupportCenterIncidents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield User_1.User.findByPk(req.body.user);
+    if (user === null || user === void 0 ? void 0 : user.hasRole(1)) {
+        return res.status(403).json({ error: 'You are not authorized to perform this action' });
+    }
+    const supportCenter = yield SupportCenter_1.SupportCenter.findByPk(req.params.supportCenterId);
+    const incidents = yield (supportCenter === null || supportCenter === void 0 ? void 0 : supportCenter.getIncidents());
+    return res.json({ incidents: incidents });
+});
+exports.getSupportCenterIncidents = getSupportCenterIncidents;

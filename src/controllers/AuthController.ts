@@ -5,6 +5,7 @@ import { User } from '../models/User';
 import { validationResult } from 'express-validator';
 import { AuthService } from '../services/AuthService';
 import { Role } from '../models/Role';
+import { SupportCenter } from '../models/SupportCenter';
 
 const authService = new AuthService();
 
@@ -70,7 +71,7 @@ export const adminRegister = async (req: Request, res: Response) => {
             password: await bcrypt.hash(password, 15),
         });
 
-        const role = await Role.findOne({ where: { name: 'manager' } });
+        const role = await Role.findOne({ where: { name: 'supportCenter' } });
 
         // Setting user id
         user.id = (await user.createId()).toString();

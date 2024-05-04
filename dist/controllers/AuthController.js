@@ -93,7 +93,7 @@ const adminRegister = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             address: address,
             password: yield bcrypt.hash(password, 15),
         });
-        const role = yield Role_1.Role.findOne({ where: { name: 'manager' } });
+        const role = yield Role_1.Role.findOne({ where: { name: 'supportCenter' } });
         // Setting user id
         user.id = (yield user.createId()).toString();
         // Store user in database
