@@ -18,7 +18,7 @@ const express_validator_1 = require("express-validator");
 const AuthController_1 = require("../controllers/AuthController");
 const User_1 = require("../models/User");
 exports.authRoutes = express_1.default.Router();
-// Register route
+// Ctizen Register route
 exports.authRoutes.post('/register', [
     (0, express_validator_1.body)('lastName').isString().notEmpty(),
     (0, express_validator_1.body)('firstName').isString().notEmpty(),
@@ -35,9 +35,32 @@ exports.authRoutes.post('/register', [
             return Promise.reject('Phone already registered');
         }
     })),
-], AuthController_1.register);
-// Login route
+], AuthController_1.citizenRegister);
+// Admin Register route
+exports.authRoutes.post('/admin/register', [
+    (0, express_validator_1.body)('lastName').isString().notEmpty(),
+    (0, express_validator_1.body)('firstName').isString().notEmpty(),
+    (0, express_validator_1.body)('email').isString().notEmpty().custom((value) => __awaiter(void 0, void 0, void 0, function* () {
+        const user = yield User_1.User.findOne({ where: { email: value } });
+        if (user) {
+            return Promise.reject('Email already registered');
+        }
+    })),
+    (0, express_validator_1.body)('password').isAlphanumeric().notEmpty().isLength({ min: 8 }),
+    (0, express_validator_1.body)('phone').isNumeric().notEmpty().custom((value) => __awaiter(void 0, void 0, void 0, function* () {
+        const user = yield User_1.User.findOne({ where: { phone: value } });
+        if (user) {
+            return Promise.reject('Phone already registered');
+        }
+    })),
+], AuthController_1.adminRegister);
+// Citizen Login route
 exports.authRoutes.post('/login', [
     (0, express_validator_1.body)('identifier').notEmpty(),
     (0, express_validator_1.body)('password').notEmpty().isString(),
-], AuthController_1.login);
+], AuthController_1.citizenLogin);
+// Admin login route
+exports.authRoutes.post('/admin/login/', [
+    (0, express_validator_1.body)('identifier').notEmpty(),
+    (0, express_validator_1.body)('password').notEmpty().isString(),
+], AuthController_1.adminLogin);
