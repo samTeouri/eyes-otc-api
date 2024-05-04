@@ -27,8 +27,13 @@ exports.incidentRouter = void 0;
 const express = __importStar(require("express"));
 const express_validator_1 = require("express-validator");
 const incidentController = __importStar(require("../controllers/IncidentController"));
+const AuthMiddleware_1 = require("../middlewares/AuthMiddleware");
 exports.incidentRouter = express.Router();
 // Report an incident
 exports.incidentRouter.post('/report', [
     (0, express_validator_1.body)('description').isEmpty()
-], incidentController.reportIncident);
+], AuthMiddleware_1.authVerifyToken, incidentController.reportIncident);
+// Handle an incident
+exports.incidentRouter.post('/handle/:incidentId', [
+    (0, express_validator_1.body)('description').isEmpty()
+], AuthMiddleware_1.authVerifyToken, incidentController.handleIncident);

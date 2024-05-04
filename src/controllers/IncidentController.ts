@@ -31,6 +31,10 @@ export const reportIncident = async (req: Request, res: Response) => {
 
     const user = await User.findByPk(req.body.user);
 
+    if (!user?.hasRole(1)) {
+        return res.status(403).json({ error: 'You are not authorized to perform this action' });
+    }
+
     if (user) {
         await user.createIncident(
             {
@@ -62,6 +66,13 @@ export const handleIncident = async (req: Request, res: Response) => {
     }
 
     try {
+
+        const user = await User.findByPk(req.body.user);
+
+        if (!(user?.hasRole(3) || user?.hasRole(2))) {
+            return res.status(403).json({ error: 'You are not authorized to perform this action' });
+        }
+
         const { isHandled } = req.body;
 
         const incident = await Incident.findByPk(req.params.incidentId)

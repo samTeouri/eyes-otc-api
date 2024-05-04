@@ -35,6 +35,9 @@ const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
         return res.status(422).json({ message: "Server was unable to process the contained instructions" });
     }
     const user = yield User_1.User.findByPk(req.body.user);
+    if (!(user === null || user === void 0 ? void 0 : user.hasRole(1))) {
+        return res.status(403).json({ error: 'You are not authorized to perform this action' });
+    }
     if (user) {
         yield user.createIncident({
             description: description,
@@ -62,6 +65,10 @@ const handleIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
         return res.status(400).json({ errors: errors.array() });
     }
     try {
+        const user = yield User_1.User.findByPk(req.body.user);
+        if (!((user === null || user === void 0 ? void 0 : user.hasRole(3)) || (user === null || user === void 0 ? void 0 : user.hasRole(2)))) {
+            return res.status(403).json({ error: 'You are not authorized to perform this action' });
+        }
         const { isHandled } = req.body;
         const incident = yield Incident_1.Incident.findByPk(req.params.incidentId)
             .then((incident) => __awaiter(void 0, void 0, void 0, function* () {
