@@ -3,7 +3,7 @@ import { sequelize } from '../config/database';
 
 export class Notification extends Model {
     declare id: BigInteger;
-    declare isReaded: boolean;
+    declare isHandled: boolean;
     declare createdAt: Date;
     declare updatedAt: Date;
 }

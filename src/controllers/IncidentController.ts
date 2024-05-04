@@ -6,6 +6,7 @@ import { handleSingleUploadVideo } from "../utils/UploadVideo";
 import { UploadedFile } from "../utils/UploadedFile";
 import { Trouble } from "../models/Trouble";
 import { User } from "../models/User";
+import { Notification } from "../models/Notification";
 
 export const reportIncident = async (req: Request, res: Response) => {
     // Validate form values and manage errors
@@ -51,4 +52,34 @@ export const reportIncident = async (req: Request, res: Response) => {
     } else {
         return res.status(404).json({ error: 'User not found' });
     }
+}
+
+export const handleIncident = async (req: Request, res: Response) => {
+    // Validate form values and manage errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+        const { isHandled } = req.body;
+
+        const incident = await Incident.findByPk(req.params.incidentId)
+            .then(async (incident: Incident | null) => {
+                const notification = await Notification.findOne({ where: { incidentId: incident?.id } });
+                notification?.update({ isHandled: isHandled });
+                if (isHandled) {
+                    res.status(201).json({message: "Incident handled succesfully !"});
+                } else {
+                    res.status(201).json({message: "Incident declined succesfully !"});
+                }
+            })
+            .catch((reason: any) => {
+                console.log(`Error : ${reason}`);
+                return res.status(500).json({ error: 'Error while incident handling' });
+            });
+    } catch (error) {
+        
+    }
+
 }
