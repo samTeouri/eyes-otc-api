@@ -1,56 +1,29 @@
-import { DataTypes, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, HasOneSetAssociationMixin } from 'sequelize';
-import { sequelize } from '../config/database';
-import { Service } from './Service';
-import { User } from './User';
-import { Location } from './Location';
+import { Schema, model, Document, Types } from 'mongoose';
+import { ILocation } from './Location';
+import { IService } from './Service';
+import { IUser } from './User';
 
-export class SupportCenter extends User {
-    declare type: string;
-    declare name: string;
-    declare telephone: BigInteger;
-    declare createdAt: Date;
-    declare updatedAt: Date;
-
-    declare getLocation: HasOneGetAssociationMixin<Location>;
-    declare setLocation: HasOneSetAssociationMixin<Location, number>;
-    declare createLocation: HasOneCreateAssociationMixin<Location>;
+// Interface pour représenter les données d'un centre de support
+export interface ISupportCenter extends Document {
+    name: string;
+    telephone: number;
+    createdAt: Date;
+    updatedAt: Date;
+    location: ILocation;
+    service: IService;
+    user: IUser;
 }
 
-SupportCenter.init(
-    {
-        id: {
-            type: DataTypes.BIGINT,
-            primaryKey: true,
-            autoIncrement: true,
-        },
-        type: {
-            type: DataTypes.ENUM('hôpital', 'pompier', 'gendarmerie'),
-            allowNull: false,
-        },
-        name: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        telephone: {
-            type: DataTypes.BIGINT,
-            allowNull: false
-        },
-        createdAt: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW
-        },
-        updatedAt: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW
-        }
-    },
-    {
-        sequelize: sequelize,
-        modelName: 'SupportCenter',
-        tableName: 'support_centers',
-    }
-);
-
-SupportCenter.belongsTo(Service, {
-    foreignKey: 'service_id'
+// Schéma du centre de support
+const supportCenterSchema: Schema<ISupportCenter> = new Schema({
+    name: { type: String, required: true },
+    telephone: { type: Number, required: true },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+    location: { type: Schema.Types.ObjectId, ref: 'Location' },
+    service: { type: Schema.Types.ObjectId, ref: 'Service' },
+    user: { type: Schema.Types.ObjectId, ref: 'User' },
 });
+
+// Création du modèle SupportCenter à partir du schéma
+export const SupportCenter = model<ISupportCenter>('SupportCenter', supportCenterSchema);

@@ -1,6 +1,6 @@
 import express from "express";
 import { body, header } from "express-validator";
-import { citizenLogin, adminLogin, adminRegister, citizenRegister, adminGetLogin, getDashboard } from "../controllers/AuthController";
+import { citizenLogin, adminLogin, adminRegister, citizenRegister } from "../controllers/AuthController";
 import { User } from "../models/User";
 import { authVerifyToken } from "../middlewares/AuthMiddleware";
 
@@ -60,15 +60,4 @@ authRoutes.post('/admin/login/',
         body('password').notEmpty().isString(),
     ],
     adminLogin,
-);
-
-// Admin auth page
-authRoutes.get('/admin/login/',
-    adminGetLogin,
-);
-
-// Show dashboard
-authRoutes.get('/admin/dashboard',
-    authVerifyToken,
-    getDashboard,
 );

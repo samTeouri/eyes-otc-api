@@ -4,29 +4,22 @@ import { authRoutes } from './routes/AuthRoutes';
 import * as database from './config/database';
 import cors from 'cors';
 import path from 'path';
-import ejs from 'ejs';
 
 export const app: Application = express();
 
 (async () => {
-    await database.connect();
-
-    await database.sequelize.sync({force: true})
-            .then(() => {
-                console.log('Database synchronised successfully');
-            })
-            .catch((error) => {
-                console.error(`Database synchronisation failed : ${error}`);
-            });
+    try {
+        // Connect to the database
+        await database.connect();
+        console.log('Database connected successfully');
+    } catch (error) {
+        console.error(`Database connection failed: ${error}`);
+    }
 })();
-
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, '../views'));
 
 // Middlewares
 app.use(express.json());
 app.use(cors());
-app.use(express.static(path.join(__dirname, '/public')));
 
 // Routes
 // Incident routes

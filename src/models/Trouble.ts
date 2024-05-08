@@ -1,47 +1,21 @@
-import { BelongsToManyAddAssociationMixin, BelongsToManyAddAssociationsMixin, BelongsToManyCreateAssociationMixin, BelongsToManyGetAssociationsMixin, BelongsToManyHasAssociationMixin, BelongsToManyHasAssociationsMixin, BelongsToManyRemoveAssociationMixin, BelongsToManyRemoveAssociationsMixin, BelongsToManySetAssociationsMixin, DataTypes, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, HasOneSetAssociationMixin, Model } from 'sequelize';
-import { sequelize } from "../config/database";
-import { Service } from './Service';
+import { Schema, model, Document, Types } from 'mongoose';
+import { IService } from './Service';
 
-export class Trouble extends Model {
-    declare id: BigInteger;
-    declare name: string;
-    declare createdAt: Date;
-    declare updatedAt: Date;
-
-    declare getServices: BelongsToManyGetAssociationsMixin<Service>;
-    declare setServices: BelongsToManySetAssociationsMixin<Service, number>;
-    declare hasService: BelongsToManyHasAssociationMixin<Service, number>;
-    declare hasServices: BelongsToManyHasAssociationsMixin<Service, number>;
-    declare addService: BelongsToManyAddAssociationMixin<Service, number>;
-    declare addServices: BelongsToManyAddAssociationsMixin<Service, number>;
-    declare removeService: BelongsToManyRemoveAssociationMixin<Service, number>;
-    declare removeServices: BelongsToManyRemoveAssociationsMixin<Service, number>;
-    declare createService: BelongsToManyCreateAssociationMixin<Service>;
+// Interface pour représenter les données d'un problème
+export interface ITrouble extends Document {
+    name: string;
+    createdAt: Date;
+    updatedAt: Date;
+    services: IService[];
 }
 
-Trouble.init(
-    {
-        id: {
-            type: DataTypes.BIGINT,
-            primaryKey: true,
-            autoIncrement: true,
-        },
-        name: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        createdAt: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW
-        },
-        updatedAt: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW
-        },
-    },
-    {
-        sequelize: sequelize,
-        modelName: 'Service',
-        tableName: 'troubles'
-    }
-);
+// Schéma du problème
+const troubleSchema: Schema<ITrouble> = new Schema({
+    name: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+    services: [{ type: Schema.Types.ObjectId, ref: 'Service' }]
+});
+
+// Création du modèle Trouble à partir du schéma
+export const Trouble = model<ITrouble>('Trouble', troubleSchema);

@@ -1,13 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RolePermission = void 0;
-const sequelize_1 = require("sequelize");
-const database_1 = require("../config/database");
-class RolePermission extends sequelize_1.Model {
-}
-exports.RolePermission = RolePermission;
-RolePermission.init({}, {
-    sequelize: database_1.sequelize,
-    modelName: 'RolePermission',
-    tableName: 'role_permissions'
+const mongoose_1 = require("mongoose");
+// Schéma de l'association entre un rôle et une permission
+const rolePermissionSchema = new mongoose_1.Schema({
+    role: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Role' },
+    permission: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Permission' },
 });
+// Création du modèle RolePermission à partir du schéma
+exports.RolePermission = (0, mongoose_1.model)('RolePermission', rolePermissionSchema);

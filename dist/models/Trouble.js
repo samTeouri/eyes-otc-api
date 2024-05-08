@@ -1,31 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Trouble = void 0;
-const sequelize_1 = require("sequelize");
-const database_1 = require("../config/database");
-class Trouble extends sequelize_1.Model {
-}
-exports.Trouble = Trouble;
-Trouble.init({
-    id: {
-        type: sequelize_1.DataTypes.BIGINT,
-        primaryKey: true,
-        autoIncrement: true,
-    },
-    name: {
-        type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
-    },
-    createdAt: {
-        type: sequelize_1.DataTypes.DATE,
-        defaultValue: sequelize_1.DataTypes.NOW
-    },
-    updatedAt: {
-        type: sequelize_1.DataTypes.DATE,
-        defaultValue: sequelize_1.DataTypes.NOW
-    },
-}, {
-    sequelize: database_1.sequelize,
-    modelName: 'Service',
-    tableName: 'troubles'
+const mongoose_1 = require("mongoose");
+// Schéma du problème
+const troubleSchema = new mongoose_1.Schema({
+    name: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+    services: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'Service' }]
 });
+// Création du modèle Trouble à partir du schéma
+exports.Trouble = (0, mongoose_1.model)('Trouble', troubleSchema);

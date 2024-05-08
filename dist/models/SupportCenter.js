@@ -1,44 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SupportCenter = void 0;
-const sequelize_1 = require("sequelize");
-const database_1 = require("../config/database");
-const Service_1 = require("./Service");
-const User_1 = require("./User");
-class SupportCenter extends User_1.User {
-}
-exports.SupportCenter = SupportCenter;
-SupportCenter.init({
-    id: {
-        type: sequelize_1.DataTypes.BIGINT,
-        primaryKey: true,
-        autoIncrement: true,
-    },
-    type: {
-        type: sequelize_1.DataTypes.ENUM('hôpital', 'pompier', 'gendarmerie'),
-        allowNull: false,
-    },
-    name: {
-        type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
-    },
-    telephone: {
-        type: sequelize_1.DataTypes.BIGINT,
-        allowNull: false
-    },
-    createdAt: {
-        type: sequelize_1.DataTypes.DATE,
-        defaultValue: sequelize_1.DataTypes.NOW
-    },
-    updatedAt: {
-        type: sequelize_1.DataTypes.DATE,
-        defaultValue: sequelize_1.DataTypes.NOW
-    }
-}, {
-    sequelize: database_1.sequelize,
-    modelName: 'SupportCenter',
-    tableName: 'support_centers',
+const mongoose_1 = require("mongoose");
+// Schéma du centre de support
+const supportCenterSchema = new mongoose_1.Schema({
+    name: { type: String, required: true },
+    telephone: { type: Number, required: true },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+    location: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Location' },
+    service: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Service' },
+    user: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User' },
 });
-SupportCenter.belongsTo(Service_1.Service, {
-    foreignKey: 'service_id'
-});
+// Création du modèle SupportCenter à partir du schéma
+exports.SupportCenter = (0, mongoose_1.model)('SupportCenter', supportCenterSchema);

@@ -1,12 +1,10 @@
 import { Request, Response } from 'express';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
-import { User } from '../models/User';
 import { validationResult } from 'express-validator';
+import { User } from '../models/User';
+import { IRole, Role } from '../models/Role';
 import { AuthService } from '../services/AuthService';
-import { Role } from '../models/Role';
-import { SupportCenter } from '../models/SupportCenter';
-import path from 'path';
 
 const authService = new AuthService();
 
@@ -23,7 +21,7 @@ export const citizenRegister = async (req: Request, res: Response) => {
         const { firstName, lastName, email, phone, address, password } = req.body;
 
         // Create an instance of user
-        const user = await User.build({
+        const user = new User({
             firstName: firstName,
             lastName: lastName,
             email: email,
@@ -32,16 +30,15 @@ export const citizenRegister = async (req: Request, res: Response) => {
             password: await bcrypt.hash(password, 15),
         });
 
-        const citizenRole = await Role.findOne({ where: { name: 'citizen' } });
-
-        // Setting user id
-        user.id = (await user.createId()).toString();
-
         // Store user in database
-        await user.save()
+        await user.save();
 
         // Set user citizen role
-        await user.addRole(citizenRole as Role);
+        const citizenRole = await Role.findOne({ name: 'citizen' });
+        if (citizenRole) {
+            user.roles.push(citizenRole);
+            await user.save();
+        }
 
         return res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
@@ -63,7 +60,7 @@ export const adminRegister = async (req: Request, res: Response) => {
         const { firstName, lastName, email, address, password } = req.body;
 
         // Create an instance of user
-        const user = await User.build({
+        const user = new User({
             firstName: firstName,
             lastName: lastName,
             email: email,
@@ -71,16 +68,15 @@ export const adminRegister = async (req: Request, res: Response) => {
             password: await bcrypt.hash(password, 15),
         });
 
-        const role = await Role.findOne({ where: { name: 'supportCenter' } });
-
-        // Setting user id
-        user.id = (await user.createId()).toString();
-
         // Store user in database
-        await user.save()
+        await user.save();
 
-        // Set user citizen role
-        await user.addRole(role as Role);
+        // Set user admin role
+        const adminRole = await Role.findOne({ name: 'admin' });
+        if (adminRole) {
+            user.roles.push(adminRole);
+            await user.save();
+        }
 
         return res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
@@ -100,23 +96,20 @@ export const citizenLogin = async (req: Request, res: Response) => {
 
         // Get user register form values from body
         const { identifier, password } = req.body;
-        
+
         // Get user instance using given identifier
         const user = await authService.getUserByIdentifier(identifier);
 
-        if (!user?.hasRole(1)) {
-            return res.status(403).json({ error: 'You are not authorized to connect via mobile' });
-        }
-
         // User with given identifier exist
-        if (user instanceof User) {
+        if (user) {
             // Check if given password is correct
-            if (!await authService.checkPassword(user, password)) {
+            const isPasswordCorrect = await bcrypt.compare(password, user.password);
+            if (!isPasswordCorrect) {
                 return res.status(401).json({ error: 'Password is incorrect' });
             }
 
             // Token signature
-            const token = jwt.sign({ userId: user.id }, process.env.TOKEN_SECRET_KEY as string);
+            const token = jwt.sign({ id: user.id }, process.env.TOKEN_SECRET_KEY as string);
 
             return res.status(200).json({
                 user: user,
@@ -144,23 +137,20 @@ export const adminLogin = async (req: Request, res: Response) => {
 
         // Get user register form values from body
         const { identifier, password } = req.body;
-        
+
         // Get user instance using given identifier
         const user = await authService.getUserByIdentifier(identifier);
 
-        if (!user?.hasRole(1)) {
-            return res.status(403).json({ error: 'You are not authorized to connect via web' });
-        }
-
         // User with given identifier exist
-        if (user instanceof User) {
+        if (user) {
             // Check if given password is correct
-            if (!await authService.checkPassword(user, password)) {
+            const isPasswordCorrect = await bcrypt.compare(password, user.password);
+            if (!isPasswordCorrect) {
                 return res.status(401).json({ error: 'Password is incorrect' });
             }
 
             // Token signature
-            const token = jwt.sign({ userId: user.id }, process.env.TOKEN_SECRET_KEY as string);
+            const token = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET_KEY as string);
 
             return res.status(200).json({
                 user: user,
@@ -175,12 +165,4 @@ export const adminLogin = async (req: Request, res: Response) => {
         console.log(error);
         return res.status(500).json({ error: 'Login failed' });
     }
-}
-
-export const adminGetLogin = async (req: Request, res: Response) => {
-    res.render('index');
-}
-
-export const getDashboard = async (req: Request, res: Response) => {
-    res.render('dashbord1');
 }

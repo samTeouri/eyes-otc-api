@@ -1,78 +1,24 @@
-import { BelongsToManyAddAssociationMixin, BelongsToManyAddAssociationsMixin, BelongsToManyCreateAssociationMixin, BelongsToManyGetAssociationsMixin, BelongsToManyHasAssociationMixin, BelongsToManyHasAssociationsMixin, BelongsToManyRemoveAssociationMixin, BelongsToManyRemoveAssociationsMixin, BelongsToManySetAssociationsMixin, DataTypes, Model } from 'sequelize';
-import { sequelize } from '../config/database';
-import { User } from './User';
-import { UserRole } from './UserRole';
-import { Permission } from './Permission';
-import { RolePermission } from './RolePermission';
+import { Schema, model, Types } from 'mongoose';
+import { IUser } from './User';
+import { IPermission } from './Permission';
 
-export class Role extends Model {
-    declare name: string;
-    declare createdAt: Date;
-    declare updatedAt: Date;
-
-    declare getUsers: BelongsToManyGetAssociationsMixin<User>;
-    declare setUsers: BelongsToManySetAssociationsMixin<User, number>;
-    declare hasUser: BelongsToManyHasAssociationMixin<User, number>;
-    declare hasUsers: BelongsToManyHasAssociationsMixin<User, number>;
-    declare addUser: BelongsToManyAddAssociationMixin<User, number>;
-    declare addUsers: BelongsToManyAddAssociationsMixin<User, number>;
-    declare removeUser: BelongsToManyRemoveAssociationMixin<User, number>;
-    declare removeUsers: BelongsToManyRemoveAssociationsMixin<User, number>;
-    declare createUser: BelongsToManyCreateAssociationMixin<User>;
-
-    declare getPermissions: BelongsToManyGetAssociationsMixin<Permission>;
-    declare setPermissions: BelongsToManySetAssociationsMixin<Permission, number>;
-    declare hasPermission: BelongsToManyHasAssociationMixin<Permission, number>;
-    declare hasPermissions: BelongsToManyHasAssociationsMixin<Permission, number>;
-    declare addPermission: BelongsToManyAddAssociationMixin<Permission, number>;
-    declare addPermissions: BelongsToManyAddAssociationsMixin<Permission, number>;
-    declare removePermission: BelongsToManyRemoveAssociationMixin<Permission, number>;
-    declare removePermissions: BelongsToManyRemoveAssociationsMixin<Permission, number>;
-    declare createPermission: BelongsToManyCreateAssociationMixin<Permission>;
+// Interface pour représenter les données d'un rôle
+export interface IRole {
+    name: string;
+    createdAt: Date;
+    updatedAt: Date;
+    users: IUser[];
+    permissions: IPermission[];
 }
 
-Role.init(
-    {
-        name: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-        },
-        createdAt: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW
-        },
-        updatedAt: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW
-        }
-    }
-    ,{
-        sequelize: sequelize,
-        modelName: 'Role',
-        tableName: 'roles',
-    }
-);
+// Schéma du rôle
+const roleSchema = new Schema<IRole>({
+    name: { type: String, required: true, unique: true },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+    users: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    permissions: [{ type: Schema.Types.ObjectId, ref: 'Permission' }],
+});
 
-User.belongsToMany(Role, {
-        through: UserRole,
-        foreignKey: 'user_id',
-    }
-);
-Role.belongsToMany(User, {
-        through: UserRole,
-        foreignKey: 'role_id'
-    }
-);
-
-Role.belongsToMany(Permission, {
-        through: RolePermission,
-        foreignKey: 'role_id'
-    }
-);
-
-Permission.belongsToMany(Role, {
-        through: RolePermission,
-        foreignKey: 'permission_id'
-    }
-);
+// Création du modèle Role à partir du schéma
+export const Role = model<IRole>('Role', roleSchema);

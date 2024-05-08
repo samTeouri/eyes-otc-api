@@ -31,11 +31,11 @@ const AuthMiddleware_1 = require("../middlewares/AuthMiddleware");
 exports.incidentRouter = express.Router();
 // Report an incident
 exports.incidentRouter.post('/report', [
-    (0, express_validator_1.body)('description').isEmpty()
+    (0, express_validator_1.body)('description').exists()
 ], AuthMiddleware_1.authVerifyToken, incidentController.reportIncident);
 // Handle an incident
 exports.incidentRouter.post('/handle/:incidentId', [
-    (0, express_validator_1.body)('description').isEmpty()
+    (0, express_validator_1.body)('description').exists()
 ], AuthMiddleware_1.authVerifyToken, incidentController.handleIncident);
 // Handle an incident
 exports.incidentRouter.post('/handle/:supportCenterId', AuthMiddleware_1.authVerifyToken, incidentController.getSupportCenterIncidents);

@@ -17,7 +17,6 @@ const express_1 = __importDefault(require("express"));
 const express_validator_1 = require("express-validator");
 const AuthController_1 = require("../controllers/AuthController");
 const User_1 = require("../models/User");
-const AuthMiddleware_1 = require("../middlewares/AuthMiddleware");
 exports.authRoutes = express_1.default.Router();
 // Ctizen Register route
 exports.authRoutes.post('/register', [
@@ -61,7 +60,3 @@ exports.authRoutes.post('/admin/login/', [
     (0, express_validator_1.body)('identifier').notEmpty(),
     (0, express_validator_1.body)('password').notEmpty().isString(),
 ], AuthController_1.adminLogin);
-// Admin auth page
-exports.authRoutes.get('/admin/login/', AuthController_1.adminGetLogin);
-// Show dashboard
-exports.authRoutes.get('/admin/dashboard', AuthMiddleware_1.authVerifyToken, AuthController_1.getDashboard);

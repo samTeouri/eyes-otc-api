@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.seedRoles = void 0;
 const Role_1 = require("../models/Role");
 const seedRoles = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield Role_1.Role.bulkCreate([
+    yield Role_1.Role.insertMany([
         { name: 'citizen' },
         { name: 'supportCenter' },
         { name: 'manager' },

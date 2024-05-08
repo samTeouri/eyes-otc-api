@@ -27,16 +27,21 @@ class OSMRoutingService {
     constructor() {
         _OSMRoutingService_osrmEngine.set(this, void 0);
         this.getDistance = (startCoords, destCoords) => __awaiter(this, void 0, void 0, function* () {
-            __classPrivateFieldGet(this, _OSMRoutingService_osrmEngine, "f").route({
-                coordinates: [startCoords, destCoords],
-            }, (error, results) => __awaiter(this, void 0, void 0, function* () {
-                if (error) {
-                    throw error;
-                }
-                if (results) {
-                    return results.routes[0].distance;
-                }
-            }));
+            try {
+                __classPrivateFieldGet(this, _OSMRoutingService_osrmEngine, "f").route({
+                    coordinates: [startCoords, destCoords],
+                }, (error, results) => __awaiter(this, void 0, void 0, function* () {
+                    if (error) {
+                        throw error;
+                    }
+                    if (results) {
+                        return results.routes[0].distance;
+                    }
+                }));
+            }
+            catch (error) {
+                console.log(`Error while getting distance`);
+            }
         });
         const _osrmEngine = (0, osrm_rest_client_1.OSRM)();
         __classPrivateFieldSet(this, _OSMRoutingService_osrmEngine, _osrmEngine, "f");

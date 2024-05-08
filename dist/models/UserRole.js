@@ -1,13 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRole = void 0;
-const sequelize_1 = require("sequelize");
-const database_1 = require("../config/database");
-class UserRole extends sequelize_1.Model {
-}
-exports.UserRole = UserRole;
-UserRole.init({}, {
-    sequelize: database_1.sequelize,
-    modelName: 'UserRole',
-    tableName: 'user_roles'
+const mongoose_1 = require("mongoose");
+// Schéma de l'association entre un utilisateur et un rôle
+const userRoleSchema = new mongoose_1.Schema({
+    user: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User' },
+    role: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Role' }
 });
+// Création du modèle UserRole à partir du schéma
+exports.UserRole = (0, mongoose_1.model)('UserRole', userRoleSchema);

@@ -1,26 +1,24 @@
-import { DataTypes, Model } from "sequelize";
-import { sequelize } from "../config/database";
+import { Schema, model, Document, Types } from 'mongoose';
+import { IService } from './Service';
+import { ITrouble } from './Trouble';
 
-export class Support extends Model {
-    declare id: BigInteger;
-    declare createdAt: Date;
-    declare updatedAt: Date;
+// Interface pour représenter les données d'un support
+export interface ISupport extends Document {
+    isHandled: boolean;
+    service: IService;
+    trouble: ITrouble;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
-Support.init( 
-    {
-        createdAt: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW
-        },
-        updatedAt: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW
-        }
-    },
-    {
-        sequelize: sequelize,
-        modelName: 'Support',
-        tableName: 'supports',
-    }
-)
+// Schéma du support
+const supportSchema: Schema<ISupport> = new Schema({
+    isHandled: { type: Boolean, default: false },
+    service: { type: Schema.Types.ObjectId, ref: 'Service' },
+    trouble: { type: Schema.Types.ObjectId, ref: 'Trouble' },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+});
+
+// Création du modèle Support à partir du schéma
+export const Support = model<ISupport>('Support', supportSchema);

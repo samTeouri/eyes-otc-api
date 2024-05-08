@@ -1,69 +1,24 @@
-import { BelongsToManyAddAssociationMixin, BelongsToManyAddAssociationsMixin, BelongsToManyCreateAssociationMixin, BelongsToManyGetAssociationsMixin, BelongsToManyHasAssociationMixin, BelongsToManyHasAssociationsMixin, BelongsToManyRemoveAssociationMixin, BelongsToManyRemoveAssociationsMixin, BelongsToManySetAssociationsMixin, DataTypes, HasOneCreateAssociationMixin, HasOneGetAssociationMixin, HasOneSetAssociationMixin, Model } from 'sequelize';
-import { sequelize } from "../config/database";
-import { Trouble } from "./Trouble";
-import { Support } from "./Support";
-import { SupportCenter } from './SupportCenter';
+import { Schema, model, Document, Types } from 'mongoose';
+import { ITrouble } from './Trouble';
+import { ISupportCenter } from './SupportCenter';
 
-export class Service extends Model {
-    declare id: BigInteger;
-    declare name: string;
-    declare createdAt: Date;
-    declare updatedAt: Date;
-
-    declare getTroubles: BelongsToManyGetAssociationsMixin<Trouble>;
-    declare setTroubles: BelongsToManySetAssociationsMixin<Trouble, number>;
-    declare hasTrouble: BelongsToManyHasAssociationMixin<Trouble, number>;
-    declare hasTroubles: BelongsToManyHasAssociationsMixin<Trouble, number>;
-    declare addTrouble: BelongsToManyAddAssociationMixin<Trouble, number>;
-    declare addTroubles: BelongsToManyAddAssociationsMixin<Trouble, number>;
-    declare removeTrouble: BelongsToManyRemoveAssociationMixin<Trouble, number>;
-    declare removeTroubles: BelongsToManyRemoveAssociationsMixin<Trouble, number>;
-    declare createTrouble: BelongsToManyCreateAssociationMixin<Trouble>;
-
-    declare getSupportCenters: BelongsToManyGetAssociationsMixin<SupportCenter>;
-    declare setSupportCenters: BelongsToManySetAssociationsMixin<SupportCenter, number>;
-    declare hasSupportCenter: BelongsToManyHasAssociationMixin<SupportCenter, number>;
-    declare hasSupportCenters: BelongsToManyHasAssociationsMixin<SupportCenter, number>;
-    declare addSupportCenter: BelongsToManyAddAssociationMixin<SupportCenter, number>;
-    declare addSupportCenters: BelongsToManyAddAssociationsMixin<SupportCenter, number>;
-    declare removeSupportCenter: BelongsToManyRemoveAssociationMixin<SupportCenter, number>;
-    declare removeSupportCenters: BelongsToManyRemoveAssociationsMixin<SupportCenter, number>;
-    declare createSupportCenter: BelongsToManyCreateAssociationMixin<SupportCenter>;
+// Interface pour représenter les données d'un service
+export interface IService extends Document {
+    name: string;
+    createdAt: Date;
+    updatedAt: Date;
+    troubles: ITrouble[];
+    supportCenters: ISupportCenter[];
 }
 
-Service.init(
-    {
-        id: {
-            type: DataTypes.BIGINT,
-            primaryKey: true,
-            autoIncrement: true,
-        },
-        name: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        createdAt: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW
-        },
-        updatedAt: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW
-        }
-    },
-    {
-        sequelize: sequelize,
-        modelName: 'Service',
-        tableName: 'services'
-    }
-);
-
-Trouble.belongsToMany(Service, {
-    through: Support,
-    foreignKey: 'trouble_id'
+// Schéma du service
+const serviceSchema: Schema<IService> = new Schema({
+    name: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+    troubles: [{ type: Schema.Types.ObjectId, ref: 'Trouble' }],
+    supportCenters: [{ type: Schema.Types.ObjectId, ref: 'SupportCenter' }],
 });
 
-Service.belongsToMany(Trouble, {
-    through: Support,
-    foreignKey: 'service_id'
-});
+// Création du modèle Service à partir du schéma
+export const Service = model<IService>('Service', serviceSchema);

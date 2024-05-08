@@ -1,32 +1,24 @@
-import { DataTypes, Model } from 'sequelize';
-import { sequelize } from '../config/database';
+import { Schema, model, Document, Types } from 'mongoose';
+import { IIncident } from './Incident';
+import { ISupportCenter } from './SupportCenter';
 
-export class Notification extends Model {
-    declare id: BigInteger;
-    declare isHandled: boolean;
-    declare createdAt: Date;
-    declare updatedAt: Date;
+// Interface pour représenter les données d'une notification
+export interface INotification extends Document {
+    isHandled: boolean;
+    supportCenter: ISupportCenter;
+    incident: IIncident;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
-Notification.init(
-    {
-        isReaded: {
-            type: DataTypes.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
-        },
-        createdAt: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW
-        },
-        updatedAt: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW
-        }
-    },
-    {
-        sequelize: sequelize,
-        modelName: 'Notification',
-        tableName: 'notifications'
-    }
-);
+// Schéma de la notification
+const notificationSchema: Schema<INotification> = new Schema({
+    isHandled: { type: Boolean, default: false },
+    supportCenter: { type: Schema.Types.ObjectId, ref: 'SupportCenter' },
+    incident: { type: Schema.Types.ObjectId, ref: 'Incident' },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+});
+
+// Création du modèle Notification à partir du schéma
+export const Notification = model<INotification>('Notification', notificationSchema);

@@ -1,41 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Service = void 0;
-const sequelize_1 = require("sequelize");
-const database_1 = require("../config/database");
-const Trouble_1 = require("./Trouble");
-const Support_1 = require("./Support");
-class Service extends sequelize_1.Model {
-}
-exports.Service = Service;
-Service.init({
-    id: {
-        type: sequelize_1.DataTypes.BIGINT,
-        primaryKey: true,
-        autoIncrement: true,
-    },
-    name: {
-        type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
-    },
-    createdAt: {
-        type: sequelize_1.DataTypes.DATE,
-        defaultValue: sequelize_1.DataTypes.NOW
-    },
-    updatedAt: {
-        type: sequelize_1.DataTypes.DATE,
-        defaultValue: sequelize_1.DataTypes.NOW
-    }
-}, {
-    sequelize: database_1.sequelize,
-    modelName: 'Service',
-    tableName: 'services'
+const mongoose_1 = require("mongoose");
+// Schéma du service
+const serviceSchema = new mongoose_1.Schema({
+    name: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+    troubles: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'Trouble' }],
+    supportCenters: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'SupportCenter' }],
 });
-Trouble_1.Trouble.belongsToMany(Service, {
-    through: Support_1.Support,
-    foreignKey: 'trouble_id'
-});
-Service.belongsToMany(Trouble_1.Trouble, {
-    through: Support_1.Support,
-    foreignKey: 'service_id'
-});
+// Création du modèle Service à partir du schéma
+exports.Service = (0, mongoose_1.model)('Service', serviceSchema);

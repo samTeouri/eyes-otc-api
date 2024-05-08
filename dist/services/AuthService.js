@@ -33,49 +33,38 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
-const sequelize_1 = require("sequelize");
 const User_1 = require("../models/User");
 const bcrypt = __importStar(require("bcrypt"));
 class AuthService {
     constructor() {
         this.getUserByIdentifier = (identifier) => __awaiter(this, void 0, void 0, function* () {
-            if (typeof identifier == 'string') {
-                // Check if identifier is string then email
-                const user = yield User_1.User.findOne({
-                    where: {
-                        [sequelize_1.Op.or]: {
-                            email: identifier,
-                        }
-                    }
-                });
-                // If user with this phone exists return user
-                if (user instanceof User_1.User)
+            try {
+                // Check if identifier is email
+                if (typeof identifier === 'string') {
+                    const user = yield User_1.User.findOne({ email: identifier });
                     return user;
-            }
-            else {
-                // identifier is not string then phone number
-                const user = yield User_1.User.findOne({
-                    where: {
-                        [sequelize_1.Op.or]: {
-                            phone: identifier,
-                        }
-                    }
-                });
-                // If user with this phone exists return user
-                if (user instanceof User_1.User)
+                }
+                else {
+                    // Check if identifier is phone number
+                    const user = yield User_1.User.findOne({ phone: identifier });
                     return user;
+                }
             }
-            // If user doesn't exist return null
-            return null;
+            catch (error) {
+                console.log("Error while finding user by identifier:", error);
+                return null;
+            }
         });
         this.checkPassword = (user, password) => __awaiter(this, void 0, void 0, function* () {
-            // Check if given password match user password
-            const passwordMatch = yield bcrypt.compare(password, user.password);
-            // Return false if password is incorrect
-            if (!passwordMatch)
+            try {
+                // Check if given password matches user password
+                const passwordMatch = yield bcrypt.compare(password, user.password);
+                return passwordMatch;
+            }
+            catch (error) {
+                console.log("Error while checking password:", error);
                 return false;
-            // Return true if paswword is correct
-            return true;
+            }
         });
     }
 }
