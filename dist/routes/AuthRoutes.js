@@ -27,15 +27,6 @@ exports.authRoutes.post('/register', [
     (0, express_validator_1.body)('password').isAlphanumeric().notEmpty().isLength({ min: 8 }),
     (0, express_validator_1.body)('phone').isNumeric().notEmpty().custom((value) => __awaiter(void 0, void 0, void 0, function* () { return requestValidationService.validateIdentifier(value, 'phone'); })),
 ], AuthController_1.citizenRegister);
-// Admin Register route
-exports.authRoutes.post('/admin/register', 
-// [
-//     body('lastName').isString().notEmpty(),
-//     body('firstName').isString().notEmpty(),
-//     body('email').isString().notEmpty().custom(async (value) => requestValidationService.validateIdentifier(value, 'email')),
-//     body('password').isAlphanumeric().notEmpty().isLength({min: 8}),
-// ],
-AuthController_1.adminRegister);
 // Citizen Login route
 exports.authRoutes.post('/login', [
     (0, express_validator_1.body)('identifier').notEmpty(),

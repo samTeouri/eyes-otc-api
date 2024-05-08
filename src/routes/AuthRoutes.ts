@@ -1,8 +1,6 @@
 import express from "express";
 import { body, header } from "express-validator";
-import { citizenLogin, adminLogin, adminRegister, citizenRegister } from "../controllers/AuthController";
-import { User } from "../models/User";
-import { authVerifyToken } from "../middlewares/AuthMiddleware";
+import { citizenLogin, adminLogin, citizenRegister } from "../controllers/AuthController";
 import { RequestValidationService } from "../services/RequestValidationService";
 
 export const authRoutes = express.Router();
@@ -18,17 +16,6 @@ authRoutes.post('/register',
         body('phone').isNumeric().notEmpty().custom(async (value) => requestValidationService.validateIdentifier(value, 'phone')),
     ],
     citizenRegister,
-);
-
-// Admin Register route
-authRoutes.post('/admin/register',
-    // [
-    //     body('lastName').isString().notEmpty(),
-    //     body('firstName').isString().notEmpty(),
-    //     body('email').isString().notEmpty().custom(async (value) => requestValidationService.validateIdentifier(value, 'email')),
-    //     body('password').isAlphanumeric().notEmpty().isLength({min: 8}),
-    // ],
-    adminRegister,
 );
 
 // Citizen Login route
