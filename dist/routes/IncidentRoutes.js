@@ -37,5 +37,5 @@ exports.incidentRouter.post('/report', [
 exports.incidentRouter.post('/handle/:incidentId', [
     (0, express_validator_1.body)('description').exists()
 ], AuthMiddleware_1.authVerifyToken, incidentController.handleIncident);
-// Handle an incident
-exports.incidentRouter.post('/handle/:supportCenterId', AuthMiddleware_1.authVerifyToken, incidentController.getSupportCenterIncidents);
+// Get incidents associated to supportCenter
+exports.incidentRouter.get('/handle/:supportCenterId', AuthMiddleware_1.authVerifyToken, incidentController.getSupportCenterIncidents);

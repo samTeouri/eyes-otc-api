@@ -141,7 +141,7 @@ Permet à un centre de support d'accepter ou décliner la prise en charge d'un i
 Permet à un centre de support d'obtenir les incidents qui lui sont associés.
 
 - **URL** : `/incidents/handle/:supportCenterId`
-- **Méthode** : `POST`
+- **Méthode** : `GET`
 - **Paramètres de l'URL** :
   - `supportCenterId` (string, obligatoire) : Identifiant du centre de support pour lequel obtenir les incidents.
 - **En-tête requis** :
