@@ -2,20 +2,20 @@ import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { Incident } from '../models/Incident';
 import { ITrouble, Trouble } from '../models/Trouble';
-import { IUser, User } from '../models/User';
+import { User } from '../models/User';
 import { Notification } from '../models/Notification';
 import { SupportCenter } from '../models/SupportCenter';
 import { handleSingleUploadImage } from '../utils/UploadImage';
 import { handleSingleUploadVideo } from '../utils/UploadVideo';
 import { UploadedFile } from '../utils/UploadedFile';
+import { RequestValidationService } from '../services/RequestValidationService';
+
+const requestValidationService = new RequestValidationService();
 
 export const reportIncident = async (req: Request, res: Response) => {
     try {
         // Validate form values and manage errors
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
+        requestValidationService.validateRequest(req, res);
 
         // Get form values from body
         const { description, troubles } = req.body;
@@ -58,13 +58,10 @@ export const reportIncident = async (req: Request, res: Response) => {
 export const handleIncident = async (req: Request, res: Response) => {
     try {
         // Validate form values and manage errors
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
+        requestValidationService.validateRequest(req, res);
 
         // Find user by ID
-        const user = await User.findById(req.body.user);
+        const user = await User.findById(req.body.user.id);
 
         // Get isHandled from request body
         const { isHandled } = req.body;
@@ -93,6 +90,9 @@ export const handleIncident = async (req: Request, res: Response) => {
 
 export const getSupportCenterIncidents = async (req: Request, res: Response) => {
     try {
+        // Validate form values and manage errors
+        requestValidationService.validateRequest(req, res);
+
         // Find user by ID
         const user = await User.findById(req.body.user);
 

@@ -35,19 +35,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.adminLogin = exports.citizenLogin = exports.adminRegister = exports.citizenRegister = void 0;
 const bcrypt = __importStar(require("bcrypt"));
 const jwt = __importStar(require("jsonwebtoken"));
-const express_validator_1 = require("express-validator");
 const User_1 = require("../models/User");
 const Role_1 = require("../models/Role");
 const AuthService_1 = require("../services/AuthService");
+const RequestValidationService_1 = require("../services/RequestValidationService");
 const authService = new AuthService_1.AuthService();
+const requestValidationService = new RequestValidationService_1.RequestValidationService();
 // Citizen registration
 const citizenRegister = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Validate form values and manage errors
-        const errors = (0, express_validator_1.validationResult)(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
+        requestValidationService.validateRequest(req, res);
         // Get user register form values from body
         const { firstName, lastName, email, phone, address, password } = req.body;
         // Create an instance of user
@@ -79,10 +77,7 @@ exports.citizenRegister = citizenRegister;
 const adminRegister = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Validate form values and manage errors
-        const errors = (0, express_validator_1.validationResult)(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
+        requestValidationService.validateRequest(req, res);
         // Get user register form values from body
         const { firstName, lastName, email, address, password } = req.body;
         // Create an instance of user
@@ -113,10 +108,7 @@ exports.adminRegister = adminRegister;
 const citizenLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Validate form values and manage errors
-        const errors = (0, express_validator_1.validationResult)(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
+        requestValidationService.validateRequest(req, res);
         // Get user register form values from body
         const { identifier, password } = req.body;
         // Get user instance using given identifier
@@ -150,10 +142,7 @@ exports.citizenLogin = citizenLogin;
 const adminLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Validate form values and manage errors
-        const errors = (0, express_validator_1.validationResult)(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
+        requestValidationService.validateRequest(req, res);
         // Get user register form values from body
         const { identifier, password } = req.body;
         // Get user instance using given identifier

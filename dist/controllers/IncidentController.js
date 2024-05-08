@@ -10,20 +10,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getSupportCenterIncidents = exports.handleIncident = exports.reportIncident = void 0;
-const express_validator_1 = require("express-validator");
 const Incident_1 = require("../models/Incident");
 const User_1 = require("../models/User");
 const Notification_1 = require("../models/Notification");
 const SupportCenter_1 = require("../models/SupportCenter");
 const UploadImage_1 = require("../utils/UploadImage");
 const UploadVideo_1 = require("../utils/UploadVideo");
+const RequestValidationService_1 = require("../services/RequestValidationService");
+const requestValidationService = new RequestValidationService_1.RequestValidationService();
 const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Validate form values and manage errors
-        const errors = (0, express_validator_1.validationResult)(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
+        requestValidationService.validateRequest(req, res);
         // Get form values from body
         const { description, troubles } = req.body;
         // Handle file uploads
@@ -58,12 +56,9 @@ exports.reportIncident = reportIncident;
 const handleIncident = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Validate form values and manage errors
-        const errors = (0, express_validator_1.validationResult)(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
+        requestValidationService.validateRequest(req, res);
         // Find user by ID
-        const user = yield User_1.User.findById(req.body.user);
+        const user = yield User_1.User.findById(req.body.user.id);
         // Get isHandled from request body
         const { isHandled } = req.body;
         // Find incident by ID
@@ -90,6 +85,8 @@ const handleIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
 exports.handleIncident = handleIncident;
 const getSupportCenterIncidents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        // Validate form values and manage errors
+        requestValidationService.validateRequest(req, res);
         // Find user by ID
         const user = yield User_1.User.findById(req.body.user);
         // Find support center by ID

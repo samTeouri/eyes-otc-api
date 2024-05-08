@@ -5,17 +5,16 @@ import { validationResult } from 'express-validator';
 import { User } from '../models/User';
 import { IRole, Role } from '../models/Role';
 import { AuthService } from '../services/AuthService';
+import { RequestValidationService } from '../services/RequestValidationService';
 
 const authService = new AuthService();
+const requestValidationService = new RequestValidationService();
 
 // Citizen registration
 export const citizenRegister = async (req: Request, res: Response) => {
     try {
         // Validate form values and manage errors
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
+        requestValidationService.validateRequest(req, res);
 
         // Get user register form values from body
         const { firstName, lastName, email, phone, address, password } = req.body;
@@ -51,10 +50,7 @@ export const citizenRegister = async (req: Request, res: Response) => {
 export const adminRegister = async (req: Request, res: Response) => {
     try {
         // Validate form values and manage errors
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
+        requestValidationService.validateRequest(req, res);
 
         // Get user register form values from body
         const { firstName, lastName, email, address, password } = req.body;
@@ -89,10 +85,7 @@ export const adminRegister = async (req: Request, res: Response) => {
 export const citizenLogin = async (req: Request, res: Response) => {
     try {
         // Validate form values and manage errors
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
+        requestValidationService.validateRequest(req, res);
 
         // Get user register form values from body
         const { identifier, password } = req.body;
@@ -130,10 +123,7 @@ export const citizenLogin = async (req: Request, res: Response) => {
 export const adminLogin = async (req: Request, res: Response) => {
     try {
         // Validate form values and manage errors
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
+        requestValidationService.validateRequest(req, res);
 
         // Get user register form values from body
         const { identifier, password } = req.body;
