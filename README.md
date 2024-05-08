@@ -1,4 +1,4 @@
-# Quiz API
+# Eyes On The City API
 
 Une API TypeScript/Node.js pour un jeu de quiz utilisant MongoDB comme base de données.
 
@@ -28,18 +28,16 @@ npm install
 ```txt
 PORT=3000
 
-DB_HOST=localhost
-DB_DIALECT= (postgres | mysql)
-DB_NAME=
-DB_USERNAME=
-DB_PASSWORD= 
+DB_URI=mongodb://localhost:27017/nom_de_la_base_de_donnees
 
 TOKEN_SECRET_KEY= (Chaîne de caractère aléatoire)
 ```
 
+5. Vous devez avoir mongodb installé sur votre machine et il doit tourner sur le port 27017.
+
 ## Utilisation
 
-1. Démarrez le serveur en mode développement :
+1. Démarrez le serveur :
 
 ```bash
 npm start
@@ -49,35 +47,107 @@ npm start
 
 ## Documentation des routes
 
-### Citoyen Login
+### Authentification
 
-- **URL** : `/questions`
-- **Méthode HTTP** : `POST`
-- **Paramètres du corps** : 
-  - `statement` (string) : Énoncé de la question
-  - `answers` (string[]) : Tableau des réponses possibles
-  - `correctAnswer` (string) : Réponse correcte
+Ce document décrit les différentes routes d'authentification disponibles dans le projet.
+
+#### Enregistrement d'un citoyen
+
+Permet à un citoyen de s'inscrire dans le système.
+
+- **URL** : `/auth/register`
+- **Méthode** : `POST`
+- **Paramètres du body** :
+  - `lastName` (string, obligatoire) : Nom de famille.
+  - `firstName` (string, obligatoire) : Prénom.
+  - `email` (string, obligatoire) : Adresse e-mail.
+  - `phone` (string, obligatoire) : Numéro de téléphone.
+  - `address` (string, facultatif) : Adresse.
+  - `password` (string, obligatoire) : Mot de passe (doit contenir au moins 8 caractères alphanumériques).
 - **Réponses** :
-  - 201 : Question ajoutée avec succès
-  - 400 : Erreur de validation des données
+  - `201 Created` : Enregistrement réussi.
+  - `400 Bad Request` : Erreur de validation des données.
+  - `500 Internal Server Error` : Erreur interne du serveur.
 
-### Vérifier une réponse
+#### Connexion d'un citoyen
 
-- **URL** : `/questions/:id/check`
-- **Méthode HTTP** : `POST`
-- **Paramètres de l'URL** : 
-  - `id` : Identifiant de la question
-- **Paramètres du corps** : 
-  - `answer` (string) : Réponse à vérifier
+Permet à un citoyen de se connecter au système.
+
+- **URL** : `/auth/login`
+- **Méthode** : `POST`
+- **Paramètres du body** :
+  - `identifier` (string, obligatoire) : Identifiant (e-mail ou numéro de téléphone).
+  - `password` (string, obligatoire) : Mot de passe.
 - **Réponses** :
-  - 200 : Réponse correcte ou incorrecte
-  - 400 : Erreur de validation des données
-  - 404 : Question non trouvée
+  - `200 OK` : Connexion réussie. Retourne l'utilisateur et un jeton d'authentification.
+  - `400 Bad Request` : Erreur de validation des données.
+  - `401 Unauthorized` : Identifiants invalides.
+  - `500 Internal Server Error` : Erreur interne du serveur.
 
-### Obtenir une question aléatoire
+#### Connexion d'un administrateur
 
-- **URL** : `/questions/random`
-- **Méthode HTTP** : `GET`
+Permet à un administrateur de se connecter au système.
+
+- **URL** : `/auth/admin/login`
+- **Méthode** : `POST`
+- **Paramètres du corps** :
+  - `identifier` (string, obligatoire) : Identifiant (e-mail ou numéro de téléphone).
+  - `password` (string, obligatoire) : Mot de passe.
 - **Réponses** :
-  - 200 : Succès avec la question aléatoire
-  - 500 : Erreur serveur
+  - `200 OK` : Connexion réussie. Retourne l'utilisateur et un jeton d'authentification.
+  - `400 Bad Request` : Erreur de validation des données.
+  - `401 Unauthorized` : Identifiants invalides.
+  - `500 Internal Server Error` : Erreur interne du serveur.
+
+### Incidents
+
+#### Signalement d'un incident
+
+Permet de signaler un nouvel incident.
+
+- **URL** : `/incidents/report`
+- **Méthode** : `POST`
+- **Paramètres du corps** :
+  - `description` (string, obligatoire) : Description de l'incident.
+  - `troubles` (array, facultatif) : Liste des problèmes associés à l'incident.
+- **En-tête requis** :
+  - `Authorization-Token` : Jeton d'authentification valide.
+- **Réponses** :
+  - `201 Created` : Incident signalé avec succès.
+  - `400 Bad Request` : Erreur de validation des données.
+  - `401 Unauthorized` : Jeton d'authentification invalide ou manquant.
+  - `500 Internal Server Error` : Erreur interne du serveur.
+
+#### Traitement d'un incident
+
+Permet à un centre de support d'accepter ou décliner la prise en charge d'un incident existant.
+
+- **URL** : `/incidents/handle/:incidentId`
+- **Méthode** : `POST`
+- **Paramètres de l'URL** :
+  - `incidentId` (string, obligatoire) : Identifiant de l'incident à traiter.
+- **Paramètres du corps** :
+  - `isHandled` (boolean, obligatoire) : Indique si l'incident sera traité ou non.
+- **En-tête requis** :
+  - `Authorization-Token` : Jeton d'authentification valide.
+- **Réponses** :
+  - `200 OK` : Incident traité ou décliné avec succès.
+  - `400 Bad Request` : Erreur de validation des données.
+  - `401 Unauthorized` : Jeton d'authentification invalide ou manquant.
+  - `500 Internal Server Error` : Erreur interne du serveur.
+
+#### Obtenir les incidents d'un centre de support
+
+Permet à un centre de support d'obtenir les incidents qui lui sont associés.
+
+- **URL** : `/incidents/handle/:supportCenterId`
+- **Méthode** : `POST`
+- **Paramètres de l'URL** :
+  - `supportCenterId` (string, obligatoire) : Identifiant du centre de support pour lequel obtenir les incidents.
+- **En-tête requis** :
+  - `Authorization-Token` : Jeton d'authentification valide.
+- **Réponses** :
+  - `200 OK` : Liste des incidents du centre de support récupérée avec succès.
+  - `400 Bad Request` : Erreur de validation des données.
+  - `401 Unauthorized` : Jeton d'authentification invalide ou manquant.
+  - `500 Internal Server Error` : Erreur interne du serveur.
