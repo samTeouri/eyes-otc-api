@@ -1,27 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Notification = void 0;
-const sequelize_1 = require("sequelize");
-const database_1 = require("../config/database");
-class Notification extends sequelize_1.Model {
-}
-exports.Notification = Notification;
-Notification.init({
-    isReaded: {
-        type: sequelize_1.DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
-    },
-    createdAt: {
-        type: sequelize_1.DataTypes.DATE,
-        defaultValue: sequelize_1.DataTypes.NOW
-    },
-    updatedAt: {
-        type: sequelize_1.DataTypes.DATE,
-        defaultValue: sequelize_1.DataTypes.NOW
-    }
-}, {
-    sequelize: database_1.sequelize,
-    modelName: 'Notification',
-    tableName: 'notifications'
+const mongoose_1 = require("mongoose");
+// Schéma de la notification
+const notificationSchema = new mongoose_1.Schema({
+    isHandled: { type: Boolean, default: false },
+    supportCenter: { type: mongoose_1.Schema.Types.ObjectId, ref: 'SupportCenter' },
+    incident: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Incident' },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
 });
+// Création du modèle Notification à partir du schéma
+exports.Notification = (0, mongoose_1.model)('Notification', notificationSchema);

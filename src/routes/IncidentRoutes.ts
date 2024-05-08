@@ -8,7 +8,7 @@ export const incidentRouter = express.Router();
 // Report an incident
 incidentRouter.post('/report',
     [
-        body('description').isEmpty()
+        body('description').exists()
     ],
     authVerifyToken,
     incidentController.reportIncident,
@@ -17,7 +17,7 @@ incidentRouter.post('/report',
 // Handle an incident
 incidentRouter.post('/handle/:incidentId',
     [
-        body('description').isEmpty()
+        body('description').exists()
     ],
     authVerifyToken,
     incidentController.handleIncident,

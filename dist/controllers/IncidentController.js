@@ -12,92 +12,96 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getSupportCenterIncidents = exports.handleIncident = exports.reportIncident = void 0;
 const express_validator_1 = require("express-validator");
 const Incident_1 = require("../models/Incident");
-const UploadImage_1 = require("../utils/UploadImage");
-const UploadVideo_1 = require("../utils/UploadVideo");
 const User_1 = require("../models/User");
 const Notification_1 = require("../models/Notification");
 const SupportCenter_1 = require("../models/SupportCenter");
+const UploadImage_1 = require("../utils/UploadImage");
+const UploadVideo_1 = require("../utils/UploadVideo");
 const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // Validate form values and manage errors
-    const errors = (0, express_validator_1.validationResult)(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-    // Get form values from body
-    const { description, troubles } = req.body;
-    let uploadImageResult;
-    let uploadVideoResult;
     try {
-        uploadImageResult = yield (0, UploadImage_1.handleSingleUploadImage)(req, res);
-        uploadVideoResult = yield (0, UploadVideo_1.handleSingleUploadVideo)(req, res);
-    }
-    catch (e) {
-        console.log(e.message);
-        return res.status(422).json({ message: "Server was unable to process the contained instructions" });
-    }
-    const user = yield User_1.User.findByPk(req.body.user);
-    if (!(user === null || user === void 0 ? void 0 : user.hasRole(1))) {
-        return res.status(403).json({ error: 'You are not authorized to perform this action' });
-    }
-    if (user) {
-        yield user.createIncident({
+        // Validate form values and manage errors
+        const errors = (0, express_validator_1.validationResult)(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        // Get form values from body
+        const { description, troubles } = req.body;
+        // Handle file uploads
+        let uploadImageResult = yield (0, UploadImage_1.handleSingleUploadImage)(req, res);
+        let uploadVideoResult = yield (0, UploadVideo_1.handleSingleUploadVideo)(req, res);
+        // Find user by ID
+        const user = yield User_1.User.findById(req.body.user.id);
+        // Create incident
+        const incident = new Incident_1.Incident({
             description: description,
             picture: uploadImageResult.path,
             video: uploadVideoResult.path,
-        }).then((incident) => __awaiter(void 0, void 0, void 0, function* () {
-            yield incident.setTroubles(troubles);
-            const supportCenters = yield incident.getConcernedSupportCenters();
-            yield incident.setSupportCenters(supportCenters);
-            res.status(201).json({ message: "Incident reported succesfully !" });
-        })).catch((reason) => {
-            console.log(`Error : ${reason}`);
-            return res.status(500).json({ error: 'Error while reporting incident' });
         });
+        // Set troubles
+        troubles.forEach((trouble) => __awaiter(void 0, void 0, void 0, function* () {
+            yield incident.troubles.push(trouble);
+        }));
+        // Get concerned support centers
+        const supportCenters = yield incident.getConcernedSupportCenters();
+        // Set support centers
+        incident.supportCenters = supportCenters;
+        // Save incident
+        yield incident.save();
+        return res.status(201).json({ message: 'Incident reported successfully!' });
     }
-    else {
-        return res.status(404).json({ error: 'User not found' });
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error while reporting incident' });
     }
 });
 exports.reportIncident = reportIncident;
 const handleIncident = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // Validate form values and manage errors
-    const errors = (0, express_validator_1.validationResult)(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
     try {
-        const user = yield User_1.User.findByPk(req.body.user);
-        if (!((user === null || user === void 0 ? void 0 : user.hasRole(3)) || (user === null || user === void 0 ? void 0 : user.hasRole(2)))) {
-            return res.status(403).json({ error: 'You are not authorized to perform this action' });
+        // Validate form values and manage errors
+        const errors = (0, express_validator_1.validationResult)(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
         }
+        // Find user by ID
+        const user = yield User_1.User.findById(req.body.user);
+        // Get isHandled from request body
         const { isHandled } = req.body;
-        const incident = yield Incident_1.Incident.findByPk(req.params.incidentId)
-            .then((incident) => __awaiter(void 0, void 0, void 0, function* () {
-            const notification = yield Notification_1.Notification.findOne({ where: { incidentId: incident === null || incident === void 0 ? void 0 : incident.id } });
-            notification === null || notification === void 0 ? void 0 : notification.update({ isHandled: isHandled });
-            if (isHandled) {
-                res.status(201).json({ message: "Incident handled succesfully !" });
-            }
-            else {
-                res.status(201).json({ message: "Incident declined succesfully !" });
-            }
-        }))
-            .catch((reason) => {
-            console.log(`Error : ${reason}`);
-            return res.status(500).json({ error: 'Error while incident handling' });
-        });
+        // Find incident by ID
+        const incident = yield Incident_1.Incident.findById(req.params.incidentId);
+        // Update incident notification
+        const notification = yield Notification_1.Notification.findOne({ incident: incident === null || incident === void 0 ? void 0 : incident._id });
+        if (notification) {
+            notification.isHandled = isHandled;
+            yield notification.save();
+        }
+        // Send response
+        if (isHandled) {
+            return res.status(201).json({ message: 'Incident handled successfully!' });
+        }
+        else {
+            return res.status(201).json({ message: 'Incident declined successfully!' });
+        }
     }
     catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error while incident handling' });
     }
 });
 exports.handleIncident = handleIncident;
 const getSupportCenterIncidents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield User_1.User.findByPk(req.body.user);
-    if (user === null || user === void 0 ? void 0 : user.hasRole(1)) {
-        return res.status(403).json({ error: 'You are not authorized to perform this action' });
+    try {
+        // Find user by ID
+        const user = yield User_1.User.findById(req.body.user);
+        // Find support center by ID
+        const supportCenter = yield SupportCenter_1.SupportCenter.findById(req.params.supportCenterId);
+        // Get incidents of support center
+        const incidents = yield Incident_1.Incident.find({ supportCenters: supportCenter === null || supportCenter === void 0 ? void 0 : supportCenter._id });
+        // Send response
+        return res.json({ incidents: incidents });
     }
-    const supportCenter = yield SupportCenter_1.SupportCenter.findByPk(req.params.supportCenterId);
-    const incidents = yield (supportCenter === null || supportCenter === void 0 ? void 0 : supportCenter.getIncidents());
-    return res.json({ incidents: incidents });
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error while fetching support center incidents' });
+    }
 });
 exports.getSupportCenterIncidents = getSupportCenterIncidents;

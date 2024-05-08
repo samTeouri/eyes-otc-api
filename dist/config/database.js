@@ -31,23 +31,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.connect = exports.sequelize = void 0;
+exports.connect = void 0;
+const mongoose_1 = __importDefault(require("mongoose"));
 const dotenv = __importStar(require("dotenv"));
-const sequelize_1 = require("sequelize");
 dotenv.config();
-exports.sequelize = new sequelize_1.Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
-    host: process.env.DB_HOST,
-    dialect: process.env.DB_DIALECT,
-    logging: true,
-});
 const connect = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield exports.sequelize.authenticate();
-        yield console.log('Connection to database established successfully.');
+        yield mongoose_1.default.connect(process.env.DB_URI);
+        console.log('Connection to database established successfully.');
     }
     catch (error) {
-        console.error("Connection to databse failed.\nclosing process ...", error);
+        console.error("Connection to database failed:", error);
         process.exit(1);
     }
 });

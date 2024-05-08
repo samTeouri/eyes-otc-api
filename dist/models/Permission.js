@@ -1,27 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Permission = void 0;
-const sequelize_1 = require("sequelize");
-const database_1 = require("../config/database");
-class Permission extends sequelize_1.Model {
-}
-exports.Permission = Permission;
-Permission.init({
-    name: {
-        type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-    },
-    createdAt: {
-        type: sequelize_1.DataTypes.DATE,
-        defaultValue: sequelize_1.DataTypes.NOW
-    },
-    updatedAt: {
-        type: sequelize_1.DataTypes.DATE,
-        defaultValue: sequelize_1.DataTypes.NOW
-    }
-}, {
-    sequelize: database_1.sequelize,
-    modelName: 'Permission',
-    tableName: 'permissions',
+const mongoose_1 = require("mongoose");
+// Schéma de la permission
+const permissionSchema = new mongoose_1.Schema({
+    name: { type: String, required: true, unique: true },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+    roles: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'Role' }],
 });
+// Création du modèle Permission à partir du schéma
+exports.Permission = (0, mongoose_1.model)('Permission', permissionSchema);

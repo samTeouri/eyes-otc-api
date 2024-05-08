@@ -1,41 +1,23 @@
-import { BelongsToManyAddAssociationMixin, BelongsToManyAddAssociationsMixin, BelongsToManyCreateAssociationMixin, BelongsToManyGetAssociationsMixin, BelongsToManyHasAssociationMixin, BelongsToManyHasAssociationsMixin, BelongsToManyRemoveAssociationMixin, BelongsToManyRemoveAssociationsMixin, BelongsToManySetAssociationsMixin, DataTypes, Model } from "sequelize";
-import { sequelize } from "../config/database";
-import { Role } from "./Role";
+import { Schema, model, Document, Types } from 'mongoose';
+import { IRole } from './Role';
 
-export class Permission extends Model {
-    declare name: string;
-    declare createdAt: Date;
-    declare updatedAt: Date;
-
-    declare getRoles: BelongsToManyGetAssociationsMixin<Role>;
-    declare setRoles: BelongsToManySetAssociationsMixin<Role, number>;
-    declare hasRole: BelongsToManyHasAssociationMixin<Role, number>;
-    declare hasRoles: BelongsToManyHasAssociationsMixin<Role, number>;
-    declare addRole: BelongsToManyAddAssociationMixin<Role, number>;
-    declare addRoles: BelongsToManyAddAssociationsMixin<Role, number>;
-    declare removeRole: BelongsToManyRemoveAssociationMixin<Role, number>;
-    declare removeRoles: BelongsToManyRemoveAssociationsMixin<Role, number>;
-    declare createRole: BelongsToManyCreateAssociationMixin<Role>;
+// Interface pour représenter les données d'une permission
+export interface IPermission extends Document {
+    _id: number;
+    name: string;
+    createdAt: Date;
+    updatedAt: Date;
+    roles: IRole[];
 }
 
-Permission.init(
-    {
-        name: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-        },
-        createdAt: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW
-        },
-        updatedAt: {
-            type: DataTypes.DATE,
-            defaultValue: DataTypes.NOW
-        }
-    },{
-        sequelize: sequelize,
-        modelName: 'Permission',
-        tableName: 'permissions',
-    }
-);
+// Schéma de la permission
+const permissionSchema: Schema<IPermission> = new Schema({
+    name: { type: String, required: true, unique: true },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+    roles: [{ type: Schema.Types.ObjectId, ref: 'Role' }],
+});
+
+// Création du modèle Permission à partir du schéma
+export const Permission = model<IPermission>('Permission', permissionSchema);
+
