@@ -11,12 +11,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RequestValidationService = void 0;
 const express_validator_1 = require("express-validator");
+const User_1 = require("../models/User");
 class RequestValidationService {
     constructor() {
+        // validate request using express-validator 
         this.validateRequest = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const errors = yield (0, express_validator_1.validationResult)(req);
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
+            }
+        });
+        // validate auth identifier
+        this.validateIdentifier = (value, field) => __awaiter(this, void 0, void 0, function* () {
+            const user = yield User_1.User.findOne({ where: { [field]: value } });
+            if (user) {
+                return Promise.reject(`${field} already registered`);
             }
         });
     }
