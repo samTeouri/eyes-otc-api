@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserIncidents = exports.getSupportCenterIncidents = exports.notificationState = exports.handleIncident = exports.reportIncident = void 0;
+exports.getUserIncidents = exports.getSupportCenterIncidents = exports.notificationState = exports.updateIncident = exports.handleIncident = exports.reportIncident = void 0;
 const Incident_1 = require("../models/Incident");
 const User_1 = require("../models/User");
 const Notification_1 = require("../models/Notification");
@@ -42,17 +42,16 @@ const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
             picture: uploadPictureResult.path,
             user: user,
             location: location,
+            troubles: troubles
         });
-        // Set troubles
-        troubles.forEach((trouble) => __awaiter(void 0, void 0, void 0, function* () {
-            yield incident.troubles.push(trouble);
-        }));
         // Get concerned support centers
         const supportCenters = yield incident.getConcernedSupportCenters();
         // Set support centers
         incident.supportCenters = supportCenters;
         // Save incident
         yield incident.save();
+        yield (user === null || user === void 0 ? void 0 : user.incidents.push(incident));
+        yield (user === null || user === void 0 ? void 0 : user.save());
         return res.status(201).json({ message: 'Incident reported successfully!' });
     }
     catch (error) {
@@ -115,6 +114,53 @@ const handleIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.handleIncident = handleIncident;
+const updateIncident = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Validate form values and manage errors
+        requestValidationService.validateRequest(req, res);
+        // Get form values from body
+        const { description, troubles, latitude, longitude, picture } = req.body;
+        const incident = yield Incident_1.Incident.findById(req.params.incidentId);
+        if (incident) {
+            const notification = yield Notification_1.Notification.findOne({
+                state: 'prise en charge en cours',
+                incident: incident
+            });
+            if (notification) {
+                return res.status(401).json({ message: 'Can\'t update. Incident support has already begin' });
+            }
+            else {
+                if (description)
+                    incident.description = description;
+                if (troubles)
+                    incident.troubles = troubles;
+                if (latitude)
+                    incident.location.latitude = latitude;
+                if (longitude)
+                    incident.location.longitude = longitude;
+                if (picture) {
+                    let uploadPictureResult = yield (0, UploadFile_1.handleFilesUpload)(req, res);
+                    incident.picture = uploadPictureResult.path;
+                }
+                incident.updatedAt = yield new Date();
+                // Get concerned support centers
+                const supportCenters = yield incident.getConcernedSupportCenters();
+                // Set support centers
+                incident.supportCenters = supportCenters;
+                yield incident.save();
+                return res.status(404).json({ message: 'Incident updated succesfully' });
+            }
+        }
+        else {
+            return res.status(404).json({ error: 'Incident not found' });
+        }
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error while updating incident' });
+    }
+});
+exports.updateIncident = updateIncident;
 const notificationState = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Validate form values and manage errors
@@ -149,11 +195,7 @@ const getSupportCenterIncidents = (req, res) => __awaiter(void 0, void 0, void 0
         // Find support center by ID
         const supportCenter = yield SupportCenter_1.SupportCenter.findById(req.params.supportCenterId);
         // Get incidents of support center
-        const incidents = yield Incident_1.Incident.find({ supportCenters: supportCenter })
-            .populate('location')
-            .populate('user')
-            .populate('troubles')
-            .populate('supportCenters');
+        const incidents = yield (supportCenter === null || supportCenter === void 0 ? void 0 : supportCenter.incidents);
         // Send response
         return res.json({ incidents: incidents });
     }

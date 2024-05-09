@@ -9,3 +9,9 @@ supportCenterRouter.get('/connected/',
     authVerifyToken,
     supportCenterController.getConnectedSupportCenter,
 );
+
+// Get all support centers
+supportCenterRouter.get('/index/',
+    authVerifyToken,
+    supportCenterController.getSupportCenters,
+);

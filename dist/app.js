@@ -43,6 +43,7 @@ const database = __importStar(require("./config/database"));
 const cors_1 = __importDefault(require("cors"));
 const TroubleRoutes_1 = require("./routes/TroubleRoutes");
 const SupportCenterRoutes_1 = require("./routes/SupportCenterRoutes");
+const UserRoutes_1 = require("./routes/UserRoutes");
 exports.app = (0, express_1.default)();
 (() => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -66,3 +67,5 @@ exports.app.use('/auth', AuthRoutes_1.authRoutes);
 exports.app.use('/troubles', TroubleRoutes_1.troubleRouter);
 // Support Centers routes
 exports.app.use('/supportCenter', SupportCenterRoutes_1.supportCenterRouter);
+// Users routes
+exports.app.use('/user', UserRoutes_1.userRouter);

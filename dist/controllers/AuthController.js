@@ -32,8 +32,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adminLogin = exports.citizenLogin = exports.citizenRegister = void 0;
+exports.refreshAccessToken = exports.adminLogin = exports.citizenLogin = exports.citizenRegister = void 0;
 const bcrypt = __importStar(require("bcrypt"));
+const jwt = __importStar(require("jsonwebtoken"));
 const User_1 = require("../models/User");
 const Role_1 = require("../models/Role");
 const AuthService_1 = require("../services/AuthService");
@@ -138,3 +139,22 @@ const adminLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.adminLogin = adminLogin;
+const refreshAccessToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const refreshToken = req.header('Refresh-Token');
+    if (!refreshToken) {
+        return res.status(401).send('Access Denied. No refresh token provided.');
+    }
+    try {
+        const decoded = jwt.verify(refreshToken, process.env.TOKEN_SECRET_KEY);
+        const accessToken = jwt.sign({ id: decoded.id }, process.env.TOKEN_SECRET_KEY, { expiresIn: '2h' });
+        return res.status(200).json({
+            userId: decoded.id,
+            _token: accessToken,
+            _refreshToken: refreshToken
+        });
+    }
+    catch (error) {
+        return res.status(400).send('Invalid refresh token.');
+    }
+});
+exports.refreshAccessToken = refreshAccessToken;

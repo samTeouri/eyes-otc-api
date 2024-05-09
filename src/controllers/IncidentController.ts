@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
 import { Incident } from '../models/Incident';
-import { ITrouble, Trouble } from '../models/Trouble';
+import { ITrouble } from '../models/Trouble';
 import { User } from '../models/User';
 import { Notification } from '../models/Notification';
 import { ISupportCenter, SupportCenter } from '../models/SupportCenter';
@@ -41,11 +40,7 @@ export const reportIncident = async (req: Request, res: Response) => {
             picture: uploadPictureResult.path,
             user: user,
             location: location,
-        });
-
-        // Set troubles
-        troubles.forEach(async (trouble: ITrouble) => {
-            await incident.troubles.push(trouble as ITrouble);
+            troubles: troubles
         });
 
         // Get concerned support centers
@@ -56,6 +51,10 @@ export const reportIncident = async (req: Request, res: Response) => {
 
         // Save incident
         await incident.save();
+
+        await user?.incidents.push(incident);
+
+        await user?.save();
 
         return res.status(201).json({ message: 'Incident reported successfully!' });
     } catch (error) {
@@ -122,6 +121,53 @@ export const handleIncident = async (req: Request, res: Response) => {
     }
 }
 
+export const updateIncident = async (req: Request, res: Response) => {
+    try {
+        // Validate form values and manage errors
+        requestValidationService.validateRequest(req, res);
+
+        // Get form values from body
+        const { description, troubles, latitude, longitude, picture } = req.body;
+        
+        const incident = await Incident.findById(req.params.incidentId);
+
+        if (incident) {
+            const notification = await Notification.findOne({
+                state: 'prise en charge en cours',
+                incident: incident
+            })
+
+            if (notification) {
+                return res.status(401).json({ message: 'Can\'t update. Incident support has already begin' });
+            } else {
+                if (description) incident.description = description;
+                if (troubles) incident.troubles = troubles;
+                if (latitude) incident.location.latitude = latitude;
+                if (longitude) incident.location.longitude = longitude;
+                if (picture) {
+                    let uploadPictureResult: UploadedFile = await handleFilesUpload(req, res);
+                    incident.picture = uploadPictureResult.path;
+                }
+                incident.updatedAt = await new Date();
+
+                // Get concerned support centers
+                const supportCenters = await incident.getConcernedSupportCenters();
+
+                // Set support centers
+                incident.supportCenters = supportCenters;
+
+                await incident.save()
+                return res.status(404).json({ message: 'Incident updated succesfully' });
+            }
+        } else {
+            return res.status(404).json({ error: 'Incident not found' });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error while updating incident' });
+    }
+}
+
 export const notificationState = async (req: Request, res: Response) => {
     try {
         // Validate form values and manage errors
@@ -166,11 +212,7 @@ export const getSupportCenterIncidents = async (req: Request, res: Response) => 
         const supportCenter = await SupportCenter.findById(req.params.supportCenterId);
 
         // Get incidents of support center
-        const incidents = await Incident.find({ supportCenters: supportCenter })
-                .populate('location')
-                .populate('user')
-                .populate('troubles')
-                .populate('supportCenters');
+        const incidents = await supportCenter?.incidents;
 
         // Send response
         return res.json({ incidents: incidents });

@@ -2,6 +2,7 @@ import { Schema, model, Document, Types } from 'mongoose';
 import { ILocation } from './Location';
 import { IService } from './Service';
 import { IUser } from './User';
+import { IIncident } from './Incident';
 
 // Interface pour représenter les données d'un centre de support
 export interface ISupportCenter extends Document {
@@ -12,6 +13,7 @@ export interface ISupportCenter extends Document {
     location: ILocation;
     service: IService;
     user: IUser;
+    incidents: IIncident[];
 }
 
 // Schéma du centre de support
@@ -23,6 +25,7 @@ const supportCenterSchema: Schema<ISupportCenter> = new Schema({
     location: { type: Schema.Types.ObjectId, ref: 'Location' },
     service: { type: Schema.Types.ObjectId, ref: 'Service' },
     user: { type: Schema.Types.ObjectId, ref: 'User' },
+    incidents: [{ type: Schema.Types.ObjectId, ref: 'Incident' }]
 });
 
 // Création du modèle SupportCenter à partir du schéma

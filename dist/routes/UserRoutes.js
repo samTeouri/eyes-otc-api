@@ -23,12 +23,26 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.supportCenterRouter = void 0;
+exports.userRouter = void 0;
 const express = __importStar(require("express"));
-const supportCenterController = __importStar(require("../controllers/SupportCenterController"));
+const userController = __importStar(require("../controllers/UserController"));
 const AuthMiddleware_1 = require("../middlewares/AuthMiddleware");
-exports.supportCenterRouter = express.Router();
-// Get incidents associated to supportCenter
-exports.supportCenterRouter.get('/connected/', AuthMiddleware_1.authVerifyToken, supportCenterController.getConnectedSupportCenter);
-// Get all support centers
-exports.supportCenterRouter.get('/index/', AuthMiddleware_1.authVerifyToken, supportCenterController.getSupportCenters);
+const express_validator_1 = require("express-validator");
+exports.userRouter = express.Router();
+// Get all users
+exports.userRouter.get('/index', AuthMiddleware_1.authVerifyToken, userController.getAllUsers);
+// Get user infos
+exports.userRouter.get('/infos/:userId', AuthMiddleware_1.authVerifyToken, userController.getUserInfo);
+// Change user password
+exports.userRouter.post('/changePassword', [
+    (0, express_validator_1.body)('newPassword').exists().isAlphanumeric(),
+    (0, express_validator_1.body)('oldPassword').exists().isAlphanumeric(),
+], AuthMiddleware_1.authVerifyToken, userController.changePassword);
+// Update user
+exports.userRouter.post('/update', [
+    (0, express_validator_1.body)('lastName').isString(),
+    (0, express_validator_1.body)('firstName').isString(),
+    (0, express_validator_1.body)('email').isEmail(),
+    (0, express_validator_1.body)('phone').isNumeric(),
+    (0, express_validator_1.body)('address').isString(),
+], AuthMiddleware_1.authVerifyToken, userController.updateUser);

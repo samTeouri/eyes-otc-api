@@ -50,11 +50,15 @@ export class AuthService {
             if (!(await this.checkPassword(user, password))) return res.status(401).json({ error: 'Password is incorrect' });
 
             // Token signature
-            const token = jwt.sign({ id: user.id }, process.env.TOKEN_SECRET_KEY as string);
+            const accessToken = jwt.sign({ id: user.id }, process.env.TOKEN_SECRET_KEY as string, { expiresIn: '2h' });
+
+            // Refresh Token signature
+            const refreshToken = jwt.sign({ id: user.id }, process.env.TOKEN_SECRET_KEY as string, { expiresIn: '7d' });
 
             return res.status(200).json({
                 user: user,
-                _token: token,
+                _token: accessToken,
+                _refreshToken: refreshToken
             });
         } else {
             // User with given identifier doesn't exist
