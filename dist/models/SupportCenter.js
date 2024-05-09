@@ -11,6 +11,7 @@ const supportCenterSchema = new mongoose_1.Schema({
     location: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Location' },
     service: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Service' },
     user: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User' },
+    incidents: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'Incident' }]
 });
 // Création du modèle SupportCenter à partir du schéma
 exports.SupportCenter = (0, mongoose_1.model)('SupportCenter', supportCenterSchema);
