@@ -36,3 +36,11 @@ exports.userRouter.post('/changePassword', [
     (0, express_validator_1.body)('newPassword').exists().isAlphanumeric(),
     (0, express_validator_1.body)('oldPassword').exists().isAlphanumeric(),
 ], AuthMiddleware_1.authVerifyToken, userController.changePassword);
+// Update user
+exports.userRouter.post('/update', [
+    (0, express_validator_1.body)('lastName').isString(),
+    (0, express_validator_1.body)('firstName').isString(),
+    (0, express_validator_1.body)('email').isEmail(),
+    (0, express_validator_1.body)('phone').isNumeric(),
+    (0, express_validator_1.body)('address').isString(),
+], AuthMiddleware_1.authVerifyToken, userController.updateUser);

@@ -128,7 +128,27 @@ Permet à un utilisateur connecté de changer son propre mot de passe.
 - **En-tête requis** :
   - `Authorization-Token` : Jeton d'authentification valide.
 - **Réponses** :
-  - `200 Created` : Mot de passe modifié avec succès.
+  - `200 OK` : Mot de passe modifié avec succès.
+  - `400 Bad Request` : Erreur de validation des données.
+  - `401 Unauthorized` : Jeton d'authentification invalide ou manquant.
+  - `500 Internal Server Error` : Erreur interne du serveur.
+
+#### Mise à jour d'un utilisateur
+
+Permet à un utilisateur connecté de modifier ses informations.
+
+- **URL** : `/user/update`
+- **Méthode** : `POST`
+- **Paramètres du corps** :
+  - `firstName` (string, facultatif) : Prénom.
+  - `lastName` (string, facultatif) : Nom.
+  - `email` (string, facultatif) : Email.
+  - `phone` (number, facultatif) : Numéro de téléphone.
+  - `address` (string, facultatif) : Addresse.
+- **En-tête requis** :
+  - `Authorization-Token` : Jeton d'authentification valide.
+- **Réponses** :
+  - `200 OK` : Utilisateur modifié avec succès.
   - `400 Bad Request` : Erreur de validation des données.
   - `401 Unauthorized` : Jeton d'authentification invalide ou manquant.
   - `500 Internal Server Error` : Erreur interne du serveur.

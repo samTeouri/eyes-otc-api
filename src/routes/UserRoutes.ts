@@ -20,3 +20,16 @@ userRouter.post('/changePassword',
     authVerifyToken,
     userController.changePassword,
 );
+
+// Update user
+userRouter.post('/update',
+    [
+        body('lastName').isString(),
+        body('firstName').isString(),
+        body('email').isEmail(),
+        body('phone').isNumeric(),
+        body('address').isString(),
+    ],
+    authVerifyToken,
+    userController.updateUser,
+);

@@ -15,7 +15,30 @@ export const getUserInfo = async (req: Request, res: Response) => {
         return res.status(404).json({ message: 'User not found' });
     } catch(error) {
         console.log(error);
-        return res.status(500).json({ error: 'Error while getting user info' });
+        return res.status(500).json({ error: 'Error while getting user infos' });
+    }
+}
+
+export const updateUser = async (req: Request, res: Response) => {
+    try {
+        const { lastName, firstName, email, phone, address } = req.body;
+
+        // Find user by ID
+        const user = await User.findById(req.body.user.id);
+
+        if (user) {
+            if (lastName) user.lastName = lastName;
+            if (firstName) user.firstName = firstName;
+            if (email) user.email = email;
+            if (phone) user.phone = phone;
+            if (address) user.address = address;
+            await user.save();
+            return res.status(200).json({ message: 'User updated successfully' });
+        }
+        return res.status(404).json({ message: 'User not found' });
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error while updating user infos' });
     }
 }
 

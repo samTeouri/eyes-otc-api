@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.changePassword = exports.getUserInfo = void 0;
+exports.changePassword = exports.updateUser = exports.getUserInfo = void 0;
 const bcrypt = __importStar(require("bcrypt"));
 const User_1 = require("../models/User");
 const RequestValidationService_1 = require("../services/RequestValidationService");
@@ -49,10 +49,37 @@ const getUserInfo = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
     catch (error) {
         console.log(error);
-        return res.status(500).json({ error: 'Error while getting user info' });
+        return res.status(500).json({ error: 'Error while getting user infos' });
     }
 });
 exports.getUserInfo = getUserInfo;
+const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { lastName, firstName, email, phone, address } = req.body;
+        // Find user by ID
+        const user = yield User_1.User.findById(req.body.user.id);
+        if (user) {
+            if (lastName)
+                user.lastName = lastName;
+            if (firstName)
+                user.firstName = firstName;
+            if (email)
+                user.email = email;
+            if (phone)
+                user.phone = phone;
+            if (address)
+                user.address = address;
+            yield user.save();
+            return res.status(200).json({ message: 'User updated successfully' });
+        }
+        return res.status(404).json({ message: 'User not found' });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error while updating user infos' });
+    }
+});
+exports.updateUser = updateUser;
 const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Validate form values and manage errors
