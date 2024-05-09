@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import * as bcrypt from 'bcrypt';
-import { IUser, User } from '../models/User';
+import { User } from '../models/User';
 import { IRole, Role } from '../models/Role';
 import { AuthService } from '../services/AuthService';
 import { RequestValidationService } from '../services/RequestValidationService';

@@ -116,6 +116,23 @@ Permet de récupérer les informations liées à l'utilisateur.
   - `401 Unauthorized` : Jeton d'authentification invalide ou manquant.
   - `500 Internal Server Error` : Erreur interne du serveur.
 
+#### Changer le mot de passe
+
+Permet à un utilisateur connecté de changer son propre mot de passe.
+
+- **URL** : `/user/changePassword`
+- **Méthode** : `POST`
+- **Paramètres du corps** :
+  - `newPassword` (string, obligatoire) : Nouveau mot de passe.
+  - `oldPassword` (string, obligatoire) : Ancien mot de passe.
+- **En-tête requis** :
+  - `Authorization-Token` : Jeton d'authentification valide.
+- **Réponses** :
+  - `200 Created` : Mot de passe modifié avec succès.
+  - `400 Bad Request` : Erreur de validation des données.
+  - `401 Unauthorized` : Jeton d'authentification invalide ou manquant.
+  - `500 Internal Server Error` : Erreur interne du serveur.
+
 ### Centres de suport
 
 ### Incidents

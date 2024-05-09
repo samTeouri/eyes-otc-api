@@ -27,6 +27,12 @@ exports.userRouter = void 0;
 const express = __importStar(require("express"));
 const userController = __importStar(require("../controllers/UserController"));
 const AuthMiddleware_1 = require("../middlewares/AuthMiddleware");
+const express_validator_1 = require("express-validator");
 exports.userRouter = express.Router();
 // Get user infos
 exports.userRouter.get('/infos/:userId', AuthMiddleware_1.authVerifyToken, userController.getUserInfo);
+// Change user password
+exports.userRouter.post('/changePassword', [
+    (0, express_validator_1.body)('newPassword').exists().isAlphanumeric(),
+    (0, express_validator_1.body)('oldPassword').exists().isAlphanumeric(),
+], AuthMiddleware_1.authVerifyToken, userController.changePassword);
