@@ -5,6 +5,7 @@ import * as database from './config/database';
 import cors from 'cors';
 import path from 'path';
 import { troubleRouter } from './routes/TroubleRoutes';
+import { supportCenterRouter } from './routes/SupportCenterRoutes';
 
 export const app: Application = express();
 
@@ -31,3 +32,6 @@ app.use('/auth', authRoutes);
 
 // Trouble routes
 app.use('/troubles', troubleRouter);
+
+// Support Centers routes
+app.use('/supportCenter', supportCenterRouter);

@@ -77,7 +77,7 @@ class AuthService {
             // User with given identifier exist
             if (user) {
                 // Check if given password is correct
-                if (yield this.checkPassword(user, password))
+                if (!(yield this.checkPassword(user, password)))
                     return res.status(401).json({ error: 'Password is incorrect' });
                 // Token signature
                 const token = jwt.sign({ id: user.id }, process.env.TOKEN_SECRET_KEY);

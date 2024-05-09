@@ -30,7 +30,13 @@ incidentRouter.get('/index/supportCenter/:supportCenterId',
 );
 
 // Change incident handling status
-incidentRouter.get('/handleStatus/:incidentId',
+incidentRouter.post('/handleStatus/:incidentId',
     authVerifyToken,
     incidentController.notificationState,
+);
+
+// Get incidents reported by user
+incidentRouter.get('/index/user/:userId',
+    authVerifyToken,
+    incidentController.getUserIncidents,
 );

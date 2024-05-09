@@ -23,23 +23,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.incidentRouter = void 0;
+exports.supportCenterRouter = void 0;
 const express = __importStar(require("express"));
-const express_validator_1 = require("express-validator");
-const incidentController = __importStar(require("../controllers/IncidentController"));
+const supportCenterController = __importStar(require("../controllers/SupportCenterController"));
 const AuthMiddleware_1 = require("../middlewares/AuthMiddleware");
-exports.incidentRouter = express.Router();
-// Report an incident
-exports.incidentRouter.post('/report', [
-    (0, express_validator_1.body)('description').exists()
-], AuthMiddleware_1.authVerifyToken, incidentController.reportIncident);
-// Handle an incident
-exports.incidentRouter.post('/handle/:incidentId', [
-    (0, express_validator_1.body)('description').exists()
-], AuthMiddleware_1.authVerifyToken, incidentController.handleIncident);
+exports.supportCenterRouter = express.Router();
 // Get incidents associated to supportCenter
-exports.incidentRouter.get('/index/supportCenter/:supportCenterId', AuthMiddleware_1.authVerifyToken, incidentController.getSupportCenterIncidents);
-// Change incident handling status
-exports.incidentRouter.post('/handleStatus/:incidentId', AuthMiddleware_1.authVerifyToken, incidentController.notificationState);
-// Get incidents reported by user
-exports.incidentRouter.get('/index/user/:userId', AuthMiddleware_1.authVerifyToken, incidentController.getUserIncidents);
+exports.supportCenterRouter.get('/connected/', AuthMiddleware_1.authVerifyToken, supportCenterController.getConnectedSupportCenter);
