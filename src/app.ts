@@ -4,6 +4,7 @@ import { authRoutes } from './routes/AuthRoutes';
 import * as database from './config/database';
 import cors from 'cors';
 import path from 'path';
+import { troubleRouter } from './routes/TroubleRoutes';
 
 export const app: Application = express();
 
@@ -27,3 +28,6 @@ app.use('/incidents', incidentRouter);
 
 // Authentication routes
 app.use('/auth', authRoutes);
+
+// Trouble routes
+app.use('/troubles', troubleRouter);

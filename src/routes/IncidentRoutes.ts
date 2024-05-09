@@ -25,6 +25,6 @@ incidentRouter.post('/handle/:incidentId',
 
 // Get incidents associated to supportCenter
 incidentRouter.get('/index/:supportCenterId',
-    //authVerifyToken,
+    authVerifyToken,
     incidentController.getSupportCenterIncidents,
 );

@@ -110,6 +110,8 @@ Permet de signaler un nouvel incident.
 - **Paramètres du corps** :
   - `description` (string, obligatoire) : Description de l'incident.
   - `troubles` (array, obligatoire) : Liste des problèmes associés à l'incident.
+  - `latitude` (number, obligatoire) : Latitude de l'incident.
+  - `longitude` (number, obligatoire) : Longitude de l'incident.
 - **En-tête requis** :
   - `Authorization-Token` : Jeton d'authentification valide.
 - **Réponses** :
@@ -148,6 +150,20 @@ Permet à un centre de support d'obtenir les incidents qui lui sont associés.
   - `Authorization-Token` : Jeton d'authentification valide.
 - **Réponses** :
   - `200 OK` : Liste des incidents du centre de support récupérée avec succès.
-  - `400 Bad Request` : Erreur de validation des données.
+  - `401 Unauthorized` : Jeton d'authentification invalide ou manquant.
+  - `500 Internal Server Error` : Erreur interne du serveur.
+
+### Troubles
+
+#### Obtenir les troubles
+
+Permet de récupérer toutes les catégories d'incident possibles.
+
+- **URL** : `/troubles/index`
+- **Méthode** : `GET`
+- **En-tête requis** :
+  - `Authorization-Token` : Jeton d'authentification valide.
+- **Réponses** :
+  - `200 OK` : Liste des catégories d'incident récupérée avec succès.
   - `401 Unauthorized` : Jeton d'authentification invalide ou manquant.
   - `500 Internal Server Error` : Erreur interne du serveur.
