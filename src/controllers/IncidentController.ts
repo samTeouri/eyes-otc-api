@@ -5,8 +5,7 @@ import { ITrouble, Trouble } from '../models/Trouble';
 import { User } from '../models/User';
 import { Notification } from '../models/Notification';
 import { SupportCenter } from '../models/SupportCenter';
-import { handleSingleUploadImage } from '../utils/UploadImage';
-import { handleSingleUploadVideo } from '../utils/UploadVideo';
+import { handleFilesUpload } from '../utils/UploadFile';
 import { UploadedFile } from '../utils/UploadedFile';
 import { RequestValidationService } from '../services/RequestValidationService';
 import { Location } from '../models/Location';
@@ -28,8 +27,7 @@ export const reportIncident = async (req: Request, res: Response) => {
         });
 
         // Handle file uploads
-        let uploadImageResult: UploadedFile = await handleSingleUploadImage(req, res);
-        let uploadVideoResult: UploadedFile = await handleSingleUploadVideo(req, res);
+        let uploadPictureResult: UploadedFile = await handleFilesUpload(req, res);
 
         // Find user by ID
         const user = await User.findById(req.body.user.id);
@@ -37,8 +35,7 @@ export const reportIncident = async (req: Request, res: Response) => {
         // Create incident
         const incident = new Incident({
             description: description,
-            picture: uploadImageResult.path,
-            video: uploadVideoResult.path,
+            picture: uploadPictureResult.path,
             user: user,
             location: location,
         });

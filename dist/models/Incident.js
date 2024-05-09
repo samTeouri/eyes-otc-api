@@ -15,10 +15,9 @@ const OSMRoutingService_1 = require("../services/OSMRoutingService");
 const Trouble_1 = require("./Trouble");
 // Schéma de l'incident
 const incidentSchema = new mongoose_1.Schema({
-    state: { type: String, enum: ['traitement en cours', 'en attente de traitement', 'résolu'], default: 'en attente de traitement' },
+    state: { type: String, enum: ['prise en charge en cours', 'en attente de prise en charge', 'résolu'], default: 'en attente de prise en charge' },
     description: { type: String, required: true },
     picture: { type: String },
-    video: { type: String },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     location: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Location' },

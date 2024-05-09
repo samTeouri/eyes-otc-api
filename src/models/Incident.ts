@@ -7,10 +7,9 @@ import { ITrouble, Trouble } from './Trouble';
 
 // Interface pour représenter les données d'un incident
 export interface IIncident extends Document {
-    state: 'traitement en cours' | 'en attente de traitement' | 'résolu';
+    state: 'prise en charge en cours' | 'en attente de prise en charge' | 'résolu';
     description: string;
     picture?: string;
-    video?: string;
     createdAt: Date;
     updatedAt: Date;
     location: ILocation;
@@ -25,10 +24,9 @@ export interface IIncident extends Document {
 
 // Schéma de l'incident
 const incidentSchema: Schema<IIncident> = new Schema({
-    state: { type: String, enum: ['traitement en cours', 'en attente de traitement', 'résolu'], default: 'en attente de traitement' },
+    state: { type: String, enum: ['prise en charge en cours', 'en attente de prise en charge', 'résolu'], default: 'en attente de prise en charge' },
     description: { type: String, required: true },
     picture: { type: String },
-    video: { type: String },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     location: { type: Schema.Types.ObjectId, ref: 'Location' },

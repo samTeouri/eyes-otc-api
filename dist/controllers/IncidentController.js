@@ -14,8 +14,7 @@ const Incident_1 = require("../models/Incident");
 const User_1 = require("../models/User");
 const Notification_1 = require("../models/Notification");
 const SupportCenter_1 = require("../models/SupportCenter");
-const UploadImage_1 = require("../utils/UploadImage");
-const UploadVideo_1 = require("../utils/UploadVideo");
+const UploadFile_1 = require("../utils/UploadFile");
 const RequestValidationService_1 = require("../services/RequestValidationService");
 const Location_1 = require("../models/Location");
 const requestValidationService = new RequestValidationService_1.RequestValidationService();
@@ -31,15 +30,13 @@ const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
             longitude: longitude,
         });
         // Handle file uploads
-        let uploadImageResult = yield (0, UploadImage_1.handleSingleUploadImage)(req, res);
-        let uploadVideoResult = yield (0, UploadVideo_1.handleSingleUploadVideo)(req, res);
+        let uploadPictureResult = yield (0, UploadFile_1.handleFilesUpload)(req, res);
         // Find user by ID
         const user = yield User_1.User.findById(req.body.user.id);
         // Create incident
         const incident = new Incident_1.Incident({
             description: description,
-            picture: uploadImageResult.path,
-            video: uploadVideoResult.path,
+            picture: uploadPictureResult.path,
             user: user,
             location: location,
         });
