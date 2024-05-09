@@ -17,13 +17,19 @@ const SupportCenter_1 = require("../models/SupportCenter");
 const UploadImage_1 = require("../utils/UploadImage");
 const UploadVideo_1 = require("../utils/UploadVideo");
 const RequestValidationService_1 = require("../services/RequestValidationService");
+const Location_1 = require("../models/Location");
 const requestValidationService = new RequestValidationService_1.RequestValidationService();
 const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Validate form values and manage errors
         requestValidationService.validateRequest(req, res);
         // Get form values from body
-        const { description, troubles } = req.body;
+        const { description, troubles, latitude, longitude } = req.body;
+        // Create Location
+        const location = yield Location_1.Location.create({
+            latitude: latitude,
+            longitude: longitude,
+        });
         // Handle file uploads
         let uploadImageResult = yield (0, UploadImage_1.handleSingleUploadImage)(req, res);
         let uploadVideoResult = yield (0, UploadVideo_1.handleSingleUploadVideo)(req, res);
@@ -34,6 +40,8 @@ const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
             description: description,
             picture: uploadImageResult.path,
             video: uploadVideoResult.path,
+            user: user,
+            location: location,
         });
         // Set troubles
         troubles.forEach((trouble) => __awaiter(void 0, void 0, void 0, function* () {

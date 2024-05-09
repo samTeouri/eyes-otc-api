@@ -109,7 +109,7 @@ Permet de signaler un nouvel incident.
 - **Méthode** : `POST`
 - **Paramètres du corps** :
   - `description` (string, obligatoire) : Description de l'incident.
-  - `troubles` (array, facultatif) : Liste des problèmes associés à l'incident.
+  - `troubles` (array, obligatoire) : Liste des problèmes associés à l'incident.
 - **En-tête requis** :
   - `Authorization-Token` : Jeton d'authentification valide.
 - **Réponses** :

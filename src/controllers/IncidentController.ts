@@ -9,6 +9,7 @@ import { handleSingleUploadImage } from '../utils/UploadImage';
 import { handleSingleUploadVideo } from '../utils/UploadVideo';
 import { UploadedFile } from '../utils/UploadedFile';
 import { RequestValidationService } from '../services/RequestValidationService';
+import { Location } from '../models/Location';
 
 const requestValidationService = new RequestValidationService();
 
@@ -18,7 +19,13 @@ export const reportIncident = async (req: Request, res: Response) => {
         requestValidationService.validateRequest(req, res);
 
         // Get form values from body
-        const { description, troubles } = req.body;
+        const { description, troubles, latitude, longitude } = req.body;
+
+        // Create Location
+        const location = await Location.create({
+            latitude: latitude,
+            longitude: longitude,
+        });
 
         // Handle file uploads
         let uploadImageResult: UploadedFile = await handleSingleUploadImage(req, res);
@@ -32,6 +39,8 @@ export const reportIncident = async (req: Request, res: Response) => {
             description: description,
             picture: uploadImageResult.path,
             video: uploadVideoResult.path,
+            user: user,
+            location: location,
         });
 
         // Set troubles
