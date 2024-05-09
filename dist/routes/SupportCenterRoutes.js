@@ -30,3 +30,5 @@ const AuthMiddleware_1 = require("../middlewares/AuthMiddleware");
 exports.supportCenterRouter = express.Router();
 // Get incidents associated to supportCenter
 exports.supportCenterRouter.get('/connected/', AuthMiddleware_1.authVerifyToken, supportCenterController.getConnectedSupportCenter);
+// Get all support centers
+exports.supportCenterRouter.get('/index/', AuthMiddleware_1.authVerifyToken, supportCenterController.getSupportCenters);

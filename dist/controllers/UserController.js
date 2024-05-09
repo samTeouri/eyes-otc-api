@@ -14,7 +14,7 @@ const User_1 = require("../models/User");
 const getUserInfo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Find user by ID
-        const user = yield User_1.User.findById(req.params.userId);
+        const user = yield User_1.User.findById(req.params.userId).populate('incidents').populate('roles');
         if (user)
             return res.status(200).json({ user: user });
         return res.status(404).json({ message: 'User not found' });

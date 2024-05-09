@@ -216,3 +216,16 @@ Permet de récupérer le centre de support actuellement connecté au dashboard a
   - `200 OK` : Centre de support connecté récupéré avec succès.
   - `401 Unauthorized` : Jeton d'authentification invalide ou manquant.
   - `500 Internal Server Error` : Erreur interne du serveur.
+
+#### Obtenir tous les centres de support
+
+Permet de récupérer tous les centres de support actuellement enregistrés dans la base.
+
+- **URL** : `/supportCenter/index`
+- **Méthode** : `GET`
+- **En-tête requis** :
+  - `Authorization-Token` : Jeton d'authentification valide.
+- **Réponses** :
+  - `200 OK` : Centres de support récupérés avec succès.
+  - `401 Unauthorized` : Jeton d'authentification invalide ou manquant.
+  - `500 Internal Server Error` : Erreur interne du serveur.
