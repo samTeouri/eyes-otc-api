@@ -106,7 +106,11 @@ export const getSupportCenterIncidents = async (req: Request, res: Response) => 
         const supportCenter = await SupportCenter.findById(req.params.supportCenterId);
 
         // Get incidents of support center
-        const incidents = await Incident.find({ supportCenters: supportCenter?._id });
+        const incidents = await Incident.find({ supportCenters: supportCenter?._id })
+                .populate('location')
+                .populate('user')
+                .populate('troubles')
+                .populate('supportCenters');
 
         // Send response
         return res.json({ incidents: incidents });

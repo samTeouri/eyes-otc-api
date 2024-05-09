@@ -97,7 +97,11 @@ const getSupportCenterIncidents = (req, res) => __awaiter(void 0, void 0, void 0
         // Find support center by ID
         const supportCenter = yield SupportCenter_1.SupportCenter.findById(req.params.supportCenterId);
         // Get incidents of support center
-        const incidents = yield Incident_1.Incident.find({ supportCenters: supportCenter === null || supportCenter === void 0 ? void 0 : supportCenter._id });
+        const incidents = yield Incident_1.Incident.find({ supportCenters: supportCenter === null || supportCenter === void 0 ? void 0 : supportCenter._id })
+            .populate('location')
+            .populate('user')
+            .populate('troubles')
+            .populate('supportCenters');
         // Send response
         return res.json({ incidents: incidents });
     }
