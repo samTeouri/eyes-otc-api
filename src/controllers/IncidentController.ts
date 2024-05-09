@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
 import { Incident } from '../models/Incident';
-import { ITrouble, Trouble } from '../models/Trouble';
+import { ITrouble } from '../models/Trouble';
 import { User } from '../models/User';
 import { Notification } from '../models/Notification';
 import { ISupportCenter, SupportCenter } from '../models/SupportCenter';
@@ -170,11 +169,7 @@ export const getSupportCenterIncidents = async (req: Request, res: Response) => 
         const supportCenter = await SupportCenter.findById(req.params.supportCenterId);
 
         // Get incidents of support center
-        const incidents = await Incident.find({ supportCenters: supportCenter })
-                .populate('location')
-                .populate('user')
-                .populate('troubles')
-                .populate('supportCenters');
+        const incidents = await supportCenter?.incidents;
 
         // Send response
         return res.json({ incidents: incidents });
