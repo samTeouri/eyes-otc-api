@@ -17,7 +17,10 @@ const SupportCenter_1 = require("../models/SupportCenter");
 const UploadFile_1 = require("../utils/UploadFile");
 const RequestValidationService_1 = require("../services/RequestValidationService");
 const Location_1 = require("../models/Location");
+const Role_1 = require("../models/Role");
+const RoleService_1 = require("../services/RoleService");
 const requestValidationService = new RequestValidationService_1.RequestValidationService();
+const roleService = new RoleService_1.RoleService();
 const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Validate form values and manage errors
@@ -62,24 +65,47 @@ const handleIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
     try {
         // Validate form values and manage errors
         requestValidationService.validateRequest(req, res);
-        // Find user by ID
-        const user = yield User_1.User.findById(req.body.user.id);
         // Get isHandled from request body
         const { isHandled } = req.body;
+        // Find user by ID
+        const user = yield User_1.User.findById(req.body.user.id);
+        if (user) {
+            yield Role_1.Role.findOne({ name: 'supportCenter' })
+                .then((role) => __awaiter(void 0, void 0, void 0, function* () {
+                if (role) {
+                    roleService.checkRole(user, role, res);
+                }
+            }))
+                .catch((reason) => __awaiter(void 0, void 0, void 0, function* () {
+                throw reason;
+            }));
+        }
         // Find incident by ID
         const incident = yield Incident_1.Incident.findById(req.params.incidentId);
-        // Update incident notification
-        const notification = yield Notification_1.Notification.findOne({ incident: incident === null || incident === void 0 ? void 0 : incident._id });
-        if (notification) {
-            notification.isHandled = isHandled;
-            yield notification.save();
-        }
-        // Send response
-        if (isHandled) {
-            return res.status(201).json({ message: 'Incident handled successfully!' });
-        }
-        else {
-            return res.status(201).json({ message: 'Incident declined successfully!' });
+        if (incident) {
+            // Update incident notification
+            const notification = yield Notification_1.Notification.findOne({ incident: incident._id });
+            if (notification) {
+                notification.isHandled = isHandled;
+                yield notification.save();
+            }
+            // Send response
+            if (isHandled) {
+                incident.state = 'prise en charge en cours';
+                yield incident.save();
+                return res.status(201).json({ message: 'Incident handled successfully!' });
+            }
+            else {
+                const supportCenter = yield SupportCenter_1.SupportCenter.findOne({ user: user });
+                if (supportCenter) {
+                    const index = incident.supportCenters.indexOf(supportCenter);
+                    const _supportCenter = yield incident.getNextNearestSupportCenter(supportCenter);
+                    incident.supportCenters.splice(index, 1);
+                    incident.supportCenters.push(_supportCenter);
+                    yield incident.save();
+                }
+                return res.status(201).json({ message: 'Incident declined successfully!' });
+            }
         }
     }
     catch (error) {

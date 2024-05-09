@@ -4,13 +4,16 @@ import { Incident } from '../models/Incident';
 import { ITrouble, Trouble } from '../models/Trouble';
 import { User } from '../models/User';
 import { Notification } from '../models/Notification';
-import { SupportCenter } from '../models/SupportCenter';
+import { ISupportCenter, SupportCenter } from '../models/SupportCenter';
 import { handleFilesUpload } from '../utils/UploadFile';
 import { UploadedFile } from '../utils/UploadedFile';
 import { RequestValidationService } from '../services/RequestValidationService';
 import { Location } from '../models/Location';
+import { IRole, Role } from '../models/Role';
+import { RoleService } from '../services/RoleService';
 
 const requestValidationService = new RequestValidationService();
+const roleService = new RoleService();
 
 export const reportIncident = async (req: Request, res: Response) => {
     try {
@@ -66,27 +69,51 @@ export const handleIncident = async (req: Request, res: Response) => {
         // Validate form values and manage errors
         requestValidationService.validateRequest(req, res);
 
+        // Get isHandled from request body
+        const { isHandled } = req.body;
+
         // Find user by ID
         const user = await User.findById(req.body.user.id);
 
-        // Get isHandled from request body
-        const { isHandled } = req.body;
+        if (user) {
+            await Role.findOne({ name: 'supportCenter' })
+                .then(async (role: IRole | null) => {
+                    if (role) {
+                        roleService.checkRole(user, role, res);
+                    }
+                })
+                .catch(async (reason: any) => {
+                    throw reason;
+                });
+        }
 
         // Find incident by ID
         const incident = await Incident.findById(req.params.incidentId);
 
-        // Update incident notification
-        const notification = await Notification.findOne({ incident: incident?._id });
-        if (notification) {
-            notification.isHandled = isHandled;
-            await notification.save();
-        }
+        if (incident) {
+            // Update incident notification
+            const notification = await Notification.findOne({ incident: incident._id });
+            if (notification) {
+                notification.isHandled = isHandled;
+                await notification.save();
+            }
 
-        // Send response
-        if (isHandled) {
-            return res.status(201).json({ message: 'Incident handled successfully!' });
-        } else {
-            return res.status(201).json({ message: 'Incident declined successfully!' });
+            // Send response
+            if (isHandled) {
+                incident.state = 'prise en charge en cours';
+                await incident.save();
+                return res.status(201).json({ message: 'Incident handled successfully!' });
+            } else {
+                const supportCenter = await SupportCenter.findOne({ user: user });
+                if (supportCenter) {
+                    const index = incident.supportCenters.indexOf(supportCenter);
+                    const _supportCenter = await incident.getNextNearestSupportCenter(supportCenter);
+                    incident.supportCenters.splice(index, 1);
+                    incident.supportCenters.push(_supportCenter as ISupportCenter);
+                    await incident.save();
+                }
+                return res.status(201).json({ message: 'Incident declined successfully!' });
+            }
         }
     } catch (error) {
         console.log(error);

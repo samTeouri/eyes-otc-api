@@ -19,6 +19,7 @@ export interface IIncident extends Document {
 
     getDistanceToSupportCenter(supportCenter: ISupportCenter): Promise<number>;
     getNearestSupportCenter(supportCenters: ISupportCenter[]): Promise<ISupportCenter | null>;
+    getNextNearestSupportCenter(supportCenter: ISupportCenter): Promise<ISupportCenter | null>;
     getConcernedSupportCenters(): Promise<ISupportCenter[]>;
 }
 
@@ -46,9 +47,24 @@ incidentSchema.methods.getNearestSupportCenter = async function (this: IIncident
     let distance = Number.MAX_VALUE;
     let nearestSupportCenter: ISupportCenter | null = null;
 
-    for (const supportCenter of supportCenters) {
+    for (let supportCenter of supportCenters) {
         const distanceToSupportCenter = await this.getDistanceToSupportCenter(supportCenter.id);
         if (distanceToSupportCenter < distance) {
+            distance = distanceToSupportCenter;
+            nearestSupportCenter = supportCenter;
+        }
+    }
+
+    return nearestSupportCenter;
+};
+
+incidentSchema.methods.getNextNearestSupportCenter = async function (this: IIncident, supportCenter: ISupportCenter): Promise<ISupportCenter | null> {
+    let distance = await this.getDistanceToSupportCenter(supportCenter);
+    let nearestSupportCenter: ISupportCenter | null = null;
+
+    for (let _supportCenter of supportCenter.service.supportCenters) {
+        const distanceToSupportCenter = await this.getDistanceToSupportCenter(_supportCenter.id);
+        if (distanceToSupportCenter < distance && !this.supportCenters.includes(_supportCenter)) {
             distance = distanceToSupportCenter;
             nearestSupportCenter = supportCenter;
         }
