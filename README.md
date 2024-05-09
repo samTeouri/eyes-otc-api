@@ -99,6 +99,25 @@ Permet à un administrateur de se connecter au système.
   - `401 Unauthorized` : Identifiants invalides.
   - `500 Internal Server Error` : Erreur interne du serveur.
 
+### Utilisateurs
+
+#### Obtenir les informations d'un utilisateur
+
+Permet de récupérer les informations liées à l'utilisateur.
+
+- **URL** : `/user/infos/:userId`
+- **Méthode** : `GET`
+- **Paramètres de l'URL** :
+  - `userId` (string, obligatoire) : Identifiant de l'utilisateur.
+- **En-tête requis** :
+  - `Authorization-Token` : Jeton d'authentification valide.
+- **Réponses** :
+  - `200 OK` : Informations de l'utilisateur récupérées avec succès.
+  - `401 Unauthorized` : Jeton d'authentification invalide ou manquant.
+  - `500 Internal Server Error` : Erreur interne du serveur.
+
+### Centres de suport
+
 ### Incidents
 
 #### Signalement d'un incident
