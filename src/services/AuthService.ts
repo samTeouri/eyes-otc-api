@@ -50,7 +50,7 @@ export class AuthService {
             if (!(await this.checkPassword(user, password))) return res.status(401).json({ error: 'Password is incorrect' });
 
             // Token signature
-            const token = jwt.sign({ id: user.id }, process.env.TOKEN_SECRET_KEY as string);
+            const token = jwt.sign({ id: user.id }, process.env.TOKEN_SECRET_KEY as string, { expiresIn: '2h' });
 
             return res.status(200).json({
                 user: user,
