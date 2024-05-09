@@ -122,6 +122,38 @@ export const handleIncident = async (req: Request, res: Response) => {
     }
 }
 
+export const notificationState = async (req: Request, res: Response) => {
+    try {
+        // Validate form values and manage errors
+        requestValidationService.validateRequest(req, res);
+
+        // Find user by ID
+        const user = await User.findById(req.body.user.id);
+
+        // Find incident by ID
+        const incident = await Incident.findById(req.params.incidentId);
+
+        // Get state from request body
+        const { state } = req.body;
+
+        // Get Connected supportCenter
+        const supportCenter = await SupportCenter.findOne({ user: user });
+
+        Notification.findOneAndUpdate(
+            {
+                supportCenter: supportCenter,
+                incident: incident,
+            },
+            {
+                state: state,
+            }
+        );
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error while changing handling status' });
+    }
+}
+
 export const getSupportCenterIncidents = async (req: Request, res: Response) => {
     try {
         // Validate form values and manage errors

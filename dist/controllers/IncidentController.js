@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSupportCenterIncidents = exports.handleIncident = exports.reportIncident = void 0;
+exports.getSupportCenterIncidents = exports.notificationState = exports.handleIncident = exports.reportIncident = void 0;
 const Incident_1 = require("../models/Incident");
 const User_1 = require("../models/User");
 const Notification_1 = require("../models/Notification");
@@ -115,6 +115,31 @@ const handleIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.handleIncident = handleIncident;
+const notificationState = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Validate form values and manage errors
+        requestValidationService.validateRequest(req, res);
+        // Find user by ID
+        const user = yield User_1.User.findById(req.body.user.id);
+        // Find incident by ID
+        const incident = yield Incident_1.Incident.findById(req.params.incidentId);
+        // Get state from request body
+        const { state } = req.body;
+        // Get Connected supportCenter
+        const supportCenter = yield SupportCenter_1.SupportCenter.findOne({ user: user });
+        Notification_1.Notification.findOneAndUpdate({
+            supportCenter: supportCenter,
+            incident: incident,
+        }, {
+            state: state,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error while changing handling status' });
+    }
+});
+exports.notificationState = notificationState;
 const getSupportCenterIncidents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Validate form values and manage errors
