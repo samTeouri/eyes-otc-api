@@ -53,6 +53,8 @@ const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
         incident.supportCenters = supportCenters;
         // Save incident
         yield incident.save();
+        yield (user === null || user === void 0 ? void 0 : user.incidents.push(incident));
+        yield (user === null || user === void 0 ? void 0 : user.save());
         return res.status(201).json({ message: 'Incident reported successfully!' });
     }
     catch (error) {

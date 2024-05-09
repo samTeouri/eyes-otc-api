@@ -6,6 +6,7 @@ import cors from 'cors';
 import path from 'path';
 import { troubleRouter } from './routes/TroubleRoutes';
 import { supportCenterRouter } from './routes/SupportCenterRoutes';
+import { userRouter } from './routes/UserRoutes';
 
 export const app: Application = express();
 
@@ -35,3 +36,6 @@ app.use('/troubles', troubleRouter);
 
 // Support Centers routes
 app.use('/supportCenter', supportCenterRouter);
+
+// Users routes
+app.use('/user', userRouter);

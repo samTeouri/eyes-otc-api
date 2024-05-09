@@ -57,6 +57,10 @@ export const reportIncident = async (req: Request, res: Response) => {
         // Save incident
         await incident.save();
 
+        await user?.incidents.push(incident);
+
+        await user?.save();
+
         return res.status(201).json({ message: 'Incident reported successfully!' });
     } catch (error) {
         console.log(error);
