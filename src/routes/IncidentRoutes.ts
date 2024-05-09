@@ -23,8 +23,14 @@ incidentRouter.post('/handle/:incidentId',
     incidentController.handleIncident,
 );
 
-// Handle an incident
-incidentRouter.post('/handle/:supportCenterId',
+// Get incidents associated to supportCenter
+incidentRouter.get('/index/supportCenter/:supportCenterId',
     authVerifyToken,
     incidentController.getSupportCenterIncidents,
+);
+
+// Change incident handling status
+incidentRouter.get('/handleStatus/:incidentId',
+    authVerifyToken,
+    incidentController.notificationState,
 );

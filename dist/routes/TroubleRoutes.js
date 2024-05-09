@@ -23,21 +23,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.incidentRouter = void 0;
+exports.troubleRouter = void 0;
 const express = __importStar(require("express"));
-const express_validator_1 = require("express-validator");
-const incidentController = __importStar(require("../controllers/IncidentController"));
+const troubleController = __importStar(require("../controllers/TroubleController"));
 const AuthMiddleware_1 = require("../middlewares/AuthMiddleware");
-exports.incidentRouter = express.Router();
-// Report an incident
-exports.incidentRouter.post('/report', [
-    (0, express_validator_1.body)('description').exists()
-], AuthMiddleware_1.authVerifyToken, incidentController.reportIncident);
-// Handle an incident
-exports.incidentRouter.post('/handle/:incidentId', [
-    (0, express_validator_1.body)('description').exists()
-], AuthMiddleware_1.authVerifyToken, incidentController.handleIncident);
+exports.troubleRouter = express.Router();
 // Get incidents associated to supportCenter
-exports.incidentRouter.get('/index/supportCenter/:supportCenterId', AuthMiddleware_1.authVerifyToken, incidentController.getSupportCenterIncidents);
-// Change incident handling status
-exports.incidentRouter.get('/handleStatus/:incidentId', AuthMiddleware_1.authVerifyToken, incidentController.notificationState);
+exports.troubleRouter.get('/index/', AuthMiddleware_1.authVerifyToken, troubleController.getTroubles);

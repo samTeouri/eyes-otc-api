@@ -1,21 +1,20 @@
 import { Request, Response } from 'express';
 import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
-import { validationResult } from 'express-validator';
-import { User } from '../models/User';
+import { IUser, User } from '../models/User';
 import { IRole, Role } from '../models/Role';
 import { AuthService } from '../services/AuthService';
+import { RequestValidationService } from '../services/RequestValidationService';
+import { RoleService } from '../services/RoleService';
 
 const authService = new AuthService();
+const roleService = new RoleService();
+const requestValidationService = new RequestValidationService();
 
 // Citizen registration
 export const citizenRegister = async (req: Request, res: Response) => {
     try {
         // Validate form values and manage errors
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
+        requestValidationService.validateRequest(req, res);
 
         // Get user register form values from body
         const { firstName, lastName, email, phone, address, password } = req.body;
@@ -47,53 +46,12 @@ export const citizenRegister = async (req: Request, res: Response) => {
     }
 }
 
-// Admin registration
-export const adminRegister = async (req: Request, res: Response) => {
-    try {
-        // Validate form values and manage errors
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-
-        // Get user register form values from body
-        const { firstName, lastName, email, address, password } = req.body;
-
-        // Create an instance of user
-        const user = new User({
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            address: address,
-            password: await bcrypt.hash(password, 15),
-        });
-
-        // Store user in database
-        await user.save();
-
-        // Set user admin role
-        const adminRole = await Role.findOne({ name: 'admin' });
-        if (adminRole) {
-            user.roles.push(adminRole);
-            await user.save();
-        }
-
-        return res.status(201).json({ message: 'User registered successfully' });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: 'Registration failed' });
-    }
-}
-
 // Citizen login
 export const citizenLogin = async (req: Request, res: Response) => {
     try {
         // Validate form values and manage errors
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-
+        requestValidationService.validateRequest(req, res);
+        
         // Get user register form values from body
         const { identifier, password } = req.body;
 
@@ -102,24 +60,19 @@ export const citizenLogin = async (req: Request, res: Response) => {
 
         // User with given identifier exist
         if (user) {
-            // Check if given password is correct
-            const isPasswordCorrect = await bcrypt.compare(password, user.password);
-            if (!isPasswordCorrect) {
-                return res.status(401).json({ error: 'Password is incorrect' });
-            }
-
-            // Token signature
-            const token = jwt.sign({ id: user.id }, process.env.TOKEN_SECRET_KEY as string);
-
-            return res.status(200).json({
-                user: user,
-                _token: token,
-            });
+            await Role.findOne({ name: 'citizen' })
+                .then(async (role: IRole | null) => {
+                    if (role) {
+                        roleService.checkRole(user, role, res);
+                    }
+                })
+                .catch(async (reason: any) => {
+                    throw reason;
+                })
+            authService.userLogging(user, password, res);
         } else {
-            // User with given identifier doesn't exist
-            return res.status(401).json({ error: 'Email or phone doesn\'t exist' });
+            res.status(404).json({ message: 'User with given identifier doesn\'t exists' });
         }
-
     } catch (error) {
         console.log(error);
         return res.status(500).json({ error: 'Login failed' });
@@ -130,11 +83,8 @@ export const citizenLogin = async (req: Request, res: Response) => {
 export const adminLogin = async (req: Request, res: Response) => {
     try {
         // Validate form values and manage errors
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-
+        requestValidationService.validateRequest(req, res);
+        
         // Get user register form values from body
         const { identifier, password } = req.body;
 
@@ -143,24 +93,19 @@ export const adminLogin = async (req: Request, res: Response) => {
 
         // User with given identifier exist
         if (user) {
-            // Check if given password is correct
-            const isPasswordCorrect = await bcrypt.compare(password, user.password);
-            if (!isPasswordCorrect) {
-                return res.status(401).json({ error: 'Password is incorrect' });
-            }
-
-            // Token signature
-            const token = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET_KEY as string);
-
-            return res.status(200).json({
-                user: user,
-                _token: token,
-            });
+            await Role.findOne({ name: 'supportCenter' })
+                .then(async (role: IRole | null) => {
+                    if (role) {
+                        roleService.checkRole(user, role, res);
+                    }
+                })
+                .catch(async (reason: any) => {
+                    throw reason;
+                })
+            authService.userLogging(user, password, res);
         } else {
-            // User with given identifier doesn't exist
-            return res.status(401).json({ error: 'Email or phone doesn\'t exist' });
+            res.status(404).json({ message: 'User with given identifier doesn\'t exists' });
         }
-
     } catch (error) {
         console.log(error);
         return res.status(500).json({ error: 'Login failed' });

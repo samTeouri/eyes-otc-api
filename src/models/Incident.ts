@@ -7,10 +7,8 @@ import { ITrouble, Trouble } from './Trouble';
 
 // Interface pour représenter les données d'un incident
 export interface IIncident extends Document {
-    state: 'traitement en cours' | 'en attente de traitement' | 'résolu';
     description: string;
     picture?: string;
-    video?: string;
     createdAt: Date;
     updatedAt: Date;
     location: ILocation;
@@ -20,15 +18,14 @@ export interface IIncident extends Document {
 
     getDistanceToSupportCenter(supportCenter: ISupportCenter): Promise<number>;
     getNearestSupportCenter(supportCenters: ISupportCenter[]): Promise<ISupportCenter | null>;
+    getNextNearestSupportCenter(supportCenter: ISupportCenter): Promise<ISupportCenter | null>;
     getConcernedSupportCenters(): Promise<ISupportCenter[]>;
 }
 
 // Schéma de l'incident
 const incidentSchema: Schema<IIncident> = new Schema({
-    state: { type: String, enum: ['traitement en cours', 'en attente de traitement', 'résolu'], default: 'en attente de traitement' },
     description: { type: String, required: true },
     picture: { type: String },
-    video: { type: String },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     location: { type: Schema.Types.ObjectId, ref: 'Location' },
@@ -48,9 +45,24 @@ incidentSchema.methods.getNearestSupportCenter = async function (this: IIncident
     let distance = Number.MAX_VALUE;
     let nearestSupportCenter: ISupportCenter | null = null;
 
-    for (const supportCenter of supportCenters) {
+    for (let supportCenter of supportCenters) {
         const distanceToSupportCenter = await this.getDistanceToSupportCenter(supportCenter.id);
         if (distanceToSupportCenter < distance) {
+            distance = distanceToSupportCenter;
+            nearestSupportCenter = supportCenter;
+        }
+    }
+
+    return nearestSupportCenter;
+};
+
+incidentSchema.methods.getNextNearestSupportCenter = async function (this: IIncident, supportCenter: ISupportCenter): Promise<ISupportCenter | null> {
+    let distance = await this.getDistanceToSupportCenter(supportCenter);
+    let nearestSupportCenter: ISupportCenter | null = null;
+
+    for (let _supportCenter of supportCenter.service.supportCenters) {
+        const distanceToSupportCenter = await this.getDistanceToSupportCenter(_supportCenter.id);
+        if (distanceToSupportCenter < distance && !this.supportCenters.includes(_supportCenter)) {
             distance = distanceToSupportCenter;
             nearestSupportCenter = supportCenter;
         }

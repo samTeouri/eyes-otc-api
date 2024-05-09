@@ -35,35 +35,60 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const User_1 = require("../models/User");
 const bcrypt = __importStar(require("bcrypt"));
+const jwt = __importStar(require("jsonwebtoken"));
+const RequestValidationService_1 = require("./RequestValidationService");
+const requestValidationService = new RequestValidationService_1.RequestValidationService();
 class AuthService {
     constructor() {
+        this.getUserByEmail = (email) => __awaiter(this, void 0, void 0, function* () {
+            return yield User_1.User.findOne({ email: email })
+                .then((user) => __awaiter(this, void 0, void 0, function* () {
+                return user;
+            }))
+                .catch((reason) => __awaiter(this, void 0, void 0, function* () {
+                throw reason;
+            }));
+        });
+        this.getUserByPhone = (phone) => __awaiter(this, void 0, void 0, function* () {
+            return yield User_1.User.findOne({ phone: phone })
+                .then((user) => __awaiter(this, void 0, void 0, function* () {
+                return user;
+            }))
+                .catch((reason) => __awaiter(this, void 0, void 0, function* () {
+                throw reason;
+            }));
+        });
         this.getUserByIdentifier = (identifier) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                // Check if identifier is email
-                if (typeof identifier === 'string') {
-                    const user = yield User_1.User.findOne({ email: identifier });
-                    return user;
-                }
-                else {
-                    // Check if identifier is phone number
-                    const user = yield User_1.User.findOne({ phone: identifier });
-                    return user;
-                }
+            // Check if identifier is email
+            if (typeof identifier === 'string') {
+                return this.getUserByEmail(identifier);
             }
-            catch (error) {
-                console.log("Error while finding user by identifier:", error);
-                return null;
+            else {
+                // identifier is phone number
+                return this.getUserByPhone(identifier);
             }
         });
         this.checkPassword = (user, password) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                // Check if given password matches user password
-                const passwordMatch = yield bcrypt.compare(password, user.password);
-                return passwordMatch;
+            // Check if given password matches user password
+            const isPasswordMatching = yield bcrypt.compare(password, user.password);
+            return isPasswordMatching;
+        });
+        this.userLogging = (user, password, res) => __awaiter(this, void 0, void 0, function* () {
+            // User with given identifier exist
+            if (user) {
+                // Check if given password is correct
+                if (yield this.checkPassword(user, password))
+                    return res.status(401).json({ error: 'Password is incorrect' });
+                // Token signature
+                const token = jwt.sign({ id: user.id }, process.env.TOKEN_SECRET_KEY);
+                return res.status(200).json({
+                    user: user,
+                    _token: token,
+                });
             }
-            catch (error) {
-                console.log("Error while checking password:", error);
-                return false;
+            else {
+                // User with given identifier doesn't exist
+                return res.status(401).json({ error: 'Email or phone doesn\'t exist' });
             }
         });
     }

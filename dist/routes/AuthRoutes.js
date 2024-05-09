@@ -16,47 +16,24 @@ exports.authRoutes = void 0;
 const express_1 = __importDefault(require("express"));
 const express_validator_1 = require("express-validator");
 const AuthController_1 = require("../controllers/AuthController");
-const User_1 = require("../models/User");
+const RequestValidationService_1 = require("../services/RequestValidationService");
 exports.authRoutes = express_1.default.Router();
+const requestValidationService = new RequestValidationService_1.RequestValidationService();
 // Ctizen Register route
 exports.authRoutes.post('/register', [
     (0, express_validator_1.body)('lastName').isString().notEmpty(),
     (0, express_validator_1.body)('firstName').isString().notEmpty(),
-    (0, express_validator_1.body)('email').isString().notEmpty().custom((value) => __awaiter(void 0, void 0, void 0, function* () {
-        const user = yield User_1.User.findOne({ where: { email: value } });
-        if (user) {
-            return Promise.reject('Email already registered');
-        }
-    })),
+    (0, express_validator_1.body)('email').isString().notEmpty().custom((value) => __awaiter(void 0, void 0, void 0, function* () { return requestValidationService.validateIdentifier(value, 'email'); })),
     (0, express_validator_1.body)('password').isAlphanumeric().notEmpty().isLength({ min: 8 }),
-    (0, express_validator_1.body)('phone').isNumeric().notEmpty().custom((value) => __awaiter(void 0, void 0, void 0, function* () {
-        const user = yield User_1.User.findOne({ where: { phone: value } });
-        if (user) {
-            return Promise.reject('Phone already registered');
-        }
-    })),
+    (0, express_validator_1.body)('phone').isNumeric().notEmpty().custom((value) => __awaiter(void 0, void 0, void 0, function* () { return requestValidationService.validateIdentifier(value, 'phone'); })),
 ], AuthController_1.citizenRegister);
-// Admin Register route
-exports.authRoutes.post('/admin/register', 
-// [
-//     body('lastName').isString().notEmpty(),
-//     body('firstName').isString().notEmpty(),
-//     body('email').isString().notEmpty().custom(async (value) => {
-//         const user =  await User.findOne({ where: {email: value} });
-//         if (user) {
-//             return Promise.reject('Email already registered');
-//         }
-//     }),
-//     body('password').isAlphanumeric().notEmpty().isLength({min: 8}),
-// ],
-AuthController_1.adminRegister);
 // Citizen Login route
 exports.authRoutes.post('/login', [
     (0, express_validator_1.body)('identifier').notEmpty(),
-    (0, express_validator_1.body)('password').notEmpty().isString(),
+    (0, express_validator_1.body)('password').notEmpty(),
 ], AuthController_1.citizenLogin);
 // Admin login route
 exports.authRoutes.post('/admin/login/', [
     (0, express_validator_1.body)('identifier').notEmpty(),
-    (0, express_validator_1.body)('password').notEmpty().isString(),
+    (0, express_validator_1.body)('password').notEmpty(),
 ], AuthController_1.adminLogin);

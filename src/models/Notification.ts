@@ -5,6 +5,7 @@ import { ISupportCenter } from './SupportCenter';
 // Interface pour représenter les données d'une notification
 export interface INotification extends Document {
     isHandled: boolean;
+    state: 'prise en charge en cours' | 'en attente de prise en charge' | 'résolu';
     supportCenter: ISupportCenter;
     incident: IIncident;
     createdAt: Date;
@@ -14,6 +15,7 @@ export interface INotification extends Document {
 // Schéma de la notification
 const notificationSchema: Schema<INotification> = new Schema({
     isHandled: { type: Boolean, default: false },
+    state: { type: String, enum: ['prise en charge en cours', 'en attente de prise en charge', 'résolu'], default: 'en attente de prise en charge' },
     supportCenter: { type: Schema.Types.ObjectId, ref: 'SupportCenter' },
     incident: { type: Schema.Types.ObjectId, ref: 'Incident' },
     createdAt: { type: Date, default: Date.now },

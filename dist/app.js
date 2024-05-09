@@ -41,6 +41,7 @@ const IncidentRoutes_1 = require("./routes/IncidentRoutes");
 const AuthRoutes_1 = require("./routes/AuthRoutes");
 const database = __importStar(require("./config/database"));
 const cors_1 = __importDefault(require("cors"));
+const TroubleRoutes_1 = require("./routes/TroubleRoutes");
 exports.app = (0, express_1.default)();
 (() => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -60,3 +61,5 @@ exports.app.use((0, cors_1.default)());
 exports.app.use('/incidents', IncidentRoutes_1.incidentRouter);
 // Authentication routes
 exports.app.use('/auth', AuthRoutes_1.authRoutes);
+// Trouble routes
+exports.app.use('/troubles', TroubleRoutes_1.troubleRouter);

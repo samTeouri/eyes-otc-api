@@ -35,36 +35,36 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleSingleUploadImage = void 0;
+exports.handleFilesUpload = void 0;
 const path = __importStar(require("path"));
 const multer_1 = __importDefault(require("multer"));
-const uploadImagePath = path.resolve(__dirname, '../..', 'public/uploads/images');
-const storageImage = multer_1.default.diskStorage({
-    destination: uploadImagePath,
-    filename(req, image, fn) {
-        fn(null, `${new Date().getTime().toString()}-${image.fieldname}${path.extname(image.originalname)}`);
+const uploadFilePath = path.resolve(__dirname, '../..', 'public/uploads/files');
+const storageFile = multer_1.default.diskStorage({
+    destination: uploadFilePath,
+    filename(req, file, fn) {
+        fn(null, `${new Date().getTime().toString()}-${file.fieldname}${path.extname(file.originalname)}`);
     },
 });
-const uploadImage = (0, multer_1.default)({
-    storage: storageImage,
+const uploadFile = (0, multer_1.default)({
+    storage: storageFile,
     limits: { fileSize: 5 * 1024 * 1024 },
-    fileFilter(req, image, callback) {
-        const extension = ['.png', '.jpg', '.jpeg'].indexOf(path.extname(image.originalname).toLowerCase()) >= 0;
-        const mimeType = ['image/png', 'image/jpg', 'image/jpeg'].indexOf(image.mimetype) >= 0;
+    fileFilter(req, file, callback) {
+        const extension = ['.png', '.jpg', '.jpeg'].indexOf(path.extname(file.originalname).toLowerCase()) >= 0;
+        const mimeType = ['image/png', 'image/jpeg'].indexOf(file.mimetype) >= 0;
         if (extension && mimeType) {
             return callback(null, true);
         }
         callback(new Error('Invalid file type. Only picture file on type PNG, JPEG and JPG are allowed!'));
     },
-}).single('picture');
-const handleSingleUploadImage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+}).any();
+const handleFilesUpload = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     return new Promise((resolve, reject) => {
-        uploadImage(req, res, (error) => {
+        uploadFile(req, res, (error) => {
             if (error) {
                 reject(error);
             }
-            resolve({ file: req.file, body: req.body });
+            resolve({ files: req.files, body: req.body });
         });
     });
 });
-exports.handleSingleUploadImage = handleSingleUploadImage;
+exports.handleFilesUpload = handleFilesUpload;
