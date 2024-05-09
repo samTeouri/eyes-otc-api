@@ -26,16 +26,32 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authVerifyToken = void 0;
 const jwt = __importStar(require("jsonwebtoken"));
 const authVerifyToken = (req, res, next) => {
-    const token = req.header('Authorization-Token');
-    if (!token)
-        return res.status(401).json({ error: 'Access denied' });
+    const accessToken = req.header('Authorization-Token');
+    const refreshToken = req.header('Refresh-Token');
+    if (!accessToken && !refreshToken)
+        return res.status(401).json({ error: 'Access denied. No token provided' });
+    console.log(refreshToken);
     try {
-        const decoded = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
+        const decoded = jwt.verify(accessToken, process.env.TOKEN_SECRET_KEY);
         req.body.user = decoded;
         next();
     }
     catch (error) {
-        res.status(401).json({ error: 'Invalid token' });
+        if (!refreshToken) {
+            return res.status(401).send('Access Denied. No refresh token provided.');
+        }
+        try {
+            const decoded = jwt.verify(refreshToken, process.env.TOKEN_SECRET_KEY);
+            const accessToken = jwt.sign({ id: decoded.id }, process.env.TOKEN_SECRET_KEY, { expiresIn: '1h' });
+            return res.status(200).json({
+                user: decoded.id,
+                _token: accessToken,
+                _refreshToken: refreshToken
+            });
+        }
+        catch (error) {
+            return res.status(400).send('Invalid Token.');
+        }
     }
 };
 exports.authVerifyToken = authVerifyToken;

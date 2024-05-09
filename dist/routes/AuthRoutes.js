@@ -33,7 +33,9 @@ exports.authRoutes.post('/login', [
     (0, express_validator_1.body)('password').notEmpty(),
 ], AuthController_1.citizenLogin);
 // Admin login route
-exports.authRoutes.post('/admin/login/', [
+exports.authRoutes.post('/admin/login', [
     (0, express_validator_1.body)('identifier').notEmpty(),
     (0, express_validator_1.body)('password').notEmpty(),
 ], AuthController_1.adminLogin);
+// Refresh token route
+exports.authRoutes.post('/refreshToken', AuthController_1.refreshAccessToken);

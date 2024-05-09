@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
 import { User } from '../models/User';
 import { IRole, Role } from '../models/Role';
 import { AuthService } from '../services/AuthService';
@@ -109,5 +110,25 @@ export const adminLogin = async (req: Request, res: Response) => {
     } catch (error) {
         console.log(error);
         return res.status(500).json({ error: 'Login failed' });
+    }
+}
+
+export const refreshAccessToken = async (req: Request, res: Response) => {
+    const refreshToken = req.header('Refresh-Token');
+    if (!refreshToken) {
+        return res.status(401).send('Access Denied. No refresh token provided.');
+    }
+
+    try {
+        const decoded: any = jwt.verify(refreshToken, process.env.TOKEN_SECRET_KEY as string);
+        const accessToken = jwt.sign({ id: decoded.id }, process.env.TOKEN_SECRET_KEY as string, { expiresIn: '2h' });
+
+        return res.status(200).json({
+            userId: decoded.id,
+            _token: accessToken,
+            _refreshToken: refreshToken
+        });
+    } catch (error) {
+        return res.status(400).send('Invalid refresh token.');
     }
 }
