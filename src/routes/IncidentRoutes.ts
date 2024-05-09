@@ -17,10 +17,16 @@ incidentRouter.post('/report',
 // Handle an incident
 incidentRouter.post('/handle/:incidentId',
     [
-        body('description').exists()
+        body('isHandled').exists()
     ],
     authVerifyToken,
     incidentController.handleIncident,
+);
+
+// Handle an incident
+incidentRouter.post('/update/:incidentId',
+    authVerifyToken,
+    incidentController.updateIncident,
 );
 
 // Get incidents associated to supportCenter

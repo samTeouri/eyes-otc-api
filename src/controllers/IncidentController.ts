@@ -40,11 +40,7 @@ export const reportIncident = async (req: Request, res: Response) => {
             picture: uploadPictureResult.path,
             user: user,
             location: location,
-        });
-
-        // Set troubles
-        troubles.forEach(async (trouble: ITrouble) => {
-            await incident.troubles.push(trouble as ITrouble);
+            troubles: troubles
         });
 
         // Get concerned support centers
@@ -122,6 +118,53 @@ export const handleIncident = async (req: Request, res: Response) => {
     } catch (error) {
         console.log(error);
         return res.status(500).json({ error: 'Error while incident handling' });
+    }
+}
+
+export const updateIncident = async (req: Request, res: Response) => {
+    try {
+        // Validate form values and manage errors
+        requestValidationService.validateRequest(req, res);
+
+        // Get form values from body
+        const { description, troubles, latitude, longitude, picture } = req.body;
+        
+        const incident = await Incident.findById(req.params.incidentId);
+
+        if (incident) {
+            const notification = await Notification.findOne({
+                state: 'prise en charge en cours',
+                incident: incident
+            })
+
+            if (notification) {
+                return res.status(401).json({ message: 'Can\'t update. Incident support has already begin' });
+            } else {
+                if (description) incident.description = description;
+                if (troubles) incident.troubles = troubles;
+                if (latitude) incident.location.latitude = latitude;
+                if (longitude) incident.location.longitude = longitude;
+                if (picture) {
+                    let uploadPictureResult: UploadedFile = await handleFilesUpload(req, res);
+                    incident.picture = uploadPictureResult.path;
+                }
+                incident.updatedAt = await new Date();
+
+                // Get concerned support centers
+                const supportCenters = await incident.getConcernedSupportCenters();
+
+                // Set support centers
+                incident.supportCenters = supportCenters;
+
+                await incident.save()
+                return res.status(404).json({ message: 'Incident updated succesfully' });
+            }
+        } else {
+            return res.status(404).json({ error: 'Incident not found' });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error while updating incident' });
     }
 }
 

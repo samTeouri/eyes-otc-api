@@ -30,7 +30,6 @@ const authVerifyToken = (req, res, next) => {
     const refreshToken = req.header('Refresh-Token');
     if (!accessToken && !refreshToken)
         return res.status(401).json({ error: 'Access denied. No token provided' });
-    console.log(refreshToken);
     try {
         const decoded = jwt.verify(accessToken, process.env.TOKEN_SECRET_KEY);
         req.body.user = decoded;

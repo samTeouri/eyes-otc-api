@@ -121,7 +121,6 @@ Permet de récupérer tous les utilisateurs inscrits sur la plateforme.
 - **Méthode** : `GET`
 - **En-tête requis** :
   - `Authorization-Token` : Jeton d'authentification valide.
-- **Cookie requis** :
   - `Refresh-Token` : Jeton de rafraîchissement valide.
 - **Réponses** :
   - `200 OK` : Utilisateurs récupérés avec succès.
@@ -138,7 +137,6 @@ Permet de récupérer les informations liées à l'utilisateur.
   - `userId` (string, obligatoire) : Identifiant de l'utilisateur.
 - **En-tête requis** :
   - `Authorization-Token` : Jeton d'authentification valide.
-- **Cookie requis** :
   - `Refresh-Token` : Jeton de rafraîchissement valide.
 - **Réponses** :
   - `200 OK` : Informations de l'utilisateur récupérées avec succès.
@@ -156,7 +154,6 @@ Permet à un utilisateur connecté de changer son propre mot de passe.
   - `oldPassword` (string, obligatoire) : Ancien mot de passe.
 - **En-tête requis** :
   - `Authorization-Token` : Jeton d'authentification valide.
-- **Cookie requis** :
   - `Refresh-Token` : Jeton de rafraîchissement valide.
 - **Réponses** :
   - `200 OK` : Mot de passe modifié avec succès.
@@ -178,7 +175,6 @@ Permet à un utilisateur connecté de modifier ses informations.
   - `address` (string, facultatif) : Addresse.
 - **En-tête requis** :
   - `Authorization-Token` : Jeton d'authentification valide.
-- **Cookie requis** :
   - `Refresh-Token` : Jeton de rafraîchissement valide.
 - **Réponses** :
   - `200 OK` : Utilisateur modifié avec succès.
@@ -203,10 +199,32 @@ Permet de signaler un nouvel incident.
   - `longitude` (number, obligatoire) : Longitude de l'incident.
 - **En-tête requis** :
   - `Authorization-Token` : Jeton d'authentification valide.
-- **Cookie requis** :
   - `Refresh-Token` : Jeton de rafraîchissement valide.
 - **Réponses** :
   - `201 Created` : Incident signalé avec succès.
+  - `400 Bad Request` : Erreur de validation des données.
+  - `401 Unauthorized` : Jeton d'authentification invalide ou manquant.
+  - `500 Internal Server Error` : Erreur interne du serveur.
+
+#### Modification d'un incident
+
+Permet de modifier un incident.
+
+- **URL** : `/incidents/update/:incidentId`
+- **Méthode** : `POST`
+- **Paramètres de l'URL** :
+  - `incidentId` (string, obligatoire) : Identifiant de l'incident à modifier.
+- **Paramètres du corps** :
+  - `description` (string, facultatif) : Description de l'incident.
+  - `troubles` (array, facultatif) : Liste des problèmes associés à l'incident.
+  - `latitude` (number, facultatif) : Latitude de l'incident.
+  - `longitude` (number, facultatif) : Longitude de l'incident.
+  - `picture` (picture, facultatif) : Image de l'incident.
+- **En-tête requis** :
+  - `Authorization-Token` : Jeton d'authentification valide.
+  - `Refresh-Token` : Jeton de rafraîchissement valide.
+- **Réponses** :
+  - `200 OK` : Incident modifié avec succès.
   - `400 Bad Request` : Erreur de validation des données.
   - `401 Unauthorized` : Jeton d'authentification invalide ou manquant.
   - `500 Internal Server Error` : Erreur interne du serveur.
@@ -223,7 +241,6 @@ Permet à un centre de support d'accepter ou décliner la prise en charge d'un i
   - `isHandled` (boolean, obligatoire) : Indique si l'incident sera traité ou non.
 - **En-tête requis** :
   - `Authorization-Token` : Jeton d'authentification valide.
-- **Cookie requis** :
   - `Refresh-Token` : Jeton de rafraîchissement valide.
 - **Réponses** :
   - `200 OK` : Incident traité ou décliné avec succès.
@@ -241,7 +258,6 @@ Permet à un centre de support d'obtenir les incidents qui lui sont associés.
   - `supportCenterId` (string, obligatoire) : Identifiant du centre de support pour lequel obtenir les incidents.
 - **En-tête requis** :
   - `Authorization-Token` : Jeton d'authentification valide.
-- **Cookie requis** :
   - `Refresh-Token` : Jeton de rafraîchissement valide.
 - **Réponses** :
   - `200 OK` : Liste des incidents du centre de support récupérée avec succès.
@@ -258,7 +274,6 @@ Permet d'obtenir les incidents associés à un utilisateur spécifique.
   - `userId` (string, obligatoire) : Identifiant de l'utilisateur.
 - **En-tête requis** :
   - `Authorization-Token` : Jeton d'authentification valide.
-- **Cookie requis** :
   - `Refresh-Token` : Jeton de rafraîchissement valide.
 - **Réponses** :
   - `200 OK` : Liste des incidents signalés récupérée avec succès.
@@ -275,7 +290,6 @@ Permet de récupérer toutes les catégories d'incident possibles.
 - **Méthode** : `GET`
 - **En-tête requis** :
   - `Authorization-Token` : Jeton d'authentification valide.
-- **Cookie requis** :
   - `Refresh-Token` : Jeton de rafraîchissement valide.
 - **Réponses** :
   - `200 OK` : Liste des catégories d'incident récupérée avec succès.
@@ -292,7 +306,6 @@ Permet de récupérer le centre de support actuellement connecté au dashboard a
 - **Méthode** : `GET`
 - **En-tête requis** :
   - `Authorization-Token` : Jeton d'authentification valide.
-- **Cookie requis** :
   - `Refresh-Token` : Jeton de rafraîchissement valide.
 - **Réponses** :
   - `200 OK` : Centre de support connecté récupéré avec succès.
@@ -307,7 +320,6 @@ Permet de récupérer tous les centres de support actuellement enregistrés dans
 - **Méthode** : `GET`
 - **En-tête requis** :
   - `Authorization-Token` : Jeton d'authentification valide.
-- **Cookie requis** :
   - `Refresh-Token` : Jeton de rafraîchissement valide.
 - **Réponses** :
   - `200 OK` : Centres de support récupérés avec succès.
