@@ -41,3 +41,5 @@ exports.incidentRouter.post('/handle/:incidentId', [
 exports.incidentRouter.get('/index/supportCenter/:supportCenterId', AuthMiddleware_1.authVerifyToken, incidentController.getSupportCenterIncidents);
 // Change incident handling status
 exports.incidentRouter.post('/handleStatus/:incidentId', AuthMiddleware_1.authVerifyToken, incidentController.notificationState);
+// Get incidents reported by user
+exports.incidentRouter.post('/index/user/:userId', AuthMiddleware_1.authVerifyToken, incidentController.getUserIncidents);

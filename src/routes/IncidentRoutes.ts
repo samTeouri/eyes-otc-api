@@ -34,3 +34,9 @@ incidentRouter.post('/handleStatus/:incidentId',
     authVerifyToken,
     incidentController.notificationState,
 );
+
+// Get incidents reported by user
+incidentRouter.post('/index/user/:userId',
+    authVerifyToken,
+    incidentController.getUserIncidents,
+);

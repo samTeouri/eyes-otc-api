@@ -166,7 +166,27 @@ export const getSupportCenterIncidents = async (req: Request, res: Response) => 
         const supportCenter = await SupportCenter.findById(req.params.supportCenterId);
 
         // Get incidents of support center
-        const incidents = await Incident.find({ supportCenters: supportCenter?._id })
+        const incidents = await Incident.find({ supportCenters: supportCenter })
+                .populate('location')
+                .populate('user')
+                .populate('troubles')
+                .populate('supportCenters');
+
+        // Send response
+        return res.json({ incidents: incidents });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error while fetching support center incidents' });
+    }
+}
+
+export const getUserIncidents = async (req: Request, res: Response) => {
+    try {
+        // Validate form values and manage errors
+        requestValidationService.validateRequest(req, res);
+
+        // Get incidents of support center
+        const incidents = await Incident.find({ user: req.params.userId })
                 .populate('location')
                 .populate('user')
                 .populate('troubles')

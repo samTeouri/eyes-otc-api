@@ -153,6 +153,21 @@ Permet à un centre de support d'obtenir les incidents qui lui sont associés.
   - `401 Unauthorized` : Jeton d'authentification invalide ou manquant.
   - `500 Internal Server Error` : Erreur interne du serveur.
 
+#### Obtenir les incidents signalés par un utilisateur
+
+Permet d'obtenir les incidents associés à un utilisateur spécifique.
+
+- **URL** : `/incidents/user/:userId`
+- **Méthode** : `GET`
+- **Paramètres de l'URL** :
+  - `userId` (string, obligatoire) : Identifiant de l'utilisateur.
+- **En-tête requis** :
+  - `Authorization-Token` : Jeton d'authentification valide.
+- **Réponses** :
+  - `200 OK` : Liste des incidents signalés récupérée avec succès.
+  - `401 Unauthorized` : Jeton d'authentification invalide ou manquant.
+  - `500 Internal Server Error` : Erreur interne du serveur.
+
 ### Troubles
 
 #### Obtenir les troubles

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSupportCenterIncidents = exports.notificationState = exports.handleIncident = exports.reportIncident = void 0;
+exports.getUserIncidents = exports.getSupportCenterIncidents = exports.notificationState = exports.handleIncident = exports.reportIncident = void 0;
 const Incident_1 = require("../models/Incident");
 const User_1 = require("../models/User");
 const Notification_1 = require("../models/Notification");
@@ -149,7 +149,7 @@ const getSupportCenterIncidents = (req, res) => __awaiter(void 0, void 0, void 0
         // Find support center by ID
         const supportCenter = yield SupportCenter_1.SupportCenter.findById(req.params.supportCenterId);
         // Get incidents of support center
-        const incidents = yield Incident_1.Incident.find({ supportCenters: supportCenter === null || supportCenter === void 0 ? void 0 : supportCenter._id })
+        const incidents = yield Incident_1.Incident.find({ supportCenters: supportCenter })
             .populate('location')
             .populate('user')
             .populate('troubles')
@@ -163,3 +163,22 @@ const getSupportCenterIncidents = (req, res) => __awaiter(void 0, void 0, void 0
     }
 });
 exports.getSupportCenterIncidents = getSupportCenterIncidents;
+const getUserIncidents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Validate form values and manage errors
+        requestValidationService.validateRequest(req, res);
+        // Get incidents of support center
+        const incidents = yield Incident_1.Incident.find({ user: req.params.userId })
+            .populate('location')
+            .populate('user')
+            .populate('troubles')
+            .populate('supportCenters');
+        // Send response
+        return res.json({ incidents: incidents });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error while fetching support center incidents' });
+    }
+});
+exports.getUserIncidents = getUserIncidents;
