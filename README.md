@@ -101,6 +101,19 @@ Permet à un administrateur de se connecter au système.
 
 ### Utilisateurs
 
+#### Récupérer tous les utilisateurs
+
+Permet de récupérer tous les utilisateurs inscrits sur la plateforme.
+
+- **URL** : `/user/index`
+- **Méthode** : `GET`
+- **En-tête requis** :
+  - `Authorization-Token` : Jeton d'authentification valide.
+- **Réponses** :
+  - `200 OK` : Utilisateurs récupérés avec succès.
+  - `401 Unauthorized` : Jeton d'authentification invalide ou manquant.
+  - `500 Internal Server Error` : Erreur interne du serveur.
+
 #### Obtenir les informations d'un utilisateur
 
 Permet de récupérer les informations liées à l'utilisateur.

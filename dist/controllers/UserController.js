@@ -32,13 +32,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.changePassword = exports.updateUser = exports.getUserInfo = void 0;
+exports.changePassword = exports.updateUser = exports.getUserInfo = exports.getAllUsers = void 0;
 const bcrypt = __importStar(require("bcrypt"));
 const User_1 = require("../models/User");
 const RequestValidationService_1 = require("../services/RequestValidationService");
 const AuthService_1 = require("../services/AuthService");
 const requestValidationService = new RequestValidationService_1.RequestValidationService();
 const authService = new AuthService_1.AuthService();
+const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Get all users
+        const users = yield User_1.User.find().populate('incidents').populate('roles');
+        if (users)
+            return res.status(200).json({ users: users });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error while getting users' });
+    }
+});
+exports.getAllUsers = getAllUsers;
 const getUserInfo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Find user by ID

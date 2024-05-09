@@ -7,6 +7,17 @@ import { AuthService } from '../services/AuthService';
 const requestValidationService = new RequestValidationService();
 const authService = new AuthService();
 
+export const getAllUsers = async (req: Request, res: Response) => {
+    try {
+        // Get all users
+        const users = await User.find().populate('incidents').populate('roles');
+        if (users) return res.status(200).json({ users: users });
+    } catch(error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error while getting users' });
+    }
+}
+
 export const getUserInfo = async (req: Request, res: Response) => {
     try {
         // Find user by ID

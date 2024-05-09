@@ -29,6 +29,8 @@ const userController = __importStar(require("../controllers/UserController"));
 const AuthMiddleware_1 = require("../middlewares/AuthMiddleware");
 const express_validator_1 = require("express-validator");
 exports.userRouter = express.Router();
+// Get all users
+exports.userRouter.get('/index', AuthMiddleware_1.authVerifyToken, userController.getAllUsers);
 // Get user infos
 exports.userRouter.get('/infos/:userId', AuthMiddleware_1.authVerifyToken, userController.getUserInfo);
 // Change user password

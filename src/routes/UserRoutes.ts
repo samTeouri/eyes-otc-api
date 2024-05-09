@@ -5,6 +5,12 @@ import { body } from 'express-validator';
 
 export const userRouter = express.Router();
 
+// Get all users
+userRouter.get('/index',
+    authVerifyToken,
+    userController.getAllUsers,
+);
+
 // Get user infos
 userRouter.get('/infos/:userId',
     authVerifyToken,
