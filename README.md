@@ -167,3 +167,18 @@ Permet de récupérer toutes les catégories d'incident possibles.
   - `200 OK` : Liste des catégories d'incident récupérée avec succès.
   - `401 Unauthorized` : Jeton d'authentification invalide ou manquant.
   - `500 Internal Server Error` : Erreur interne du serveur.
+
+### Centres de suport
+
+#### Obtenir le centre de support actuellement connecté 
+
+Permet de récupérer le centre de support actuellement connecté au dashboard admin.
+
+- **URL** : `/supportCenter/connected`
+- **Méthode** : `GET`
+- **En-tête requis** :
+  - `Authorization-Token` : Jeton d'authentification valide.
+- **Réponses** :
+  - `200 OK` : Centre de support connecté récupéré avec succès.
+  - `401 Unauthorized` : Jeton d'authentification invalide ou manquant.
+  - `500 Internal Server Error` : Erreur interne du serveur.
