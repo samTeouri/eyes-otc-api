@@ -83,28 +83,29 @@ const handleIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
         // Find incident by ID
         const incident = yield Incident_1.Incident.findById(req.params.incidentId);
         if (incident) {
+            // Get Connected supportCenter
+            const supportCenter = yield SupportCenter_1.SupportCenter.findOne({ user: user });
             // Update incident notification
-            const notification = yield Notification_1.Notification.findOne({ incident: incident._id });
+            const notification = yield Notification_1.Notification.findOne({ incident: incident._id, supportCenter: supportCenter });
             if (notification) {
                 notification.isHandled = isHandled;
                 yield notification.save();
-            }
-            // Send response
-            if (isHandled) {
-                incident.state = 'prise en charge en cours';
-                yield incident.save();
-                return res.status(201).json({ message: 'Incident handled successfully!' });
-            }
-            else {
-                const supportCenter = yield SupportCenter_1.SupportCenter.findOne({ user: user });
-                if (supportCenter) {
-                    const index = incident.supportCenters.indexOf(supportCenter);
-                    const _supportCenter = yield incident.getNextNearestSupportCenter(supportCenter);
-                    incident.supportCenters.splice(index, 1);
-                    incident.supportCenters.push(_supportCenter);
-                    yield incident.save();
+                // Send response
+                if (isHandled) {
+                    notification.state = 'prise en charge en cours';
+                    yield notification.save();
+                    return res.status(201).json({ message: 'Incident handled successfully!' });
                 }
-                return res.status(201).json({ message: 'Incident declined successfully!' });
+                else {
+                    if (supportCenter) {
+                        const index = incident.supportCenters.indexOf(supportCenter);
+                        const _supportCenter = yield incident.getNextNearestSupportCenter(supportCenter);
+                        incident.supportCenters.splice(index, 1);
+                        incident.supportCenters.push(_supportCenter);
+                        yield incident.save();
+                    }
+                    return res.status(201).json({ message: 'Incident declined successfully!' });
+                }
             }
         }
     }

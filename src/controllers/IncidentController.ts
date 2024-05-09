@@ -91,28 +91,29 @@ export const handleIncident = async (req: Request, res: Response) => {
         const incident = await Incident.findById(req.params.incidentId);
 
         if (incident) {
+            // Get Connected supportCenter
+            const supportCenter = await SupportCenter.findOne({ user: user });
+
             // Update incident notification
-            const notification = await Notification.findOne({ incident: incident._id });
+            const notification = await Notification.findOne({ incident: incident._id, supportCenter: supportCenter });
             if (notification) {
                 notification.isHandled = isHandled;
                 await notification.save();
-            }
-
-            // Send response
-            if (isHandled) {
-                incident.state = 'prise en charge en cours';
-                await incident.save();
-                return res.status(201).json({ message: 'Incident handled successfully!' });
-            } else {
-                const supportCenter = await SupportCenter.findOne({ user: user });
-                if (supportCenter) {
-                    const index = incident.supportCenters.indexOf(supportCenter);
-                    const _supportCenter = await incident.getNextNearestSupportCenter(supportCenter);
-                    incident.supportCenters.splice(index, 1);
-                    incident.supportCenters.push(_supportCenter as ISupportCenter);
-                    await incident.save();
+                // Send response
+                if (isHandled) {
+                    notification.state = 'prise en charge en cours';
+                    await notification.save();
+                    return res.status(201).json({ message: 'Incident handled successfully!' });
+                } else {
+                    if (supportCenter) {
+                        const index = incident.supportCenters.indexOf(supportCenter);
+                        const _supportCenter = await incident.getNextNearestSupportCenter(supportCenter);
+                        incident.supportCenters.splice(index, 1);
+                        incident.supportCenters.push(_supportCenter as ISupportCenter);
+                        await incident.save();
+                    }
+                    return res.status(201).json({ message: 'Incident declined successfully!' });
                 }
-                return res.status(201).json({ message: 'Incident declined successfully!' });
             }
         }
     } catch (error) {

@@ -15,7 +15,6 @@ const OSMRoutingService_1 = require("../services/OSMRoutingService");
 const Trouble_1 = require("./Trouble");
 // Schéma de l'incident
 const incidentSchema = new mongoose_1.Schema({
-    state: { type: String, enum: ['prise en charge en cours', 'en attente de prise en charge', 'résolu'], default: 'en attente de prise en charge' },
     description: { type: String, required: true },
     picture: { type: String },
     createdAt: { type: Date, default: Date.now },
