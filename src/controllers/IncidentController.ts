@@ -4,7 +4,6 @@ import { ITrouble } from '../models/Trouble';
 import { User } from '../models/User';
 import { Notification } from '../models/Notification';
 import { ISupportCenter, SupportCenter } from '../models/SupportCenter';
-import { handleFilesUpload } from '../utils/UploadFile';
 import { UploadedFile } from '../utils/UploadedFile';
 import { RequestValidationService } from '../services/RequestValidationService';
 import { Location } from '../models/Location';
@@ -28,19 +27,19 @@ export const reportIncident = async (req: Request, res: Response) => {
             longitude: longitude,
         });
 
-        // Handle file uploads
-        let uploadPictureResult: UploadedFile = await handleFilesUpload(req, res);
-
         // Find user by ID
         const user = await User.findById(req.body.user.id);
+
+        const files = req.files as Express.Multer.File[];
 
         // Create incident
         const incident = new Incident({
             description: description,
-            picture: uploadPictureResult.path,
+            picture: files[0].filename,
+            video: files[1].filename,
             user: user,
             location: location,
-            troubles: troubles
+            troubles: troubles,
         });
 
         // Get concerned support centers
@@ -145,8 +144,7 @@ export const updateIncident = async (req: Request, res: Response) => {
                 if (latitude) incident.location.latitude = latitude;
                 if (longitude) incident.location.longitude = longitude;
                 if (picture) {
-                    let uploadPictureResult: UploadedFile = await handleFilesUpload(req, res);
-                    incident.picture = uploadPictureResult.path;
+                    incident.picture = req.file?.path;
                 }
                 incident.updatedAt = await new Date();
 

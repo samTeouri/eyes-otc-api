@@ -36,6 +36,7 @@ const authVerifyToken = (req, res, next) => {
         next();
     }
     catch (error) {
+        console.log(error);
         if (!refreshToken) {
             return res.status(401).send('Access Denied. No refresh token provided.');
         }

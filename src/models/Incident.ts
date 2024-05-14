@@ -9,6 +9,7 @@ import { ITrouble, Trouble } from './Trouble';
 export interface IIncident extends Document {
     description: string;
     picture?: string;
+    video?: string;
     createdAt: Date;
     updatedAt: Date;
     location: ILocation;
@@ -26,6 +27,7 @@ export interface IIncident extends Document {
 const incidentSchema: Schema<IIncident> = new Schema({
     description: { type: String, required: true },
     picture: { type: String },
+    video: { type: String },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     location: { type: Schema.Types.ObjectId, ref: 'Location' },

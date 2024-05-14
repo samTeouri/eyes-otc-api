@@ -197,6 +197,8 @@ Permet de signaler un nouvel incident.
   - `troubles` (array, obligatoire) : Liste des problèmes associés à l'incident.
   - `latitude` (number, obligatoire) : Latitude de l'incident.
   - `longitude` (number, obligatoire) : Longitude de l'incident.
+  - `video` (video, facultatif) : Vidéo de l'incident.
+  - `audio` (audio, facultatif) : Audio descriptif de l'incident.
 - **En-tête requis** :
   - `Authorization-Token` : Jeton d'authentification valide.
   - `Refresh-Token` : Jeton de rafraîchissement valide.
@@ -220,6 +222,8 @@ Permet de modifier un incident.
   - `latitude` (number, facultatif) : Latitude de l'incident.
   - `longitude` (number, facultatif) : Longitude de l'incident.
   - `picture` (picture, facultatif) : Image de l'incident.
+  - `video` (video, facultatif) : Vidéo de l'incident.
+  - `audio` (audio, facultatif) : Audio descriptif de l'incident.
 - **En-tête requis** :
   - `Authorization-Token` : Jeton d'authentification valide.
   - `Refresh-Token` : Jeton de rafraîchissement valide.
