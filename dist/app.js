@@ -41,6 +41,7 @@ const IncidentRoutes_1 = require("./routes/IncidentRoutes");
 const AuthRoutes_1 = require("./routes/AuthRoutes");
 const database = __importStar(require("./config/database"));
 const cors_1 = __importDefault(require("cors"));
+const body_parser_1 = __importDefault(require("body-parser"));
 const TroubleRoutes_1 = require("./routes/TroubleRoutes");
 const SupportCenterRoutes_1 = require("./routes/SupportCenterRoutes");
 const UserRoutes_1 = require("./routes/UserRoutes");
@@ -56,8 +57,10 @@ exports.app = (0, express_1.default)();
     }
 }))();
 // Middlewares
-exports.app.use(express_1.default.json());
 exports.app.use((0, cors_1.default)());
+// Parse request and put data in body
+// app.use(bodyParser.json());
+exports.app.use(body_parser_1.default.urlencoded({ extended: true }));
 // Routes
 // Incident routes
 exports.app.use('/incidents', IncidentRoutes_1.incidentRouter);

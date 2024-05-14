@@ -17,6 +17,7 @@ const Trouble_1 = require("./Trouble");
 const incidentSchema = new mongoose_1.Schema({
     description: { type: String, required: true },
     picture: { type: String },
+    video: { type: String },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     location: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Location' },

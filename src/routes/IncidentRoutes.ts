@@ -2,14 +2,13 @@ import * as express from 'express';
 import { body } from "express-validator";
 import * as incidentController from '../controllers/IncidentController';
 import { authVerifyToken } from '../middlewares/AuthMiddleware';
+import { uploadFile } from '../middlewares/FilesUploadMiddleware';
 
 export const incidentRouter = express.Router();
 
 // Report an incident
 incidentRouter.post('/report',
-    [
-        body('description').exists()
-    ],
+    uploadFile.any(),
     authVerifyToken,
     incidentController.reportIncident,
 );

@@ -12,6 +12,8 @@ export const authVerifyToken = (req: Request, res: Response, next: NextFunction)
         req.body.user = decoded;
         next();
     } catch (error) {
+        console.log(error);
+        
         if (!refreshToken) {
             return res.status(401).send('Access Denied. No refresh token provided.');
         }

@@ -14,7 +14,6 @@ const Incident_1 = require("../models/Incident");
 const User_1 = require("../models/User");
 const Notification_1 = require("../models/Notification");
 const SupportCenter_1 = require("../models/SupportCenter");
-const UploadFile_1 = require("../utils/UploadFile");
 const RequestValidationService_1 = require("../services/RequestValidationService");
 const Location_1 = require("../models/Location");
 const Role_1 = require("../models/Role");
@@ -32,17 +31,17 @@ const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
             latitude: latitude,
             longitude: longitude,
         });
-        // Handle file uploads
-        let uploadPictureResult = yield (0, UploadFile_1.handleFilesUpload)(req, res);
         // Find user by ID
         const user = yield User_1.User.findById(req.body.user.id);
+        const files = req.files;
         // Create incident
         const incident = new Incident_1.Incident({
             description: description,
-            picture: uploadPictureResult.path,
+            picture: files[0].filename,
+            video: files[1].filename,
             user: user,
             location: location,
-            troubles: troubles
+            troubles: troubles,
         });
         // Get concerned support centers
         const supportCenters = yield incident.getConcernedSupportCenters();
@@ -115,6 +114,7 @@ const handleIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.handleIncident = handleIncident;
 const updateIncident = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
         // Validate form values and manage errors
         requestValidationService.validateRequest(req, res);
@@ -139,8 +139,7 @@ const updateIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 if (longitude)
                     incident.location.longitude = longitude;
                 if (picture) {
-                    let uploadPictureResult = yield (0, UploadFile_1.handleFilesUpload)(req, res);
-                    incident.picture = uploadPictureResult.path;
+                    incident.picture = (_a = req.file) === null || _a === void 0 ? void 0 : _a.path;
                 }
                 incident.updatedAt = yield new Date();
                 // Get concerned support centers

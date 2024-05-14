@@ -3,10 +3,11 @@ import { incidentRouter } from "./routes/IncidentRoutes";
 import { authRoutes } from './routes/AuthRoutes';
 import * as database from './config/database';
 import cors from 'cors';
-import path from 'path';
+import bodyParser from 'body-parser';
 import { troubleRouter } from './routes/TroubleRoutes';
 import { supportCenterRouter } from './routes/SupportCenterRoutes';
 import { userRouter } from './routes/UserRoutes';
+import { uploadFile } from './middlewares/FilesUploadMiddleware';
 
 export const app: Application = express();
 
@@ -21,8 +22,11 @@ export const app: Application = express();
 })();
 
 // Middlewares
-app.use(express.json());
 app.use(cors());
+
+// Parse request and put data in body
+// app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
 // Incident routes
