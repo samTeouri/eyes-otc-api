@@ -114,13 +114,13 @@ const handleIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.handleIncident = handleIncident;
 const updateIncident = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     try {
         // Validate form values and manage errors
         requestValidationService.validateRequest(req, res);
         // Get form values from body
-        const { description, troubles, latitude, longitude, picture } = req.body;
+        const { description, troubles, latitude, longitude } = req.body;
         const incident = yield Incident_1.Incident.findById(req.params.incidentId);
+        const files = req.files;
         if (incident) {
             const notification = yield Notification_1.Notification.findOne({
                 state: 'prise en charge en cours',
@@ -138,8 +138,11 @@ const updateIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
                     incident.location.latitude = latitude;
                 if (longitude)
                     incident.location.longitude = longitude;
-                if (picture) {
-                    incident.picture = (_a = req.file) === null || _a === void 0 ? void 0 : _a.path;
+                if (files[0]) {
+                    incident.picture = files[0].filename;
+                }
+                if (files[1]) {
+                    incident.video = files[1].filename;
                 }
                 incident.updatedAt = yield new Date();
                 // Get concerned support centers

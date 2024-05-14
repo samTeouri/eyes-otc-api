@@ -126,9 +126,11 @@ export const updateIncident = async (req: Request, res: Response) => {
         requestValidationService.validateRequest(req, res);
 
         // Get form values from body
-        const { description, troubles, latitude, longitude, picture } = req.body;
+        const { description, troubles, latitude, longitude } = req.body;
         
         const incident = await Incident.findById(req.params.incidentId);
+
+        const files = req.files as Express.Multer.File[];
 
         if (incident) {
             const notification = await Notification.findOne({
@@ -143,8 +145,11 @@ export const updateIncident = async (req: Request, res: Response) => {
                 if (troubles) incident.troubles = troubles;
                 if (latitude) incident.location.latitude = latitude;
                 if (longitude) incident.location.longitude = longitude;
-                if (picture) {
-                    incident.picture = req.file?.path;
+                if (files[0]) {
+                    incident.picture = files[0].filename;
+                }
+                if (files[1]) {
+                    incident.video = files[1].filename;
                 }
                 incident.updatedAt = await new Date();
 

@@ -7,7 +7,6 @@ import bodyParser from 'body-parser';
 import { troubleRouter } from './routes/TroubleRoutes';
 import { supportCenterRouter } from './routes/SupportCenterRoutes';
 import { userRouter } from './routes/UserRoutes';
-import { uploadFile } from './middlewares/FilesUploadMiddleware';
 
 export const app: Application = express();
 
