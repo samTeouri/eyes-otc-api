@@ -20,6 +20,7 @@ export const seedUsers = async () => {
         });
         if (citizenRole) {
             await citizen1.roles.push(citizenRole as IRole);
+            await citizen1.save();
         }
 
         const citizen2 = await User.create({
@@ -32,6 +33,7 @@ export const seedUsers = async () => {
         });
         if (citizenRole) {
             await citizen2.roles.push(citizenRole as IRole);
+            await citizen2.save();
         }
 
         // Create manager users
@@ -45,6 +47,7 @@ export const seedUsers = async () => {
         });
         if (managerRole) {
             await manager1.roles.push(managerRole as IRole);
+            await manager1.save();
         }
 
         console.log('Users seeded successfully');

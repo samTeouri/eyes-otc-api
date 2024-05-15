@@ -29,6 +29,7 @@ const seedUsers = () => __awaiter(void 0, void 0, void 0, function* () {
         });
         if (citizenRole) {
             yield citizen1.roles.push(citizenRole);
+            yield citizen1.save();
         }
         const citizen2 = yield User_1.User.create({
             id: "LARD20241",
@@ -40,6 +41,7 @@ const seedUsers = () => __awaiter(void 0, void 0, void 0, function* () {
         });
         if (citizenRole) {
             yield citizen2.roles.push(citizenRole);
+            yield citizen2.save();
         }
         // Create manager users
         const manager1 = yield User_1.User.create({
@@ -52,6 +54,7 @@ const seedUsers = () => __awaiter(void 0, void 0, void 0, function* () {
         });
         if (managerRole) {
             yield manager1.roles.push(managerRole);
+            yield manager1.save();
         }
         console.log('Users seeded successfully');
     }

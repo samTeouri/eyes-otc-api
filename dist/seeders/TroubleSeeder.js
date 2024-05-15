@@ -9,18 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.seedRoles = void 0;
-const Role_1 = require("../models/Role");
-const seedRoles = () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield Role_1.Role.insertMany([
-            { name: 'citizen' },
-            { name: 'supportCenter' },
-            { name: 'manager' },
-        ]);
-    }
-    catch (error) {
-        console.log('Roles seeded succesfully');
-    }
+exports.seedTroubles = void 0;
+const Trouble_1 = require("../models/Trouble");
+const seedTroubles = () => __awaiter(void 0, void 0, void 0, function* () {
+    Trouble_1.Trouble.create({
+        name: 'accident'
+    });
 });
-exports.seedRoles = seedRoles;
+exports.seedTroubles = seedTroubles;
