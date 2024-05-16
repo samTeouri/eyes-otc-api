@@ -37,8 +37,9 @@ const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
         // Create incident
         const incident = new Incident_1.Incident({
             description: description,
-            picture: files[0].filename,
-            video: files[1].filename,
+            picture: files['picture'][0].filename,
+            video: files['video'][0].filename,
+            audio: files['audio'][0].filename,
             user: user,
             location: location,
             troubles: troubles,

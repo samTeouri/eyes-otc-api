@@ -86,15 +86,15 @@ const citizenLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         const user = yield authService.getUserByIdentifier(identifier);
         // User with given identifier exist
         if (user) {
-            yield Role_1.Role.findOne({ name: 'citizen' })
-                .then((role) => __awaiter(void 0, void 0, void 0, function* () {
-                if (role) {
-                    roleService.checkRole(user, role, res);
-                }
-            }))
-                .catch((reason) => __awaiter(void 0, void 0, void 0, function* () {
-                throw reason;
-            }));
+            // await Role.findOne({ name: 'citizen' })
+            //     .then(async (role: IRole | null) => {
+            //         if (role) {
+            //             roleService.checkRole(user, role, res);
+            //         }
+            //     })
+            //     .catch(async (reason: any) => {
+            //         throw reason;
+            //     })
             authService.userLogging(user, password, res);
         }
         else {

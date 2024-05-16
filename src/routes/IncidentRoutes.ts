@@ -8,7 +8,7 @@ export const incidentRouter = express.Router();
 
 // Report an incident
 incidentRouter.post('/report',
-    uploadFile.any(),
+    uploadFile.fields([{ name: 'picture', maxCount: 1 }, { name: 'video', maxCount: 1 }, { name: 'audio', maxCount: 1 }]),
     authVerifyToken,
     incidentController.reportIncident,
 );

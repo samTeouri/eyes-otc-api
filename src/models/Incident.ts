@@ -7,9 +7,10 @@ import { ITrouble, Trouble } from './Trouble';
 
 // Interface pour représenter les données d'un incident
 export interface IIncident extends Document {
-    description: string;
+    description?: string;
     picture?: string;
     video?: string;
+    audio: string;
     createdAt: Date;
     updatedAt: Date;
     location: ILocation;
@@ -25,9 +26,10 @@ export interface IIncident extends Document {
 
 // Schéma de l'incident
 const incidentSchema: Schema<IIncident> = new Schema({
-    description: { type: String, required: true },
+    description: { type: String },
     picture: { type: String },
     video: { type: String },
+    audio: { type: String },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     location: { type: Schema.Types.ObjectId, ref: 'Location' },
