@@ -36,12 +36,18 @@ const PermissionSeeder_1 = require("./PermissionSeeder");
 const RoleSeeder_1 = require("./RoleSeeder");
 const UserSeeder_1 = require("./UserSeeder");
 const database = __importStar(require("../config/database"));
+const TroubleSeeder_1 = require("./TroubleSeeder");
+const ServiceSeeder_1 = require("./ServiceSeeder");
+const SupportCenterSeeder_1 = require("./SupportCenterSeeder");
 const seed = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield database.connect();
         yield (0, RoleSeeder_1.seedRoles)();
         yield (0, UserSeeder_1.seedUsers)();
         yield (0, PermissionSeeder_1.seedPermissions)();
+        yield (0, TroubleSeeder_1.seedTroubles)();
+        yield (0, ServiceSeeder_1.seedServices)();
+        yield (0, SupportCenterSeeder_1.seedSupportCenters)();
     }
     catch (error) {
         console.log(error);

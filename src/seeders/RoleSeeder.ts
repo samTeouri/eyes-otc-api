@@ -7,7 +7,8 @@ export const seedRoles = async () => {
             { name: 'supportCenter' },
             { name: 'manager' },
         ]);
+        console.log('Roles seeded successfully');
     } catch (error) {
-        console.log('Roles seeded succesfully');
+        console.log('Error while seeding roles:', error);
     }
 }

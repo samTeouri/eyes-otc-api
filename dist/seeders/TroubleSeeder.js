@@ -12,8 +12,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.seedTroubles = void 0;
 const Trouble_1 = require("../models/Trouble");
 const seedTroubles = () => __awaiter(void 0, void 0, void 0, function* () {
-    Trouble_1.Trouble.create({
-        name: 'accident'
-    });
+    try {
+        yield Trouble_1.Trouble.create({
+            name: 'accident'
+        });
+        yield Trouble_1.Trouble.create({
+            name: 'incendie'
+        });
+        yield Trouble_1.Trouble.create({
+            name: 'braquage'
+        });
+        yield Trouble_1.Trouble.create({
+            name: 'inondation'
+        });
+        yield Trouble_1.Trouble.create({
+            name: 'meurtre'
+        });
+        console.log('Troubles seeded successfully');
+    }
+    catch (error) {
+        console.log('Error while seeding troubles:', error);
+    }
 });
 exports.seedTroubles = seedTroubles;

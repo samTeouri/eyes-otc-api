@@ -7,7 +7,6 @@ import { IIncident } from './Incident';
 // Interface pour représenter les données d'un centre de support
 export interface ISupportCenter extends Document {
     name: string;
-    telephone: number;
     createdAt: Date;
     updatedAt: Date;
     location: ILocation;
@@ -19,7 +18,6 @@ export interface ISupportCenter extends Document {
 // Schéma du centre de support
 const supportCenterSchema: Schema<ISupportCenter> = new Schema({
     name: { type: String, required: true },
-    telephone: { type: Number, required: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     location: { type: Schema.Types.ObjectId, ref: 'Location' },

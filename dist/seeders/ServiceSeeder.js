@@ -11,11 +11,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.seedServices = void 0;
 const Service_1 = require("../models/Service");
+const Trouble_1 = require("../models/Trouble");
 const seedServices = () => __awaiter(void 0, void 0, void 0, function* () {
-    Service_1.Service.insertMany([
-        {
-            name
-        }
-    ]);
+    try {
+        const centreSante = yield Service_1.Service.create({
+            name: 'centre de santé',
+        });
+        const gendarmerie = yield Service_1.Service.create({
+            name: 'gendarmerie',
+        });
+        const pompier = yield Service_1.Service.create({
+            name: 'pompier',
+        });
+        yield Trouble_1.Trouble.findOneAndUpdate({ name: 'accident' }, { services: [centreSante, gendarmerie] });
+        yield Trouble_1.Trouble.findOneAndUpdate({ name: 'incendie' }, { services: [centreSante, gendarmerie, pompier] });
+        yield Trouble_1.Trouble.findOneAndUpdate({ name: 'braquage' }, { services: [centreSante, gendarmerie] });
+        yield Trouble_1.Trouble.findOneAndUpdate({ name: 'inondation' }, { services: [pompier] });
+        yield Trouble_1.Trouble.findOneAndUpdate({ name: 'meurtre' }, { services: [centreSante, gendarmerie] });
+        console.log('Services seeded successfully');
+    }
+    catch (error) {
+        console.log('Error while seeding services:', error);
+    }
 });
 exports.seedServices = seedServices;

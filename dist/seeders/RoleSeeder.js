@@ -18,9 +18,10 @@ const seedRoles = () => __awaiter(void 0, void 0, void 0, function* () {
             { name: 'supportCenter' },
             { name: 'manager' },
         ]);
+        console.log('Roles seeded successfully');
     }
     catch (error) {
-        console.log('Roles seeded succesfully');
+        console.log('Error while seeding roles:', error);
     }
 });
 exports.seedRoles = seedRoles;
