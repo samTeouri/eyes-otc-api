@@ -9,19 +9,29 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.seedRoles = void 0;
-const Role_1 = require("../models/Role");
-const seedRoles = () => __awaiter(void 0, void 0, void 0, function* () {
+exports.seedTroubles = void 0;
+const Trouble_1 = require("../models/Trouble");
+const seedTroubles = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield Role_1.Role.insertMany([
-            { name: 'citizen' },
-            { name: 'supportCenter' },
-            { name: 'manager' },
-        ]);
-        console.log('Roles seeded successfully');
+        yield Trouble_1.Trouble.create({
+            name: 'accident'
+        });
+        yield Trouble_1.Trouble.create({
+            name: 'incendie'
+        });
+        yield Trouble_1.Trouble.create({
+            name: 'braquage'
+        });
+        yield Trouble_1.Trouble.create({
+            name: 'inondation'
+        });
+        yield Trouble_1.Trouble.create({
+            name: 'meurtre'
+        });
+        console.log('Troubles seeded successfully');
     }
     catch (error) {
-        console.log('Error while seeding roles:', error);
+        console.log('Error while seeding troubles:', error);
     }
 });
-exports.seedRoles = seedRoles;
+exports.seedTroubles = seedTroubles;

@@ -5,7 +5,6 @@ const mongoose_1 = require("mongoose");
 // Schéma du centre de support
 const supportCenterSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
-    telephone: { type: Number, required: true },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     location: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Location' },

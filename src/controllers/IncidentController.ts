@@ -1,10 +1,8 @@
 import { Request, Response } from 'express';
 import { Incident } from '../models/Incident';
-import { ITrouble } from '../models/Trouble';
 import { User } from '../models/User';
 import { Notification } from '../models/Notification';
 import { ISupportCenter, SupportCenter } from '../models/SupportCenter';
-import { UploadedFile } from '../utils/UploadedFile';
 import { RequestValidationService } from '../services/RequestValidationService';
 import { Location } from '../models/Location';
 import { IRole, Role } from '../models/Role';

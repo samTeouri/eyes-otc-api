@@ -4,7 +4,6 @@ exports.Support = void 0;
 const mongoose_1 = require("mongoose");
 // Schéma du support
 const supportSchema = new mongoose_1.Schema({
-    isHandled: { type: Boolean, default: false },
     service: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Service' },
     trouble: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Trouble' },
     createdAt: { type: Date, default: Date.now },

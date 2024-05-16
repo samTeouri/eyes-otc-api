@@ -1,9 +1,9 @@
-import { Schema, model, Types } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import { IUser } from './User';
 import { IPermission } from './Permission';
 
 // Interface pour représenter les données d'un rôle
-export interface IRole {
+export interface IRole extends Document {
     name: string;
     createdAt: Date;
     updatedAt: Date;
