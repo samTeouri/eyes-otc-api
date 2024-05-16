@@ -31,7 +31,7 @@ const AuthMiddleware_1 = require("../middlewares/AuthMiddleware");
 const FilesUploadMiddleware_1 = require("../middlewares/FilesUploadMiddleware");
 exports.incidentRouter = express.Router();
 // Report an incident
-exports.incidentRouter.post('/report', FilesUploadMiddleware_1.uploadFile.any(), AuthMiddleware_1.authVerifyToken, incidentController.reportIncident);
+exports.incidentRouter.post('/report', FilesUploadMiddleware_1.uploadFile.fields([{ name: 'picture', maxCount: 1 }, { name: 'video', maxCount: 1 }, { name: 'audio', maxCount: 1 }]), AuthMiddleware_1.authVerifyToken, incidentController.reportIncident);
 // Handle an incident
 exports.incidentRouter.post('/handle/:incidentId', [
     (0, express_validator_1.body)('isHandled').exists()

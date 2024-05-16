@@ -59,7 +59,7 @@ exports.app = (0, express_1.default)();
 // Middlewares
 exports.app.use((0, cors_1.default)());
 // Parse request and put data in body
-// app.use(bodyParser.json());
+exports.app.use(body_parser_1.default.json());
 exports.app.use(body_parser_1.default.urlencoded({ extended: true }));
 // Routes
 // Incident routes

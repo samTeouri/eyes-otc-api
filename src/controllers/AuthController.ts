@@ -61,15 +61,15 @@ export const citizenLogin = async (req: Request, res: Response) => {
 
         // User with given identifier exist
         if (user) {
-            await Role.findOne({ name: 'citizen' })
-                .then(async (role: IRole | null) => {
-                    if (role) {
-                        roleService.checkRole(user, role, res);
-                    }
-                })
-                .catch(async (reason: any) => {
-                    throw reason;
-                })
+            // await Role.findOne({ name: 'citizen' })
+            //     .then(async (role: IRole | null) => {
+            //         if (role) {
+            //             roleService.checkRole(user, role, res);
+            //         }
+            //     })
+            //     .catch(async (reason: any) => {
+            //         throw reason;
+            //     })
             authService.userLogging(user, password, res);
         } else {
             res.status(404).json({ message: 'User with given identifier doesn\'t exists' });

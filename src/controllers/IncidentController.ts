@@ -28,13 +28,14 @@ export const reportIncident = async (req: Request, res: Response) => {
         // Find user by ID
         const user = await User.findById(req.body.user.id);
 
-        const files = req.files as Express.Multer.File[];
+        const files = req.files as {[fieldname: string]: Express.Multer.File[]};
 
         // Create incident
         const incident = new Incident({
             description: description,
-            picture: files[0].filename,
-            video: files[1].filename,
+            picture: files['picture'][0].filename,
+            video: files['video'][0].filename,
+            audio: files['audio'][0].filename,
             user: user,
             location: location,
             troubles: troubles,
