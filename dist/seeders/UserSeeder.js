@@ -46,10 +46,9 @@ const seedUsers = () => __awaiter(void 0, void 0, void 0, function* () {
         const supportCenterRole = yield Role_1.Role.findOne({ name: 'supportCenter' });
         // Create citizen users
         const citizen1 = yield User_1.User.create({
-            id: "LADJ20241",
-            firstName: "Serigne",
-            lastName: "LADJI",
-            email: "sladji@mail.com",
+            firstName: 'Serigne',
+            lastName: 'LADJI',
+            email: 'sladji@mail.com',
             phone: 90902024,
             password: yield bcrypt.hash('password1234', 15),
         });
@@ -58,10 +57,9 @@ const seedUsers = () => __awaiter(void 0, void 0, void 0, function* () {
             yield citizen1.save();
         }
         const citizen2 = yield User_1.User.create({
-            id: "LARD20241",
-            firstName: "David",
-            lastName: "LARE",
-            email: "dlare@mail.com",
+            firstName: 'David',
+            lastName: 'LARE',
+            email: 'dlare@mail.com',
             phone: 90992002,
             password: yield bcrypt.hash('password1234', 15),
         });
@@ -71,10 +69,9 @@ const seedUsers = () => __awaiter(void 0, void 0, void 0, function* () {
         }
         // Create manager users
         const manager1 = yield User_1.User.create({
-            id: "GANF20241",
-            firstName: "Farid",
-            lastName: "GANI",
-            email: "fgani@mail.com",
+            firstName: 'Farid',
+            lastName: 'GANI',
+            email: 'fgani@mail.com',
             phone: 91311220,
             password: yield bcrypt.hash('password1234', 15),
         });
@@ -85,10 +82,9 @@ const seedUsers = () => __awaiter(void 0, void 0, void 0, function* () {
         // Create support centers users
         // Centres de santé
         const supportCenter1 = yield User_1.User.create({
-            id: "CHUCAMPUS",
-            firstName: "Farid",
-            lastName: "GANI",
-            email: "chucampus@mail.com",
+            firstName: 'Julien',
+            lastName: 'LAWSON',
+            email: 'chucampus@mail.com',
             phone: 97341321,
             password: yield bcrypt.hash('password1234', 15),
         });
@@ -97,10 +93,9 @@ const seedUsers = () => __awaiter(void 0, void 0, void 0, function* () {
             yield supportCenter1.save();
         }
         const supportCenter2 = yield User_1.User.create({
-            id: "CHUSYLVOL",
-            firstName: "Djamal",
-            lastName: "ABOU",
-            email: "chusyvanusolympio@mail.com",
+            firstName: 'Djamal',
+            lastName: 'ABOU',
+            email: 'chusylvanusolympio@mail.com',
             phone: 93677654,
             password: yield bcrypt.hash('password1234', 15),
         });
@@ -109,10 +104,9 @@ const seedUsers = () => __awaiter(void 0, void 0, void 0, function* () {
             yield supportCenter2.save();
         }
         const supportCenter3 = yield User_1.User.create({
-            id: "DOGLAF",
-            firstName: "Roger",
-            lastName: "LEMOU",
-            email: "dogtalafie@mail.com",
+            firstName: 'Roger',
+            lastName: 'LEMOU',
+            email: 'dogtalafie@mail.com',
             phone: 99233212,
             password: yield bcrypt.hash('password1234', 15),
         });
@@ -122,10 +116,9 @@ const seedUsers = () => __awaiter(void 0, void 0, void 0, function* () {
         }
         // Gendarmeries
         const supportCenter4 = yield User_1.User.create({
-            id: "GENDSANG",
-            firstName: "Hodabalo",
-            lastName: "SIMFEYI",
-            email: "gendarmeriesanguera@mail.com",
+            firstName: 'Hodabalo',
+            lastName: 'SIMFEYI',
+            email: 'gendarmeriesanguera@mail.com',
             phone: 92123454,
             password: yield bcrypt.hash('password1234', 15),
         });
@@ -134,10 +127,9 @@ const seedUsers = () => __awaiter(void 0, void 0, void 0, function* () {
             yield supportCenter4.save();
         }
         const supportCenter5 = yield User_1.User.create({
-            id: "GENDAGOE",
-            firstName: "Jules",
-            lastName: "OUREYA",
-            email: "gendarmerieagoe@mail.com",
+            firstName: 'Jules',
+            lastName: 'OUREYA',
+            email: 'gendarmerieagoe@mail.com',
             phone: 72345117,
             password: yield bcrypt.hash('password1234', 15),
         });
@@ -146,10 +138,9 @@ const seedUsers = () => __awaiter(void 0, void 0, void 0, function* () {
             yield supportCenter5.save();
         }
         const supportCenter6 = yield User_1.User.create({
-            id: "GENDADAM",
-            firstName: "Achille",
-            lastName: "SEGNIKA",
-            email: "gendarmerieadamavo@mail.com",
+            firstName: 'Achille',
+            lastName: 'SEGNIKA',
+            email: 'gendarmerieadamavo@mail.com',
             phone: 77234535,
             password: yield bcrypt.hash('password1234', 15),
         });
@@ -159,10 +150,9 @@ const seedUsers = () => __awaiter(void 0, void 0, void 0, function* () {
         }
         // Pompier
         const supportCenter7 = yield User_1.User.create({
-            id: "CASAVEP",
-            firstName: "Stéphane",
-            lastName: "MWEBIDA",
-            email: "caserneavepozo@mail.com",
+            firstName: 'Stéphane',
+            lastName: 'MWEBIDA',
+            email: 'caserneavepozo@mail.com',
             phone: 90098776,
             password: yield bcrypt.hash('password1234', 15),
         });
@@ -171,10 +161,9 @@ const seedUsers = () => __awaiter(void 0, void 0, void 0, function* () {
             yield supportCenter7.save();
         }
         const supportCenter8 = yield User_1.User.create({
-            id: "CASPRIN",
-            firstName: "Lamine",
-            lastName: "TCHASSANTI",
-            email: "caserneprinicpale@mail.com",
+            firstName: 'Lamine',
+            lastName: 'TCHASSANTI',
+            email: 'caserneprinicpale@mail.com',
             phone: 97561272,
             password: yield bcrypt.hash('password1234', 15),
         });
@@ -183,10 +172,9 @@ const seedUsers = () => __awaiter(void 0, void 0, void 0, function* () {
             yield supportCenter8.save();
         }
         const supportCenter9 = yield User_1.User.create({
-            id: "CASAGOE",
-            firstName: "Sabin",
-            lastName: "FAYI",
-            email: "caserneagoe@mail.com",
+            firstName: 'Sabin',
+            lastName: 'FAYI',
+            email: 'caserneagoe@mail.com',
             phone: 99002131,
             password: yield bcrypt.hash('password1234', 15),
         });

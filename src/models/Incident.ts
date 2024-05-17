@@ -1,9 +1,11 @@
 import { Schema, model, Document, Types } from 'mongoose';
 import { ISupportCenter } from './SupportCenter';
 import { OSMRoutingService } from '../services/OSMRoutingService';
-import { ILocation } from './Location';
+import { ILocation, Location } from './Location';
 import { IUser } from './User';
 import { ITrouble, Trouble } from './Trouble';
+import { Service } from './Service';
+import { delay } from '../utils/Tools';
 
 // Interface pour représenter les données d'un incident
 export interface IIncident extends Document {
@@ -42,15 +44,27 @@ const incidentSchema: Schema<IIncident> = new Schema({
 incidentSchema.methods.getDistanceToSupportCenter = async function (this: IIncident, supportCenter: ISupportCenter): Promise<number | void> {
     const osrm = new OSMRoutingService();
     if (!supportCenter) throw new Error('Support Center not found');
-    return await osrm.getDistance([this.location.longitude, this.location.latitude], [supportCenter.location.longitude, supportCenter.location.latitude]);
+
+    try {
+        const distance = await osrm.getDistance(
+            [this.location.longitude, this.location.latitude],
+            [supportCenter.location.longitude, supportCenter.location.latitude]
+        );
+        console.log(distance);
+        return distance;
+    } catch (error) {
+        console.error(`Error while getting distance to Support Center: ${error}`);
+    }
 };
 
 incidentSchema.methods.getNearestSupportCenter = async function (this: IIncident, supportCenters: ISupportCenter[]): Promise<ISupportCenter | null> {
     let distance = Number.MAX_VALUE;
+    
     let nearestSupportCenter: ISupportCenter | null = null;
 
     for (let supportCenter of supportCenters) {
-        const distanceToSupportCenter = await this.getDistanceToSupportCenter(supportCenter.id);
+        const distanceToSupportCenter = await this.getDistanceToSupportCenter(await supportCenter.populate('location'));
+        await delay(1000);
         if (distanceToSupportCenter < distance) {
             distance = distanceToSupportCenter;
             nearestSupportCenter = supportCenter;
@@ -79,10 +93,10 @@ incidentSchema.methods.getConcernedSupportCenters = async function (this: IIncid
     const supportCenters: ISupportCenter[] = [];
 
     for (const troubleId of this.troubles) {
-        const trouble = await Trouble.findById(troubleId).populate('services');
+        const trouble = await Trouble.findById(troubleId).populate({ path: 'services', model: Service });
         if (!trouble) continue;
-        
         for (const service of trouble.services) {
+            await service.populate('supportCenters');
             const nearestSupportCenter = await this.getNearestSupportCenter(service.supportCenters);
             if (nearestSupportCenter) supportCenters.push(nearestSupportCenter);
         }

@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
     if (kind === "m") throw new TypeError("Private method is not writable");
     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
@@ -26,25 +17,25 @@ const osrm_rest_client_1 = require("osrm-rest-client");
 class OSMRoutingService {
     constructor() {
         _OSMRoutingService_osrmEngine.set(this, void 0);
-        this.getDistance = (startCoords, destCoords) => __awaiter(this, void 0, void 0, function* () {
-            try {
+        this.getDistance = (startCoords, destCoords) => {
+            return new Promise((resolve, reject) => {
                 __classPrivateFieldGet(this, _OSMRoutingService_osrmEngine, "f").route({
                     coordinates: [startCoords, destCoords],
-                }, (error, results) => __awaiter(this, void 0, void 0, function* () {
+                }, (error, results) => {
                     if (error) {
-                        throw error;
+                        reject(`Error while getting distance: ${error}`);
+                        return;
                     }
-                    if (results) {
-                        return results.routes[0].distance;
+                    if (results && results.routes.length > 0 && results.routes[0].distance !== undefined) {
+                        resolve(results.routes[0].distance);
                     }
-                }));
-            }
-            catch (error) {
-                console.log(`Error while getting distance`);
-            }
-        });
-        const _osrmEngine = (0, osrm_rest_client_1.OSRM)();
-        __classPrivateFieldSet(this, _OSMRoutingService_osrmEngine, _osrmEngine, "f");
+                    else {
+                        reject('No route results found or distance is undefined');
+                    }
+                });
+            });
+        };
+        __classPrivateFieldSet(this, _OSMRoutingService_osrmEngine, (0, osrm_rest_client_1.OSRM)(), "f");
     }
 }
 exports.OSMRoutingService = OSMRoutingService;

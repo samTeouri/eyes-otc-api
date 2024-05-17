@@ -7,6 +7,7 @@ import { RequestValidationService } from '../services/RequestValidationService';
 import { Location } from '../models/Location';
 import { IRole, Role } from '../models/Role';
 import { RoleService } from '../services/RoleService';
+import { ITrouble, Trouble } from '../models/Trouble';
 
 const requestValidationService = new RequestValidationService();
 const roleService = new RoleService();
@@ -25,6 +26,16 @@ export const reportIncident = async (req: Request, res: Response) => {
             longitude: longitude,
         });
 
+        var troublesArray: ITrouble[] = new Array();
+
+        // Get troubles
+        const troublePromises = troubles.map(async (troubleId: string) => {
+            var trouble = await Trouble.findById(troubleId);
+            troublesArray.push(trouble as ITrouble);
+        });
+        
+        await Promise.all(troublePromises);
+        
         // Find user by ID
         const user = await User.findById(req.body.user.id);
 
@@ -38,11 +49,13 @@ export const reportIncident = async (req: Request, res: Response) => {
             audio: files['audio'][0].filename,
             user: user,
             location: location,
-            troubles: troubles,
+            troubles: troublesArray,
         });
 
         // Get concerned support centers
         const supportCenters = await incident.getConcernedSupportCenters();
+
+        await Promise.all(supportCenters);
 
         // Set support centers
         incident.supportCenters = supportCenters;
@@ -167,6 +180,23 @@ export const updateIncident = async (req: Request, res: Response) => {
     } catch (error) {
         console.log(error);
         return res.status(500).json({ error: 'Error while updating incident' });
+    }
+}
+
+export const getIncidentDetails = async (req: Request, res: Response) => {
+    try {
+        const incidentId = req.params.incidentId;
+
+        await Incident.findById(incidentId).populate('location').populate('user').populate('supportCenters').populate('troubles')
+            .then(async (incident) => {
+                return res.status(200).json({ incident: incident })
+            })
+            .catch(async (error) => {
+                throw error;
+            });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error getting incident details' });
     }
 }
 

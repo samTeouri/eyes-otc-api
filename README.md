@@ -193,12 +193,13 @@ Permet de signaler un nouvel incident.
 - **URL** : `/incidents/report`
 - **Méthode** : `POST`
 - **Paramètres du corps** :
-  - `description` (string, obligatoire) : Description de l'incident.
-  - `troubles` (array, obligatoire) : Liste des problèmes associés à l'incident.
+  - `description` (string, facultatif) : Texte descriptif de l'incident.
+  - `troubles` (array of string, obligatoire) : Liste des identifiants des troubles associés à l'incident.
   - `latitude` (number, obligatoire) : Latitude de l'incident.
   - `longitude` (number, obligatoire) : Longitude de l'incident.
+  - `audio` (audio, obligatoire) : Audio descriptif de l'incident.
+  - `picture` (image, facultatif) : Photo de l'incident.
   - `video` (video, facultatif) : Vidéo de l'incident.
-  - `audio` (audio, facultatif) : Audio descriptif de l'incident.
 - **En-tête requis** :
   - `Authorization-Token` : Jeton d'authentification valide.
   - `Refresh-Token` : Jeton de rafraîchissement valide.
@@ -230,6 +231,22 @@ Permet de modifier un incident.
 - **Réponses** :
   - `200 OK` : Incident modifié avec succès.
   - `400 Bad Request` : Erreur de validation des données.
+  - `401 Unauthorized` : Jeton d'authentification invalide ou manquant.
+  - `500 Internal Server Error` : Erreur interne du serveur.
+
+#### Obtenir les détails d'un incident
+
+Permet d'obtenir les détails d'un incident.
+
+- **URL** : `/incidents/:incidentId`
+- **Méthode** : `GET`
+- **Paramètres de l'URL** :
+  - `incidentId` (string, obligatoire) : Identifiant de l'incident.
+- **En-tête requis** :
+  - `Authorization-Token` : Jeton d'authentification valide.
+  - `Refresh-Token` : Jeton de rafraîchissement valide.
+- **Réponses** :
+  - `200 OK` : Détails de l'incident récupérés avec succès.
   - `401 Unauthorized` : Jeton d'authentification invalide ou manquant.
   - `500 Internal Server Error` : Erreur interne du serveur.
 

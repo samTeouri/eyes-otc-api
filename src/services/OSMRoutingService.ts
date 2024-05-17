@@ -4,27 +4,27 @@ export class OSMRoutingService {
     #osrmEngine: IOsrm;
 
     constructor() {
-        const _osrmEngine = OSRM();
-        this.#osrmEngine = _osrmEngine;
+        this.#osrmEngine = OSRM();
     }
 
-    getDistance = async (startCoords: [number, number], destCoords: [number, number]): Promise<number | void> => {
-        try {
+    getDistance = (startCoords: [number, number], destCoords: [number, number]): Promise<number> => {
+        return new Promise((resolve, reject) => {
             this.#osrmEngine.route(
                 {
                     coordinates: [startCoords, destCoords],
                 },
-                async (error: Error | null, results: IOsrmRouteResult | undefined) => {
+                (error: Error | null, results: IOsrmRouteResult | undefined) => {
                     if (error) {
-                        throw error;
+                        reject(`Error while getting distance: ${error}`);
+                        return;
                     }
-                    if (results) {
-                        return results.routes[0].distance;
+                    if (results && results.routes.length > 0 && results.routes[0].distance !== undefined) {
+                        resolve(results.routes[0].distance);
+                    } else {
+                        reject('No route results found or distance is undefined');
                     }
                 }
             );
-        } catch (error) {
-            console.log(`Error while getting distance`); 
-        }
+        });
     }
 }

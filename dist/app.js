@@ -37,15 +37,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
 const express_1 = __importDefault(require("express"));
-const IncidentRoutes_1 = require("./routes/IncidentRoutes");
-const AuthRoutes_1 = require("./routes/AuthRoutes");
 const database = __importStar(require("./config/database"));
 const cors_1 = __importDefault(require("cors"));
 const body_parser_1 = __importDefault(require("body-parser"));
-const TroubleRoutes_1 = require("./routes/TroubleRoutes");
-const SupportCenterRoutes_1 = require("./routes/SupportCenterRoutes");
-const UserRoutes_1 = require("./routes/UserRoutes");
-exports.app = (0, express_1.default)();
 (() => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Connect to the database
@@ -56,6 +50,12 @@ exports.app = (0, express_1.default)();
         console.error(`Database connection failed: ${error}`);
     }
 }))();
+const IncidentRoutes_1 = require("./routes/IncidentRoutes");
+const AuthRoutes_1 = require("./routes/AuthRoutes");
+const TroubleRoutes_1 = require("./routes/TroubleRoutes");
+const SupportCenterRoutes_1 = require("./routes/SupportCenterRoutes");
+const UserRoutes_1 = require("./routes/UserRoutes");
+exports.app = (0, express_1.default)();
 // Middlewares
 exports.app.use((0, cors_1.default)());
 // Parse request and put data in body

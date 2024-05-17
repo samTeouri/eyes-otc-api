@@ -1,5 +1,5 @@
 import { Service } from "../models/Service"
-import { Trouble } from "../models/Trouble";
+import { ITrouble, Trouble } from "../models/Trouble";
 
 export const seedServices = async () => {
     try {
@@ -15,30 +15,38 @@ export const seedServices = async () => {
             name: 'pompier',
         });
     
-        await Trouble.findOneAndUpdate(
+        const accident = await Trouble.findOneAndUpdate(
             { name: 'accident' },
             { services: [centreSante, gendarmerie] }
         );
     
-        await Trouble.findOneAndUpdate(
+        const incendie = await Trouble.findOneAndUpdate(
             { name: 'incendie' },
             { services: [centreSante, gendarmerie, pompier] }
         );
     
-        await Trouble.findOneAndUpdate(
+        const braquage = await Trouble.findOneAndUpdate(
             { name: 'braquage' },
-            { services: [centreSante, gendarmerie] }
+            { services: [gendarmerie] }
         );
     
-        await Trouble.findOneAndUpdate(
+        const inondation = await Trouble.findOneAndUpdate(
             { name: 'inondation' },
             { services: [pompier] }
         );
     
-        await Trouble.findOneAndUpdate(
+        const meurtre = await Trouble.findOneAndUpdate(
             { name: 'meurtre' },
             { services: [centreSante, gendarmerie] }
         );
+
+        centreSante.troubles = [accident as ITrouble, incendie as ITrouble, meurtre as ITrouble];
+        await centreSante.save();
+        gendarmerie.troubles = [accident as ITrouble, incendie as ITrouble, meurtre as ITrouble, braquage as ITrouble];
+        await gendarmerie.save();
+        pompier.troubles = [incendie as ITrouble, inondation as ITrouble];
+        await pompier.save();
+
         console.log('Services seeded successfully');
     } catch (error) {
         console.log('Error while seeding services:', error);
