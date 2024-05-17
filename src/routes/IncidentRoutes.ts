@@ -22,10 +22,16 @@ incidentRouter.post('/handle/:incidentId',
     incidentController.handleIncident,
 );
 
-// Handle an incident
+// Update an incident
 incidentRouter.post('/update/:incidentId',
     authVerifyToken,
     incidentController.updateIncident,
+);
+
+// Get incident details
+incidentRouter.get('/:incidentId',
+    authVerifyToken,
+    incidentController.getIncidentDetails,
 );
 
 // Get incidents associated to supportCenter

@@ -36,8 +36,10 @@ exports.incidentRouter.post('/report', FilesUploadMiddleware_1.uploadFile.fields
 exports.incidentRouter.post('/handle/:incidentId', [
     (0, express_validator_1.body)('isHandled').exists()
 ], AuthMiddleware_1.authVerifyToken, incidentController.handleIncident);
-// Handle an incident
+// Update an incident
 exports.incidentRouter.post('/update/:incidentId', AuthMiddleware_1.authVerifyToken, incidentController.updateIncident);
+// Get incident details
+exports.incidentRouter.get('/:incidentId', AuthMiddleware_1.authVerifyToken, incidentController.getIncidentDetails);
 // Get incidents associated to supportCenter
 exports.incidentRouter.get('/index/supportCenter/:supportCenterId', AuthMiddleware_1.authVerifyToken, incidentController.getSupportCenterIncidents);
 // Change incident handling status

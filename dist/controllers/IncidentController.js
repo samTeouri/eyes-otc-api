@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserIncidents = exports.getSupportCenterIncidents = exports.notificationState = exports.updateIncident = exports.handleIncident = exports.reportIncident = void 0;
+exports.getUserIncidents = exports.getSupportCenterIncidents = exports.notificationState = exports.getIncidentDetails = exports.updateIncident = exports.handleIncident = exports.reportIncident = void 0;
 const Incident_1 = require("../models/Incident");
 const User_1 = require("../models/User");
 const Notification_1 = require("../models/Notification");
@@ -18,6 +18,7 @@ const RequestValidationService_1 = require("../services/RequestValidationService
 const Location_1 = require("../models/Location");
 const Role_1 = require("../models/Role");
 const RoleService_1 = require("../services/RoleService");
+const Trouble_1 = require("../models/Trouble");
 const requestValidationService = new RequestValidationService_1.RequestValidationService();
 const roleService = new RoleService_1.RoleService();
 const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -31,6 +32,13 @@ const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
             latitude: latitude,
             longitude: longitude,
         });
+        var troublesArray = new Array();
+        // Get troubles
+        const troublePromises = troubles.map((troubleId) => __awaiter(void 0, void 0, void 0, function* () {
+            var trouble = yield Trouble_1.Trouble.findById(troubleId);
+            troublesArray.push(trouble);
+        }));
+        yield Promise.all(troublePromises);
         // Find user by ID
         const user = yield User_1.User.findById(req.body.user.id);
         const files = req.files;
@@ -42,10 +50,11 @@ const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
             audio: files['audio'][0].filename,
             user: user,
             location: location,
-            troubles: troubles,
+            troubles: troublesArray,
         });
         // Get concerned support centers
         const supportCenters = yield incident.getConcernedSupportCenters();
+        yield Promise.all(supportCenters);
         // Set support centers
         incident.supportCenters = supportCenters;
         // Save incident
@@ -164,6 +173,23 @@ const updateIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.updateIncident = updateIncident;
+const getIncidentDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const incidentId = req.params.incidentId;
+        yield Incident_1.Incident.findById(incidentId).populate('location').populate('user').populate('supportCenters').populate('troubles')
+            .then((incident) => __awaiter(void 0, void 0, void 0, function* () {
+            return res.status(200).json({ incident: incident });
+        }))
+            .catch((error) => __awaiter(void 0, void 0, void 0, function* () {
+            throw error;
+        }));
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: 'Error getting incident details' });
+    }
+});
+exports.getIncidentDetails = getIncidentDetails;
 const notificationState = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Validate form values and manage errors

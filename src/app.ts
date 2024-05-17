@@ -1,15 +1,7 @@
 import express, { Application } from 'express';
-import { incidentRouter } from "./routes/IncidentRoutes";
-import { authRoutes } from './routes/AuthRoutes';
 import * as database from './config/database';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import { troubleRouter } from './routes/TroubleRoutes';
-import { supportCenterRouter } from './routes/SupportCenterRoutes';
-import { userRouter } from './routes/UserRoutes';
-import { uploadFile } from './middlewares/FilesUploadMiddleware';
-
-export const app: Application = express();
 
 (async () => {
     try {
@@ -20,6 +12,14 @@ export const app: Application = express();
         console.error(`Database connection failed: ${error}`);
     }
 })();
+
+import { incidentRouter } from "./routes/IncidentRoutes";
+import { authRoutes } from './routes/AuthRoutes';
+import { troubleRouter } from './routes/TroubleRoutes';
+import { supportCenterRouter } from './routes/SupportCenterRoutes';
+import { userRouter } from './routes/UserRoutes';
+
+export const app: Application = express();
 
 // Middlewares
 app.use(cors());

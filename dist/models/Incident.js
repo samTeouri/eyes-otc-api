@@ -13,6 +13,8 @@ exports.Incident = void 0;
 const mongoose_1 = require("mongoose");
 const OSMRoutingService_1 = require("../services/OSMRoutingService");
 const Trouble_1 = require("./Trouble");
+const Service_1 = require("./Service");
+const Tools_1 = require("../utils/Tools");
 // Schéma de l'incident
 const incidentSchema = new mongoose_1.Schema({
     description: { type: String },
@@ -32,7 +34,14 @@ incidentSchema.methods.getDistanceToSupportCenter = function (supportCenter) {
         const osrm = new OSMRoutingService_1.OSMRoutingService();
         if (!supportCenter)
             throw new Error('Support Center not found');
-        return yield osrm.getDistance([this.location.longitude, this.location.latitude], [supportCenter.location.longitude, supportCenter.location.latitude]);
+        try {
+            const distance = yield osrm.getDistance([this.location.longitude, this.location.latitude], [supportCenter.location.longitude, supportCenter.location.latitude]);
+            console.log(distance);
+            return distance;
+        }
+        catch (error) {
+            console.error(`Error while getting distance to Support Center: ${error}`);
+        }
     });
 };
 incidentSchema.methods.getNearestSupportCenter = function (supportCenters) {
@@ -40,7 +49,8 @@ incidentSchema.methods.getNearestSupportCenter = function (supportCenters) {
         let distance = Number.MAX_VALUE;
         let nearestSupportCenter = null;
         for (let supportCenter of supportCenters) {
-            const distanceToSupportCenter = yield this.getDistanceToSupportCenter(supportCenter.id);
+            const distanceToSupportCenter = yield this.getDistanceToSupportCenter(yield supportCenter.populate('location'));
+            yield (0, Tools_1.delay)(1000);
             if (distanceToSupportCenter < distance) {
                 distance = distanceToSupportCenter;
                 nearestSupportCenter = supportCenter;
@@ -67,10 +77,11 @@ incidentSchema.methods.getConcernedSupportCenters = function () {
     return __awaiter(this, void 0, void 0, function* () {
         const supportCenters = [];
         for (const troubleId of this.troubles) {
-            const trouble = yield Trouble_1.Trouble.findById(troubleId).populate('services');
+            const trouble = yield Trouble_1.Trouble.findById(troubleId).populate({ path: 'services', model: Service_1.Service });
             if (!trouble)
                 continue;
             for (const service of trouble.services) {
+                yield service.populate('supportCenters');
                 const nearestSupportCenter = yield this.getNearestSupportCenter(service.supportCenters);
                 if (nearestSupportCenter)
                     supportCenters.push(nearestSupportCenter);

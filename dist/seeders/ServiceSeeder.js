@@ -23,11 +23,17 @@ const seedServices = () => __awaiter(void 0, void 0, void 0, function* () {
         const pompier = yield Service_1.Service.create({
             name: 'pompier',
         });
-        yield Trouble_1.Trouble.findOneAndUpdate({ name: 'accident' }, { services: [centreSante, gendarmerie] });
-        yield Trouble_1.Trouble.findOneAndUpdate({ name: 'incendie' }, { services: [centreSante, gendarmerie, pompier] });
-        yield Trouble_1.Trouble.findOneAndUpdate({ name: 'braquage' }, { services: [centreSante, gendarmerie] });
-        yield Trouble_1.Trouble.findOneAndUpdate({ name: 'inondation' }, { services: [pompier] });
-        yield Trouble_1.Trouble.findOneAndUpdate({ name: 'meurtre' }, { services: [centreSante, gendarmerie] });
+        const accident = yield Trouble_1.Trouble.findOneAndUpdate({ name: 'accident' }, { services: [centreSante, gendarmerie] });
+        const incendie = yield Trouble_1.Trouble.findOneAndUpdate({ name: 'incendie' }, { services: [centreSante, gendarmerie, pompier] });
+        const braquage = yield Trouble_1.Trouble.findOneAndUpdate({ name: 'braquage' }, { services: [gendarmerie] });
+        const inondation = yield Trouble_1.Trouble.findOneAndUpdate({ name: 'inondation' }, { services: [pompier] });
+        const meurtre = yield Trouble_1.Trouble.findOneAndUpdate({ name: 'meurtre' }, { services: [centreSante, gendarmerie] });
+        centreSante.troubles = [accident, incendie, meurtre];
+        yield centreSante.save();
+        gendarmerie.troubles = [accident, incendie, meurtre, braquage];
+        yield gendarmerie.save();
+        pompier.troubles = [incendie, inondation];
+        yield pompier.save();
         console.log('Services seeded successfully');
     }
     catch (error) {
