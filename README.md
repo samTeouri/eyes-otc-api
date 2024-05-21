@@ -55,7 +55,7 @@ Ce document décrit les différentes routes d'authentification disponibles dans 
 
 Permet à un citoyen de s'inscrire dans le système.
 
-- **URL** : `/auth/register`
+- **URL** : `/api/auth/register`
 - **Méthode** : `POST`
 - **Paramètres du body** :
   - `lastName` (string, obligatoire) : Nom de famille.
@@ -73,24 +73,9 @@ Permet à un citoyen de s'inscrire dans le système.
 
 Permet à un citoyen de se connecter au système.
 
-- **URL** : `/auth/login`
+- **URL** : `/api/auth/login`
 - **Méthode** : `POST`
 - **Paramètres du body** :
-  - `identifier` (string, obligatoire) : Identifiant (e-mail ou numéro de téléphone).
-  - `password` (string, obligatoire) : Mot de passe.
-- **Réponses** :
-  - `200 OK` : Connexion réussie. Retourne l'utilisateur et un jeton d'authentification en plus du jeton de rafraîchissement.
-  - `400 Bad Request` : Erreur de validation des données.
-  - `401 Unauthorized` : Identifiants invalides.
-  - `500 Internal Server Error` : Erreur interne du serveur.
-
-#### Connexion d'un administrateur
-
-Permet à un administrateur de se connecter au système.
-
-- **URL** : `/auth/admin/login`
-- **Méthode** : `POST`
-- **Paramètres du corps** :
   - `identifier` (string, obligatoire) : Identifiant (e-mail ou numéro de téléphone).
   - `password` (string, obligatoire) : Mot de passe.
 - **Réponses** :
@@ -103,7 +88,7 @@ Permet à un administrateur de se connecter au système.
 
 Rafraîchissement du token d'authorisation
 
-- **URL** : `/auth/refreshToken`
+- **URL** : `/api/auth/refreshToken`
 - **Méthode** : `POST`
 - **Réponses** :
   - `200 OK` : Rafraîchissement réussi. Retourne un jeton d'authentification et un jeton de rafraîchissement.
@@ -117,7 +102,7 @@ Rafraîchissement du token d'authorisation
 
 Permet de récupérer tous les utilisateurs inscrits sur la plateforme.
 
-- **URL** : `/user/index`
+- **URL** : `/api/user/index`
 - **Méthode** : `GET`
 - **En-tête requis** :
   - `Authorization-Token` : Jeton d'authentification valide.
@@ -131,7 +116,7 @@ Permet de récupérer tous les utilisateurs inscrits sur la plateforme.
 
 Permet de récupérer les informations liées à l'utilisateur.
 
-- **URL** : `/user/infos/:userId`
+- **URL** : `/api/user/infos/:userId`
 - **Méthode** : `GET`
 - **Paramètres de l'URL** :
   - `userId` (string, obligatoire) : Identifiant de l'utilisateur.
@@ -147,7 +132,7 @@ Permet de récupérer les informations liées à l'utilisateur.
 
 Permet à un utilisateur connecté de changer son propre mot de passe.
 
-- **URL** : `/user/changePassword`
+- **URL** : `/api/user/changePassword`
 - **Méthode** : `POST`
 - **Paramètres du corps** :
   - `newPassword` (string, obligatoire) : Nouveau mot de passe.
@@ -165,7 +150,7 @@ Permet à un utilisateur connecté de changer son propre mot de passe.
 
 Permet à un utilisateur connecté de modifier ses informations.
 
-- **URL** : `/user/update`
+- **URL** : `/api/user/update`
 - **Méthode** : `POST`
 - **Paramètres du corps** :
   - `firstName` (string, facultatif) : Prénom.
@@ -190,7 +175,7 @@ Permet à un utilisateur connecté de modifier ses informations.
 
 Permet de signaler un nouvel incident.
 
-- **URL** : `/incidents/report`
+- **URL** : `/api/incidents/report`
 - **Méthode** : `POST`
 - **Paramètres du corps** :
   - `description` (string, facultatif) : Texte descriptif de l'incident.
@@ -213,7 +198,7 @@ Permet de signaler un nouvel incident.
 
 Permet de modifier un incident.
 
-- **URL** : `/incidents/update/:incidentId`
+- **URL** : `/api/incidents/update/:incidentId`
 - **Méthode** : `POST`
 - **Paramètres de l'URL** :
   - `incidentId` (string, obligatoire) : Identifiant de l'incident à modifier.
@@ -238,7 +223,7 @@ Permet de modifier un incident.
 
 Permet d'obtenir les détails d'un incident.
 
-- **URL** : `/incidents/:incidentId`
+- **URL** : `/api/incidents/:incidentId`
 - **Méthode** : `GET`
 - **Paramètres de l'URL** :
   - `incidentId` (string, obligatoire) : Identifiant de l'incident.
@@ -254,7 +239,7 @@ Permet d'obtenir les détails d'un incident.
 
 Permet à un centre de support d'accepter ou décliner la prise en charge d'un incident existant.
 
-- **URL** : `/incidents/handle/:incidentId`
+- **URL** : `/api/incidents/handle/:incidentId`
 - **Méthode** : `POST`
 - **Paramètres de l'URL** :
   - `incidentId` (string, obligatoire) : Identifiant de l'incident à traiter.
@@ -273,7 +258,7 @@ Permet à un centre de support d'accepter ou décliner la prise en charge d'un i
 
 Permet à un centre de support d'obtenir les incidents qui lui sont associés.
 
-- **URL** : `/incidents/supportCenter/:supportCenterId`
+- **URL** : `/api/incidents/supportCenter/:supportCenterId`
 - **Méthode** : `GET`
 - **Paramètres de l'URL** :
   - `supportCenterId` (string, obligatoire) : Identifiant du centre de support pour lequel obtenir les incidents.
@@ -289,7 +274,7 @@ Permet à un centre de support d'obtenir les incidents qui lui sont associés.
 
 Permet d'obtenir les incidents associés à un utilisateur spécifique.
 
-- **URL** : `/incidents/user/:userId`
+- **URL** : `/api/incidents/user/:userId`
 - **Méthode** : `GET`
 - **Paramètres de l'URL** :
   - `userId` (string, obligatoire) : Identifiant de l'utilisateur.
@@ -307,7 +292,7 @@ Permet d'obtenir les incidents associés à un utilisateur spécifique.
 
 Permet de récupérer toutes les catégories d'incident possibles.
 
-- **URL** : `/troubles/index`
+- **URL** : `/api/troubles/index`
 - **Méthode** : `GET`
 - **En-tête requis** :
   - `Authorization-Token` : Jeton d'authentification valide.
@@ -323,7 +308,7 @@ Permet de récupérer toutes les catégories d'incident possibles.
 
 Permet de récupérer le centre de support actuellement connecté au dashboard admin.
 
-- **URL** : `/supportCenter/connected`
+- **URL** : `/api/supportCenter/connected`
 - **Méthode** : `GET`
 - **En-tête requis** :
   - `Authorization-Token` : Jeton d'authentification valide.
@@ -337,7 +322,7 @@ Permet de récupérer le centre de support actuellement connecté au dashboard a
 
 Permet de récupérer tous les centres de support actuellement enregistrés dans la base.
 
-- **URL** : `/supportCenter/index`
+- **URL** : `/api/supportCenter/index`
 - **Méthode** : `GET`
 - **En-tête requis** :
   - `Authorization-Token` : Jeton d'authentification valide.
