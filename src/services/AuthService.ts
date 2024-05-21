@@ -3,6 +3,7 @@ import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { RequestValidationService } from "./RequestValidationService";
 import { Request, Response } from "express";
+import { ISupportCenter, SupportCenter } from "../models/SupportCenter";
 
 const requestValidationService = new RequestValidationService();
 
@@ -43,7 +44,7 @@ export class AuthService {
         return isPasswordMatching;
     }
 
-    userLogging = async (user: IUser, password: string,res: Response): Promise<Response> => {
+    userApiLogging = async (user: IUser, password: string,res: Response): Promise<Response> => {
         // User with given identifier exist
         if (user) {
             // Check if given password is correct
@@ -65,5 +66,26 @@ export class AuthService {
             return res.status(401).json({ error: 'Email or phone doesn\'t exist' });
         }
 
+    }
+
+    userWebLogging = async (user: IUser, password: string, req: Request): Promise<boolean> => {
+        try {
+            // Check if given password is correct
+            if (!(await this.checkPassword(user, password))) {
+                req.session.errorMessage = 'Incorrect password';
+                return false
+            };
+
+            const supportCenter = await SupportCenter.findOne({ user: user });
+            const session: any = req.session;
+            session.isAuthenticated = true;
+            session.user = user;
+            session.supportCenter = supportCenter;
+
+            return true;
+        } catch (error) {
+            console.log(`Error while login : ${error}`);
+            return false;
+        }
     }
 }

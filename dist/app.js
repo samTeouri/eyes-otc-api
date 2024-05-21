@@ -37,9 +37,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
 const express_1 = __importDefault(require("express"));
+const express_session_1 = __importDefault(require("express-session"));
 const database = __importStar(require("./config/database"));
 const cors_1 = __importDefault(require("cors"));
 const body_parser_1 = __importDefault(require("body-parser"));
+const IncidentRoutes_1 = require("./routes/api/IncidentRoutes");
+const AuthRoutes_1 = require("./routes/api/AuthRoutes");
+const TroubleRoutes_1 = require("./routes/api/TroubleRoutes");
+const SupportCenterRoutes_1 = require("./routes/api/SupportCenterRoutes");
+const UserRoutes_1 = require("./routes/api/UserRoutes");
+const AuthRoutes_2 = require("./routes/web/AuthRoutes");
+const ViewsRoutes_1 = require("./routes/web/ViewsRoutes");
+const AuthMiddlewares_1 = require("./middlewares/AuthMiddlewares");
+const FlashMessagesMiddleware_1 = require("./middlewares/FlashMessagesMiddleware");
 (() => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Connect to the database
@@ -50,25 +60,43 @@ const body_parser_1 = __importDefault(require("body-parser"));
         console.error(`Database connection failed: ${error}`);
     }
 }))();
-const IncidentRoutes_1 = require("./routes/IncidentRoutes");
-const AuthRoutes_1 = require("./routes/AuthRoutes");
-const TroubleRoutes_1 = require("./routes/TroubleRoutes");
-const SupportCenterRoutes_1 = require("./routes/SupportCenterRoutes");
-const UserRoutes_1 = require("./routes/UserRoutes");
 exports.app = (0, express_1.default)();
-// Middlewares
+// Set the view engine to ejs
+exports.app.set('view engine', 'ejs');
+// Set static folders
+exports.app.use(express_1.default.static('public'));
+exports.app.use(express_1.default.static('node_modules'));
+// Set session
+exports.app.use((0, express_session_1.default)({
+    secret: 'ANDJ673+=22YvrfdIS2E22AE2eNJKF92',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        maxAge: 5 * 60 * 1000,
+    }
+}));
+// Middleware for checking if user is authenticated
+exports.app.use(AuthMiddlewares_1.isAuthenticated);
+// Middleware to set flash messages
+exports.app.use(FlashMessagesMiddleware_1.setFlashMessages);
+// Cross-Origin Middleware
 exports.app.use((0, cors_1.default)());
 // Parse request and put data in body
 exports.app.use(body_parser_1.default.json());
 exports.app.use(body_parser_1.default.urlencoded({ extended: true }));
-// Routes
+// API Routes
 // Incident routes
-exports.app.use('/incidents', IncidentRoutes_1.incidentRouter);
+exports.app.use('/api/incidents', IncidentRoutes_1.incidentRouter);
 // Authentication routes
-exports.app.use('/auth', AuthRoutes_1.authRoutes);
+exports.app.use('/api/auth', AuthRoutes_1.authRoutes);
 // Trouble routes
-exports.app.use('/troubles', TroubleRoutes_1.troubleRouter);
+exports.app.use('/api/troubles', TroubleRoutes_1.troubleRouter);
 // Support Centers routes
-exports.app.use('/supportCenter', SupportCenterRoutes_1.supportCenterRouter);
+exports.app.use('/api/supportCenter', SupportCenterRoutes_1.supportCenterRouter);
 // Users routes
-exports.app.use('/user', UserRoutes_1.userRouter);
+exports.app.use('/api/user', UserRoutes_1.userRouter);
+// Web Routes
+// Authentication Routes
+exports.app.use('/auth', AuthRoutes_2.adminAuthRoutes);
+// Views Routes
+exports.app.use('/', ViewsRoutes_1.viewsRoutes);

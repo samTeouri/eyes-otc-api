@@ -37,6 +37,7 @@ const User_1 = require("../models/User");
 const bcrypt = __importStar(require("bcrypt"));
 const jwt = __importStar(require("jsonwebtoken"));
 const RequestValidationService_1 = require("./RequestValidationService");
+const SupportCenter_1 = require("../models/SupportCenter");
 const requestValidationService = new RequestValidationService_1.RequestValidationService();
 class AuthService {
     constructor() {
@@ -73,7 +74,7 @@ class AuthService {
             const isPasswordMatching = yield bcrypt.compare(password, user.password);
             return isPasswordMatching;
         });
-        this.userLogging = (user, password, res) => __awaiter(this, void 0, void 0, function* () {
+        this.userApiLogging = (user, password, res) => __awaiter(this, void 0, void 0, function* () {
             // User with given identifier exist
             if (user) {
                 // Check if given password is correct
@@ -92,6 +93,26 @@ class AuthService {
             else {
                 // User with given identifier doesn't exist
                 return res.status(401).json({ error: 'Email or phone doesn\'t exist' });
+            }
+        });
+        this.userWebLogging = (user, password, req) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                // Check if given password is correct
+                if (!(yield this.checkPassword(user, password))) {
+                    req.session.errorMessage = 'Incorrect password';
+                    return false;
+                }
+                ;
+                const supportCenter = yield SupportCenter_1.SupportCenter.findOne({ user: user });
+                const session = req.session;
+                session.isAuthenticated = true;
+                session.user = user;
+                session.supportCenter = supportCenter;
+                return true;
+            }
+            catch (error) {
+                console.log(`Error while login : ${error}`);
+                return false;
             }
         });
     }
