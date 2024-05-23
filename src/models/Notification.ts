@@ -5,7 +5,7 @@ import { ISupportCenter } from './SupportCenter';
 // Interface pour représenter les données d'une notification
 export interface INotification extends Document {
     isHandled: boolean;
-    state: 'prise en charge en cours' | 'en attente de prise en charge' | 'résolu';
+    state: 'en attente de prise en charge' | 'prise en charge en cours' | 'résolu';
     supportCenter: ISupportCenter;
     incident: IIncident;
     createdAt: Date;

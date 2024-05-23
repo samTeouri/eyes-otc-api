@@ -42,12 +42,12 @@ export const adminLogin = async (req: Request, res: Response) => {
             }
             return res.redirect('/dashboard')
         } else {
-            req.session.errorMessage = 'User with this email doesn\'t exists';
+            req.session.errorMessage = 'Aucun utilisateur n\'est enregistré avec cet email';
             return res.redirect('/auth/login');
         }
     } catch (error) {
         console.log(error);
-        req.session.errorMessage = 'Error while login contact the site administrator';
+        req.session.errorMessage = 'Erreur lors de la connexion contactez l\'administrateur du site';
         return res.redirect('/auth/login');
     }
 }

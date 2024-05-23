@@ -33,9 +33,9 @@ export const reportIncident = async (req: Request, res: Response) => {
             var trouble = await Trouble.findById(troubleId);
             troublesArray.push(trouble as ITrouble);
         });
-        
+
         await Promise.all(troublePromises);
-        
+
         // Find user by ID
         const user = await User.findById(req.body.user.id);
 
@@ -57,8 +57,13 @@ export const reportIncident = async (req: Request, res: Response) => {
 
         await Promise.all(supportCenters);
 
-        // Set support centers
-        incident.supportCenters = supportCenters;
+        // Notify support centers
+        for (const supportCenter of supportCenters) {
+            await Notification.create({
+                supportCenter: supportCenter,
+                incident: incident,
+            });
+        }
 
         // Save incident
         await incident.save();
@@ -71,64 +76,6 @@ export const reportIncident = async (req: Request, res: Response) => {
     } catch (error) {
         console.log(error);
         return res.status(500).json({ error: 'Error while reporting incident' });
-    }
-}
-
-export const handleIncident = async (req: Request, res: Response) => {
-    try {
-        // Validate form values and manage errors
-        requestValidationService.validateRequest(req, res);
-
-        // Get isHandled from request body
-        const { isHandled } = req.body;
-
-        // Find user by ID
-        const user = await User.findById(req.body.user.id);
-
-        if (user) {
-            await Role.findOne({ name: 'supportCenter' })
-                .then(async (role: IRole | null) => {
-                    if (role) {
-                        roleService.checkRole(user, role, res);
-                    }
-                })
-                .catch(async (reason: any) => {
-                    throw reason;
-                });
-        }
-
-        // Find incident by ID
-        const incident = await Incident.findById(req.params.incidentId);
-
-        if (incident) {
-            // Get Connected supportCenter
-            const supportCenter = await SupportCenter.findOne({ user: user });
-
-            // Update incident notification
-            const notification = await Notification.findOne({ incident: incident._id, supportCenter: supportCenter });
-            if (notification) {
-                notification.isHandled = isHandled;
-                await notification.save();
-                // Send response
-                if (isHandled) {
-                    notification.state = 'prise en charge en cours';
-                    await notification.save();
-                    return res.status(201).json({ message: 'Incident handled successfully!' });
-                } else {
-                    if (supportCenter) {
-                        const index = incident.supportCenters.indexOf(supportCenter);
-                        const _supportCenter = await incident.getNextNearestSupportCenter(supportCenter);
-                        incident.supportCenters.splice(index, 1);
-                        incident.supportCenters.push(_supportCenter as ISupportCenter);
-                        await incident.save();
-                    }
-                    return res.status(201).json({ message: 'Incident declined successfully!' });
-                }
-            }
-        }
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: 'Error while incident handling' });
     }
 }
 

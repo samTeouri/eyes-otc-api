@@ -9,14 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserIncidents = exports.getSupportCenterIncidents = exports.notificationState = exports.getIncidentDetails = exports.updateIncident = exports.handleIncident = exports.reportIncident = void 0;
+exports.getUserIncidents = exports.getSupportCenterIncidents = exports.notificationState = exports.getIncidentDetails = exports.updateIncident = exports.reportIncident = void 0;
 const Incident_1 = require("../../models/Incident");
 const User_1 = require("../../models/User");
 const Notification_1 = require("../../models/Notification");
 const SupportCenter_1 = require("../../models/SupportCenter");
 const RequestValidationService_1 = require("../../services/RequestValidationService");
 const Location_1 = require("../../models/Location");
-const Role_1 = require("../../models/Role");
 const RoleService_1 = require("../../services/RoleService");
 const Trouble_1 = require("../../models/Trouble");
 const requestValidationService = new RequestValidationService_1.RequestValidationService();
@@ -55,8 +54,13 @@ const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
         // Get concerned support centers
         const supportCenters = yield incident.getConcernedSupportCenters();
         yield Promise.all(supportCenters);
-        // Set support centers
-        incident.supportCenters = supportCenters;
+        // Notify support centers
+        for (const supportCenter of supportCenters) {
+            yield Notification_1.Notification.create({
+                supportCenter: supportCenter,
+                incident: incident,
+            });
+        }
         // Save incident
         yield incident.save();
         yield (user === null || user === void 0 ? void 0 : user.incidents.push(incident));
@@ -69,60 +73,6 @@ const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.reportIncident = reportIncident;
-const handleIncident = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        // Validate form values and manage errors
-        requestValidationService.validateRequest(req, res);
-        // Get isHandled from request body
-        const { isHandled } = req.body;
-        // Find user by ID
-        const user = yield User_1.User.findById(req.body.user.id);
-        if (user) {
-            yield Role_1.Role.findOne({ name: 'supportCenter' })
-                .then((role) => __awaiter(void 0, void 0, void 0, function* () {
-                if (role) {
-                    roleService.checkRole(user, role, res);
-                }
-            }))
-                .catch((reason) => __awaiter(void 0, void 0, void 0, function* () {
-                throw reason;
-            }));
-        }
-        // Find incident by ID
-        const incident = yield Incident_1.Incident.findById(req.params.incidentId);
-        if (incident) {
-            // Get Connected supportCenter
-            const supportCenter = yield SupportCenter_1.SupportCenter.findOne({ user: user });
-            // Update incident notification
-            const notification = yield Notification_1.Notification.findOne({ incident: incident._id, supportCenter: supportCenter });
-            if (notification) {
-                notification.isHandled = isHandled;
-                yield notification.save();
-                // Send response
-                if (isHandled) {
-                    notification.state = 'prise en charge en cours';
-                    yield notification.save();
-                    return res.status(201).json({ message: 'Incident handled successfully!' });
-                }
-                else {
-                    if (supportCenter) {
-                        const index = incident.supportCenters.indexOf(supportCenter);
-                        const _supportCenter = yield incident.getNextNearestSupportCenter(supportCenter);
-                        incident.supportCenters.splice(index, 1);
-                        incident.supportCenters.push(_supportCenter);
-                        yield incident.save();
-                    }
-                    return res.status(201).json({ message: 'Incident declined successfully!' });
-                }
-            }
-        }
-    }
-    catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: 'Error while incident handling' });
-    }
-});
-exports.handleIncident = handleIncident;
 const updateIncident = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Validate form values and manage errors

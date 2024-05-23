@@ -99,7 +99,7 @@ class AuthService {
             try {
                 // Check if given password is correct
                 if (!(yield this.checkPassword(user, password))) {
-                    req.session.errorMessage = 'Incorrect password';
+                    req.session.errorMessage = 'Mot de passe incorrect';
                     return false;
                 }
                 ;
