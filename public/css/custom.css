@@ -1,0 +1,11 @@
+.more-description { 
+    display: none;
+}
+
+p.description:hover {
+    display: none;
+}
+
+p.description:hover + .more-description {
+    display: inline-block;
+}

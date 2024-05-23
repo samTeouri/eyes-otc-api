@@ -50,7 +50,6 @@ incidentSchema.methods.getDistanceToSupportCenter = async function (this: IIncid
             [this.location.longitude, this.location.latitude],
             [supportCenter.location.longitude, supportCenter.location.latitude]
         );
-        console.log(distance);
         return distance;
     } catch (error) {
         console.error(`Error while getting distance to Support Center: ${error}`);

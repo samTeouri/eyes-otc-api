@@ -72,7 +72,7 @@ exports.app.use((0, express_session_1.default)({
     resave: false,
     saveUninitialized: true,
     cookie: {
-        maxAge: 5 * 60 * 1000,
+        maxAge: 2 * 60 * 60 * 1000,
     }
 }));
 // Middleware for checking if user is authenticated

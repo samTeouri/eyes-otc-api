@@ -38,7 +38,7 @@ export const authVerifyWebToken = (req: Request, res: Response, next: NextFuncti
     const isAuthenticated = session.isAuthenticated
 
     if (!isAuthenticated) {
-        req.session.errorMessage = 'You need to login first.'
+        req.session.errorMessage = 'Veuilez vous connecter d\'abord.'
         res.redirect('/auth/login');
     } else {
         next();

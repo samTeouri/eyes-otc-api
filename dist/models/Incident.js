@@ -36,7 +36,6 @@ incidentSchema.methods.getDistanceToSupportCenter = function (supportCenter) {
             throw new Error('Support Center not found');
         try {
             const distance = yield osrm.getDistance([this.location.longitude, this.location.latitude], [supportCenter.location.longitude, supportCenter.location.latitude]);
-            console.log(distance);
             return distance;
         }
         catch (error) {

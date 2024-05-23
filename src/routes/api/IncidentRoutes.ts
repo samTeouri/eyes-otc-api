@@ -1,5 +1,4 @@
 import * as express from 'express';
-import { body } from "express-validator";
 import * as incidentController from '../../controllers/api/IncidentController';
 import { authVerifyApiToken } from '../../middlewares/AuthMiddlewares';
 import { uploadFile } from '../../middlewares/FilesUploadMiddleware';
@@ -11,15 +10,6 @@ incidentRouter.post('/report',
     uploadFile.fields([{ name: 'picture', maxCount: 1 }, { name: 'video', maxCount: 1 }, { name: 'audio', maxCount: 1 }]),
     authVerifyApiToken,
     incidentController.reportIncident,
-);
-
-// Handle an incident
-incidentRouter.post('/handle/:incidentId',
-    [
-        body('isHandled').exists()
-    ],
-    authVerifyApiToken,
-    incidentController.handleIncident,
 );
 
 // Update an incident

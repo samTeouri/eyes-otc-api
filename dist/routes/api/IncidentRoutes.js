@@ -25,17 +25,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.incidentRouter = void 0;
 const express = __importStar(require("express"));
-const express_validator_1 = require("express-validator");
 const incidentController = __importStar(require("../../controllers/api/IncidentController"));
 const AuthMiddlewares_1 = require("../../middlewares/AuthMiddlewares");
 const FilesUploadMiddleware_1 = require("../../middlewares/FilesUploadMiddleware");
 exports.incidentRouter = express.Router();
 // Report an incident
 exports.incidentRouter.post('/report', FilesUploadMiddleware_1.uploadFile.fields([{ name: 'picture', maxCount: 1 }, { name: 'video', maxCount: 1 }, { name: 'audio', maxCount: 1 }]), AuthMiddlewares_1.authVerifyApiToken, incidentController.reportIncident);
-// Handle an incident
-exports.incidentRouter.post('/handle/:incidentId', [
-    (0, express_validator_1.body)('isHandled').exists()
-], AuthMiddlewares_1.authVerifyApiToken, incidentController.handleIncident);
 // Update an incident
 exports.incidentRouter.post('/update/:incidentId', AuthMiddlewares_1.authVerifyApiToken, incidentController.updateIncident);
 // Get incident details

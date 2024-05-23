@@ -10,3 +10,5 @@ const AuthMiddlewares_1 = require("../../middlewares/AuthMiddlewares");
 exports.viewsRoutes = express_1.default.Router();
 // Show dashboard route
 exports.viewsRoutes.get('/dashboard', AuthMiddlewares_1.authVerifyWebToken, ViewsController_1.getDashboard);
+// Show dashboard route
+exports.viewsRoutes.get('/incidents/', AuthMiddlewares_1.authVerifyWebToken, ViewsController_1.getIncidents);
