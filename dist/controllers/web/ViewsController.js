@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getIncidents = exports.getDashboard = void 0;
+exports.getIncidents = exports.getMap = exports.getDashboard = void 0;
 const ejs_1 = __importDefault(require("ejs"));
 const path_1 = __importDefault(require("path"));
 const Incident_1 = require("../../models/Incident");
@@ -23,6 +23,18 @@ const getDashboard = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     });
 });
 exports.getDashboard = getDashboard;
+const getMap = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const incidents = yield Incident_1.Incident.find().populate('location');
+    for (const incident of incidents) {
+        console.log(incident);
+    }
+    return res.render('pages/main', {
+        content: yield ejs_1.default.renderFile(path_1.default.join(__dirname, '../../../views/pages', 'map.ejs'), {
+            incidents: incidents,
+        })
+    });
+});
+exports.getMap = getMap;
 const getIncidents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Get session data
     const session = req.session;

@@ -40,16 +40,25 @@ export const reportIncident = async (req: Request, res: Response) => {
 
         const files = req.files as {[fieldname: string]: Express.Multer.File[]};
 
-        // Create incident
-        const incident = new Incident({
+        let incident = new Incident({
             description: description,
-            picture: files['picture'][0].filename,
-            video: files['video'][0].filename,
-            audio: files['audio'][0].filename,
             user: user,
             location: location,
             troubles: troublesArray,
         });
+
+        // Create incident
+        if (files['audio']) {
+            incident.audio = files['audio'][0].filename;
+        }
+        
+        if (files['picture']) {
+            incident.video = files['video'][0].filename;
+        }
+        
+        if (files['video']) {
+            incident.video = files['video'][0].filename;
+        }
 
         // Get concerned support centers
         const supportCenters = await incident.getConcernedSupportCenters();

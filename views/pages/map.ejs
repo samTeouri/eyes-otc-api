@@ -1,0 +1,15 @@
+<div
+    class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+>
+    <div id="map">
+
+    </div>
+</div>
+<script type="text/javascript">
+    var map = L.map('map').setView([6.1690, -0.09], 1.2221);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+</script>

@@ -16,4 +16,5 @@ exports.viewsRoutes.get('', (req, res) => {
 exports.viewsRoutes.get('/dashboard', AuthMiddlewares_1.authVerifyWebToken, ViewsController_1.getDashboard);
 // Show dashboard route
 exports.viewsRoutes.get('/incidents/', AuthMiddlewares_1.authVerifyWebToken, ViewsController_1.getIncidents);
-// Show profile
+// Show incidents with map
+exports.viewsRoutes.get('/map', AuthMiddlewares_1.authVerifyWebToken, ViewsController_1.getMap);
