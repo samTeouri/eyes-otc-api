@@ -13,3 +13,5 @@ p.description:hover + .more-description {
 .hide {
     display: none;
 }
+
+#map { height: 180px; }

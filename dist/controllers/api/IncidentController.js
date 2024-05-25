@@ -41,16 +41,22 @@ const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
         // Find user by ID
         const user = yield User_1.User.findById(req.body.user.id);
         const files = req.files;
-        // Create incident
-        const incident = new Incident_1.Incident({
+        let incident = new Incident_1.Incident({
             description: description,
-            picture: files['picture'][0].filename,
-            video: files['video'][0].filename,
-            audio: files['audio'][0].filename,
             user: user,
             location: location,
             troubles: troublesArray,
         });
+        // Create incident
+        if (files['audio']) {
+            incident.audio = files['audio'][0].filename;
+        }
+        if (files['picture']) {
+            incident.video = files['video'][0].filename;
+        }
+        if (files['video']) {
+            incident.video = files['video'][0].filename;
+        }
         // Get concerned support centers
         const supportCenters = yield incident.getConcernedSupportCenters();
         yield Promise.all(supportCenters);

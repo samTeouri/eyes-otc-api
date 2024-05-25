@@ -10,6 +10,21 @@ export const getDashboard = async (req: Request, res: Response) => {
     });
 }
 
+export const getMap = async (req: Request, res: Response) => {
+
+    const incidents = await Incident.find().populate('location');
+
+    for (const incident of incidents) {
+        console.log(incident);
+    }
+
+    return res.render('pages/main', {
+        content: await ejs.renderFile(path.join(__dirname, '../../../views/pages', 'map.ejs'), {
+            incidents: incidents,
+        })
+    });
+}
+
 export const getIncidents = async (req: Request, res: Response) => {
     // Get session data
     const session: any = req.session
