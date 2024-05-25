@@ -9,3 +9,7 @@ p.description:hover {
 p.description:hover + .more-description {
     display: inline-block;
 }
+
+.hide {
+    display: none;
+}

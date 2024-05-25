@@ -50,6 +50,7 @@ const AuthRoutes_2 = require("./routes/web/AuthRoutes");
 const ViewsRoutes_1 = require("./routes/web/ViewsRoutes");
 const AuthMiddlewares_1 = require("./middlewares/AuthMiddlewares");
 const FlashMessagesMiddleware_1 = require("./middlewares/FlashMessagesMiddleware");
+const IncidentRoutes_2 = require("./routes/web/IncidentRoutes");
 (() => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Connect to the database
@@ -86,7 +87,7 @@ exports.app.use(body_parser_1.default.json());
 exports.app.use(body_parser_1.default.urlencoded({ extended: true }));
 // API Routes
 // Incident routes
-exports.app.use('/api/incidents', IncidentRoutes_1.incidentRouter);
+exports.app.use('/api/incidents', IncidentRoutes_1.incidentApiRouter);
 // Authentication routes
 exports.app.use('/api/auth', AuthRoutes_1.authRoutes);
 // Trouble routes
@@ -100,3 +101,5 @@ exports.app.use('/api/user', UserRoutes_1.userRouter);
 exports.app.use('/auth', AuthRoutes_2.adminAuthRoutes);
 // Views Routes
 exports.app.use('/', ViewsRoutes_1.viewsRoutes);
+// Views Routes
+exports.app.use('/incidents', IncidentRoutes_2.incidentWebRouter);

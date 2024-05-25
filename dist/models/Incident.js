@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Incident = void 0;
 const mongoose_1 = require("mongoose");
 const OSMRoutingService_1 = require("../services/OSMRoutingService");
+const Location_1 = require("./Location");
 const Trouble_1 = require("./Trouble");
 const Service_1 = require("./Service");
 const Tools_1 = require("../utils/Tools");
@@ -35,8 +36,12 @@ incidentSchema.methods.getDistanceToSupportCenter = function (supportCenter) {
         if (!supportCenter)
             throw new Error('Support Center not found');
         try {
-            const distance = yield osrm.getDistance([this.location.longitude, this.location.latitude], [supportCenter.location.longitude, supportCenter.location.latitude]);
-            return distance;
+            const incidentLocation = yield Location_1.Location.findById(this.location);
+            const supportCenterLocation = yield Location_1.Location.findById(supportCenter.location);
+            if (supportCenterLocation && incidentLocation) {
+                const distance = yield osrm.getDistance([incidentLocation.longitude, incidentLocation.latitude], [supportCenterLocation.longitude, supportCenterLocation.latitude]);
+                return distance;
+            }
         }
         catch (error) {
             console.error(`Error while getting distance to Support Center: ${error}`);
@@ -62,11 +67,14 @@ incidentSchema.methods.getNextNearestSupportCenter = function (supportCenter) {
     return __awaiter(this, void 0, void 0, function* () {
         let distance = yield this.getDistanceToSupportCenter(supportCenter);
         let nearestSupportCenter = null;
-        for (let _supportCenter of supportCenter.service.supportCenters) {
-            const distanceToSupportCenter = yield this.getDistanceToSupportCenter(_supportCenter.id);
-            if (distanceToSupportCenter < distance && !this.supportCenters.includes(_supportCenter)) {
-                distance = distanceToSupportCenter;
-                nearestSupportCenter = supportCenter;
+        const service = yield Service_1.Service.findOne({ id: supportCenter.service });
+        if (service) {
+            for (let _supportCenter of service.supportCenters) {
+                const distanceToSupportCenter = yield this.getDistanceToSupportCenter(_supportCenter.id);
+                if (distanceToSupportCenter < distance && !this.supportCenters.includes(_supportCenter)) {
+                    distance = distanceToSupportCenter;
+                    nearestSupportCenter = supportCenter;
+                }
             }
         }
         return nearestSupportCenter;

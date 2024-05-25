@@ -3,7 +3,7 @@ import session, { Session, SessionData } from 'express-session'
 import * as database from './config/database';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import { incidentRouter } from "./routes/api/IncidentRoutes";
+import { incidentApiRouter } from "./routes/api/IncidentRoutes";
 import { authRoutes } from './routes/api/AuthRoutes';
 import { troubleRouter } from './routes/api/TroubleRoutes';
 import { supportCenterRouter } from './routes/api/SupportCenterRoutes';
@@ -14,6 +14,7 @@ import { IUser } from './models/User';
 import { ISupportCenter } from './models/SupportCenter';
 import { isAuthenticated } from './middlewares/AuthMiddlewares';
 import { setFlashMessages } from './middlewares/FlashMessagesMiddleware';
+import { incidentWebRouter } from './routes/web/IncidentRoutes';
 
 declare module 'express-session' {
     interface SessionData {
@@ -76,7 +77,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // API Routes
 // Incident routes
-app.use('/api/incidents', incidentRouter);
+app.use('/api/incidents', incidentApiRouter);
 
 // Authentication routes
 app.use('/api/auth', authRoutes);
@@ -96,3 +97,6 @@ app.use('/auth', adminAuthRoutes);
 
 // Views Routes
 app.use('/', viewsRoutes);
+
+// Views Routes
+app.use('/incidents', incidentWebRouter);

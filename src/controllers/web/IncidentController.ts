@@ -23,39 +23,56 @@ export const handleIncident = async (req: Request, res: Response) => {
         if (incident) {
             // Get Connected supportCenter
             const supportCenter = session.supportCenter
-
-            // Update incident notification
-            const notification = await Notification.findOneAndUpdate(
-                {
-                    incident: incident._id,
-                    supportCenter: supportCenter
-                },
-                {
-                    isHandled: isHandled
-                }
-            );
-
-            if (notification) {
-                // Send response
-                if (isHandled) {
-                    await incident.supportCenters.push(supportCenter as ISupportCenter);
-                    req.session.successMessage = 'Incident pris en charge avec succès';
-                    return res.redirect('/incidents');
-                } else {
-                    if (supportCenter) {
-                        const _supportCenter = await incident.getNextNearestSupportCenter(supportCenter);
-                        await Notification.create({
-                            supportCenter: _supportCenter,
-                            incident: incident,
-                        });
+            
+            if (isHandled != 2) {
+                // Update incident notification
+                const notification = await Notification.findOneAndUpdate(
+                    {
+                        incident: incident._id,
+                        supportCenter: supportCenter
+                    },
+                    {
+                        isHandled: isHandled
                     }
-                    req.session.successMessage = 'Prise en charge de l\'incident déclinée avec succès';
-                    return res.redirect('/incidents');
+                );
+
+                if (notification) {
+                    // Send response
+                    if (isHandled == 1) {
+                        await incident.supportCenters.push(supportCenter as ISupportCenter);
+                        notification.state = 'prise en charge en cours';
+                        await notification.save();
+                        req.session.successMessage = 'Incident pris en charge';
+                        return res.redirect('/incidents');
+                    } else  if (isHandled == 0) {
+                        if (supportCenter) {
+                            await Notification.findByIdAndDelete(notification._id)
+                            const _supportCenter = await incident.getNextNearestSupportCenter(supportCenter);
+                            await Notification.create({
+                                supportCenter: _supportCenter,
+                                incident: incident,
+                            });
+                        }
+                        req.session.successMessage = 'Prise en charge de l\'incident déclinée';
+                        return res.redirect('/incidents');
+                    }
                 }
+            } else {
+                const i =await Notification.findOneAndUpdate(
+                    {
+                        incident: incident._id,
+                        supportCenter: supportCenter
+                    },
+                    {
+                        state: 'résolu'
+                    }
+                );
+                req.session.successMessage = 'Incident marqué comme résolu';
+                return res.redirect('/incidents');
             }
         }
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: 'Error while incident handling' });
+        req.session.errorMessage = 'Erreur lors de la résolution de l\'incident';
+        return res.redirect('/incidents');
     }
 }
