@@ -24,9 +24,35 @@ const getDashboard = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 });
 exports.getDashboard = getDashboard;
 const getMap = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const incidents = yield Incident_1.Incident.find().populate('location');
-    for (const incident of incidents) {
-        console.log(incident);
+    // Get session data
+    const session = req.session;
+    // Get support center notifications
+    const notifications = yield Notification_1.Notification.find({ supportCenter: session.supportCenter._id });
+    let incidents = [];
+    for (const notification of notifications) {
+        const incident = yield Incident_1.Incident.findById(notification.incident).populate('user').populate('location').populate('troubles').populate('supportCenters');
+        let incidentStatus = 'En cours';
+        if (notification.state == 'résolu') {
+            incidentStatus = 'Résolu';
+        }
+        else if (notification.state == 'en attente de prise en charge') {
+            incidentStatus = 'En attente';
+        }
+        const incidentResult = {
+            id: incident === null || incident === void 0 ? void 0 : incident._id,
+            description: incident === null || incident === void 0 ? void 0 : incident.description,
+            picture: incident === null || incident === void 0 ? void 0 : incident.picture,
+            video: incident === null || incident === void 0 ? void 0 : incident.video,
+            audio: incident === null || incident === void 0 ? void 0 : incident.audio,
+            location: incident === null || incident === void 0 ? void 0 : incident.location,
+            user: incident === null || incident === void 0 ? void 0 : incident.user,
+            troubles: incident === null || incident === void 0 ? void 0 : incident.troubles,
+            supportCenters: incident === null || incident === void 0 ? void 0 : incident.supportCenters,
+            createdAt: incident === null || incident === void 0 ? void 0 : incident.createdAt,
+            updatedAt: incident === null || incident === void 0 ? void 0 : incident.updatedAt,
+            status: incidentStatus
+        };
+        incidents.push(incidentResult);
     }
     return res.render('pages/main', {
         content: yield ejs_1.default.renderFile(path_1.default.join(__dirname, '../../../views/pages', 'map.ejs'), {
