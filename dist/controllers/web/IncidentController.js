@@ -27,37 +27,52 @@ const handleIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
         if (incident) {
             // Get Connected supportCenter
             const supportCenter = session.supportCenter;
-            // Update incident notification
-            const notification = yield Notification_1.Notification.findOneAndUpdate({
-                incident: incident._id,
-                supportCenter: supportCenter
-            }, {
-                isHandled: isHandled
-            });
-            if (notification) {
-                // Send response
-                if (isHandled) {
-                    yield incident.supportCenters.push(supportCenter);
-                    req.session.successMessage = 'Incident pris en charge avec succès';
-                    return res.redirect('/incidents');
-                }
-                else {
-                    if (supportCenter) {
-                        const _supportCenter = yield incident.getNextNearestSupportCenter(supportCenter);
-                        yield Notification_1.Notification.create({
-                            supportCenter: _supportCenter,
-                            incident: incident,
-                        });
+            if (isHandled != 2) {
+                // Update incident notification
+                const notification = yield Notification_1.Notification.findOneAndUpdate({
+                    incident: incident._id,
+                    supportCenter: supportCenter
+                }, {
+                    isHandled: isHandled
+                });
+                if (notification) {
+                    // Send response
+                    if (isHandled == 1) {
+                        yield incident.supportCenters.push(supportCenter);
+                        notification.state = 'prise en charge en cours';
+                        yield notification.save();
+                        req.session.successMessage = 'Incident pris en charge';
+                        return res.redirect('/incidents');
                     }
-                    req.session.successMessage = 'Prise en charge de l\'incident déclinée avec succès';
-                    return res.redirect('/incidents');
+                    else if (isHandled == 0) {
+                        if (supportCenter) {
+                            yield Notification_1.Notification.findByIdAndDelete(notification._id);
+                            const _supportCenter = yield incident.getNextNearestSupportCenter(supportCenter);
+                            yield Notification_1.Notification.create({
+                                supportCenter: _supportCenter,
+                                incident: incident,
+                            });
+                        }
+                        req.session.successMessage = 'Prise en charge de l\'incident déclinée';
+                        return res.redirect('/incidents');
+                    }
                 }
+            }
+            else {
+                const i = yield Notification_1.Notification.findOneAndUpdate({
+                    incident: incident._id,
+                    supportCenter: supportCenter
+                }, {
+                    state: 'résolu'
+                });
+                req.session.successMessage = 'Incident marqué comme résolu';
+                return res.redirect('/incidents');
             }
         }
     }
     catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: 'Error while incident handling' });
+        req.session.errorMessage = 'Erreur lors de la résolution de l\'incident';
+        return res.redirect('/incidents');
     }
 });
 exports.handleIncident = handleIncident;

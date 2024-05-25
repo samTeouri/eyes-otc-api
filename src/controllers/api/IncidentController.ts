@@ -2,10 +2,9 @@ import { Request, Response } from 'express';
 import { Incident } from '../../models/Incident';
 import { User } from '../../models/User';
 import { Notification } from '../../models/Notification';
-import { ISupportCenter, SupportCenter } from '../../models/SupportCenter';
+import { SupportCenter } from '../../models/SupportCenter';
 import { RequestValidationService } from '../../services/RequestValidationService';
 import { Location } from '../../models/Location';
-import { IRole, Role } from '../../models/Role';
 import { RoleService } from '../../services/RoleService';
 import { ITrouble, Trouble } from '../../models/Trouble';
 
@@ -92,35 +91,26 @@ export const updateIncident = async (req: Request, res: Response) => {
         const files = req.files as Express.Multer.File[];
 
         if (incident) {
-            const notification = await Notification.findOne({
-                state: 'prise en charge en cours',
-                incident: incident
-            })
-
-            if (notification) {
-                return res.status(401).json({ message: 'Can\'t update. Incident support has already begin' });
-            } else {
-                if (description) incident.description = description;
-                if (troubles) incident.troubles = troubles;
-                if (latitude) incident.location.latitude = latitude;
-                if (longitude) incident.location.longitude = longitude;
-                if (files[0]) {
-                    incident.picture = files[0].filename;
-                }
-                if (files[1]) {
-                    incident.video = files[1].filename;
-                }
-                incident.updatedAt = await new Date();
-
-                // Get concerned support centers
-                const supportCenters = await incident.getConcernedSupportCenters();
-
-                // Set support centers
-                incident.supportCenters = supportCenters;
-
-                await incident.save()
-                return res.status(404).json({ message: 'Incident updated succesfully' });
+            if (description) incident.description = description;
+            if (troubles) incident.troubles = troubles;
+            if (latitude) incident.location.latitude = latitude;
+            if (longitude) incident.location.longitude = longitude;
+            if (files[0]) {
+                incident.picture = files[0].filename;
             }
+            if (files[1]) {
+                incident.video = files[1].filename;
+            }
+            incident.updatedAt = await new Date();
+
+            // Get concerned support centers
+            const supportCenters = await incident.getConcernedSupportCenters();
+
+            // Set support centers
+            incident.supportCenters = supportCenters;
+
+            await incident.save()
+            return res.status(404).json({ message: 'Incident updated succesfully' });
         } else {
             return res.status(404).json({ error: 'Incident not found' });
         }

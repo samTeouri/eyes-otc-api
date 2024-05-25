@@ -12,7 +12,7 @@ export interface IIncident extends Document {
     description?: string;
     picture?: string;
     video?: string;
-    audio: string;
+    audio?: string;
     createdAt: Date;
     updatedAt: Date;
     location: ILocation;
@@ -46,11 +46,15 @@ incidentSchema.methods.getDistanceToSupportCenter = async function (this: IIncid
     if (!supportCenter) throw new Error('Support Center not found');
 
     try {
-        const distance = await osrm.getDistance(
-            [this.location.longitude, this.location.latitude],
-            [supportCenter.location.longitude, supportCenter.location.latitude]
-        );
-        return distance;
+        const incidentLocation = await Location.findById(this.location);
+        const supportCenterLocation = await Location.findById(supportCenter.location);
+        if (supportCenterLocation && incidentLocation) {
+            const distance = await osrm.getDistance(
+                [incidentLocation.longitude, incidentLocation.latitude],
+                [supportCenterLocation.longitude, supportCenterLocation.latitude]
+            );
+            return distance;
+        }
     } catch (error) {
         console.error(`Error while getting distance to Support Center: ${error}`);
     }
@@ -76,12 +80,15 @@ incidentSchema.methods.getNearestSupportCenter = async function (this: IIncident
 incidentSchema.methods.getNextNearestSupportCenter = async function (this: IIncident, supportCenter: ISupportCenter): Promise<ISupportCenter | null> {
     let distance = await this.getDistanceToSupportCenter(supportCenter);
     let nearestSupportCenter: ISupportCenter | null = null;
+    const service = await Service.findOne({ id: supportCenter.service });
 
-    for (let _supportCenter of supportCenter.service.supportCenters) {
-        const distanceToSupportCenter = await this.getDistanceToSupportCenter(_supportCenter.id);
-        if (distanceToSupportCenter < distance && !this.supportCenters.includes(_supportCenter)) {
-            distance = distanceToSupportCenter;
-            nearestSupportCenter = supportCenter;
+    if (service) {
+        for (let _supportCenter of service.supportCenters) {
+            const distanceToSupportCenter = await this.getDistanceToSupportCenter(_supportCenter.id);
+            if (distanceToSupportCenter < distance && !this.supportCenters.includes(_supportCenter)) {
+                distance = distanceToSupportCenter;
+                nearestSupportCenter = supportCenter;
+            }
         }
     }
 

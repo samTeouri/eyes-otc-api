@@ -82,36 +82,27 @@ const updateIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
         const incident = yield Incident_1.Incident.findById(req.params.incidentId);
         const files = req.files;
         if (incident) {
-            const notification = yield Notification_1.Notification.findOne({
-                state: 'prise en charge en cours',
-                incident: incident
-            });
-            if (notification) {
-                return res.status(401).json({ message: 'Can\'t update. Incident support has already begin' });
+            if (description)
+                incident.description = description;
+            if (troubles)
+                incident.troubles = troubles;
+            if (latitude)
+                incident.location.latitude = latitude;
+            if (longitude)
+                incident.location.longitude = longitude;
+            if (files[0]) {
+                incident.picture = files[0].filename;
             }
-            else {
-                if (description)
-                    incident.description = description;
-                if (troubles)
-                    incident.troubles = troubles;
-                if (latitude)
-                    incident.location.latitude = latitude;
-                if (longitude)
-                    incident.location.longitude = longitude;
-                if (files[0]) {
-                    incident.picture = files[0].filename;
-                }
-                if (files[1]) {
-                    incident.video = files[1].filename;
-                }
-                incident.updatedAt = yield new Date();
-                // Get concerned support centers
-                const supportCenters = yield incident.getConcernedSupportCenters();
-                // Set support centers
-                incident.supportCenters = supportCenters;
-                yield incident.save();
-                return res.status(404).json({ message: 'Incident updated succesfully' });
+            if (files[1]) {
+                incident.video = files[1].filename;
             }
+            incident.updatedAt = yield new Date();
+            // Get concerned support centers
+            const supportCenters = yield incident.getConcernedSupportCenters();
+            // Set support centers
+            incident.supportCenters = supportCenters;
+            yield incident.save();
+            return res.status(404).json({ message: 'Incident updated succesfully' });
         }
         else {
             return res.status(404).json({ error: 'Incident not found' });

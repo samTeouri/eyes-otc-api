@@ -274,7 +274,7 @@ Permet à un centre de support d'obtenir les incidents qui lui sont associés.
 
 Permet d'obtenir les incidents associés à un utilisateur spécifique.
 
-- **URL** : `/api/incidents/user/:userId`
+- **URL** : `/api/incidents/index/user/:userId`
 - **Méthode** : `GET`
 - **Paramètres de l'URL** :
   - `userId` (string, obligatoire) : Identifiant de l'utilisateur.

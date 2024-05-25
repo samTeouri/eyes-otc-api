@@ -30,22 +30,27 @@ const getIncidents = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const notifications = yield Notification_1.Notification.find({ supportCenter: session.supportCenter._id });
     let incidents = [];
     for (const notification of notifications) {
-        const incident = yield Incident_1.Incident.findById(notification.incident);
-        const incidentNotifications = yield Notification_1.Notification.find({ incident: incident });
-        const incidentHandledNotifications = yield incidentNotifications.filter((notification) => notification.isHandled);
-        const incidentResolvedNotifications = yield incidentNotifications.filter((notification) => {
-            if (notification.state = 'résolu')
-                return true;
-            return false;
-        });
-        let incidentStatus = 'En attente';
-        if (incidentResolvedNotifications.length === incidentHandledNotifications.length) {
+        const incident = yield Incident_1.Incident.findById(notification.incident).populate('user').populate('location').populate('troubles').populate('supportCenters');
+        // const incidentNotifications = await Notification.find({ incident: incident });
+        // const incidentHandledNotifications = await incidentNotifications.filter((notification) => notification.isHandled);
+        // const incidentResolvedNotifications = await incidentNotifications.filter((notification) => {
+        //     if (notification.state = 'résolu') return true;
+        //     return false;
+        // });
+        // let incidentStatus = 'En attente'
+        // if (incidentResolvedNotifications.length === incidentHandledNotifications.length) {
+        //     incidentStatus = 'Résolu'
+        // } else {
+        //     if (incidentHandledNotifications.length > 0) {
+        //         incidentStatus = 'En cours';
+        //     }
+        // }
+        let incidentStatus = 'En cours';
+        if (notification.state == 'résolu') {
             incidentStatus = 'Résolu';
         }
-        else {
-            if (incidentHandledNotifications.length > 0) {
-                incidentStatus = 'En cours';
-            }
+        else if (notification.state == 'en attente de prise en charge') {
+            incidentStatus = 'En attente';
         }
         const incidentResult = {
             id: incident === null || incident === void 0 ? void 0 : incident._id,
@@ -53,6 +58,10 @@ const getIncidents = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             picture: incident === null || incident === void 0 ? void 0 : incident.picture,
             video: incident === null || incident === void 0 ? void 0 : incident.video,
             audio: incident === null || incident === void 0 ? void 0 : incident.audio,
+            location: incident === null || incident === void 0 ? void 0 : incident.location,
+            user: incident === null || incident === void 0 ? void 0 : incident.user,
+            troubles: incident === null || incident === void 0 ? void 0 : incident.troubles,
+            supportCenters: incident === null || incident === void 0 ? void 0 : incident.supportCenters,
             createdAt: incident === null || incident === void 0 ? void 0 : incident.createdAt,
             updatedAt: incident === null || incident === void 0 ? void 0 : incident.updatedAt,
             status: incidentStatus

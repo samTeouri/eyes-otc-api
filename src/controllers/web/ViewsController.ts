@@ -20,25 +20,33 @@ export const getIncidents = async (req: Request, res: Response) => {
     let incidents = [];
 
     for (const notification of notifications) {
-        const incident = await Incident.findById(notification.incident);
+        const incident = await Incident.findById(notification.incident).populate('user').populate('location').populate('troubles').populate('supportCenters');
         
-        const incidentNotifications = await Notification.find({ incident: incident });
+        // const incidentNotifications = await Notification.find({ incident: incident });
         
-        const incidentHandledNotifications = await incidentNotifications.filter((notification) => notification.isHandled);
+        // const incidentHandledNotifications = await incidentNotifications.filter((notification) => notification.isHandled);
         
-        const incidentResolvedNotifications = await incidentNotifications.filter((notification) => {
-            if (notification.state = 'résolu') return true;
-            return false;
-        });
+        // const incidentResolvedNotifications = await incidentNotifications.filter((notification) => {
+        //     if (notification.state = 'résolu') return true;
+        //     return false;
+        // });
 
-        let incidentStatus = 'En attente'
+        // let incidentStatus = 'En attente'
 
-        if (incidentResolvedNotifications.length === incidentHandledNotifications.length) {
-            incidentStatus = 'Résolu'
-        } else {
-            if (incidentHandledNotifications.length > 0) {
-                incidentStatus = 'En cours';
-            }
+        // if (incidentResolvedNotifications.length === incidentHandledNotifications.length) {
+        //     incidentStatus = 'Résolu'
+        // } else {
+        //     if (incidentHandledNotifications.length > 0) {
+        //         incidentStatus = 'En cours';
+        //     }
+        // }
+
+        let incidentStatus = 'En cours';
+
+        if (notification.state == 'résolu') {
+            incidentStatus = 'Résolu';
+        } else if (notification.state == 'en attente de prise en charge') {
+            incidentStatus = 'En attente'
         }
 
         const incidentResult = {
@@ -47,11 +55,16 @@ export const getIncidents = async (req: Request, res: Response) => {
             picture: incident?.picture,
             video: incident?.video,
             audio: incident?.audio,
+            location: incident?.location,
+            user: incident?.user,
+            troubles: incident?.troubles,
+            supportCenters: incident?.supportCenters,
             createdAt: incident?.createdAt,
             updatedAt: incident?.updatedAt,
             status: incidentStatus
         }
         incidents.push(incidentResult);
+        
     }
 
     return res.render('pages/main', {

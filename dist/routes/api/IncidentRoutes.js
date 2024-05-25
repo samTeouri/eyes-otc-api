@@ -23,21 +23,21 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.incidentRouter = void 0;
+exports.incidentApiRouter = void 0;
 const express = __importStar(require("express"));
 const incidentController = __importStar(require("../../controllers/api/IncidentController"));
 const AuthMiddlewares_1 = require("../../middlewares/AuthMiddlewares");
 const FilesUploadMiddleware_1 = require("../../middlewares/FilesUploadMiddleware");
-exports.incidentRouter = express.Router();
+exports.incidentApiRouter = express.Router();
 // Report an incident
-exports.incidentRouter.post('/report', FilesUploadMiddleware_1.uploadFile.fields([{ name: 'picture', maxCount: 1 }, { name: 'video', maxCount: 1 }, { name: 'audio', maxCount: 1 }]), AuthMiddlewares_1.authVerifyApiToken, incidentController.reportIncident);
+exports.incidentApiRouter.post('/report', FilesUploadMiddleware_1.uploadFile.fields([{ name: 'picture', maxCount: 1 }, { name: 'video', maxCount: 1 }, { name: 'audio', maxCount: 1 }]), AuthMiddlewares_1.authVerifyApiToken, incidentController.reportIncident);
 // Update an incident
-exports.incidentRouter.post('/update/:incidentId', AuthMiddlewares_1.authVerifyApiToken, incidentController.updateIncident);
+exports.incidentApiRouter.post('/update/:incidentId', FilesUploadMiddleware_1.uploadFile.fields([{ name: 'picture', maxCount: 1 }, { name: 'video', maxCount: 1 }, { name: 'audio', maxCount: 1 }]), AuthMiddlewares_1.authVerifyApiToken, incidentController.updateIncident);
 // Get incident details
-exports.incidentRouter.get('/:incidentId', AuthMiddlewares_1.authVerifyApiToken, incidentController.getIncidentDetails);
+exports.incidentApiRouter.get('/:incidentId', AuthMiddlewares_1.authVerifyApiToken, incidentController.getIncidentDetails);
 // Get incidents associated to supportCenter
-exports.incidentRouter.get('/index/supportCenter/:supportCenterId', AuthMiddlewares_1.authVerifyApiToken, incidentController.getSupportCenterIncidents);
+exports.incidentApiRouter.get('/index/supportCenter/:supportCenterId', AuthMiddlewares_1.authVerifyApiToken, incidentController.getSupportCenterIncidents);
 // Change incident handling status
-exports.incidentRouter.post('/handleStatus/:incidentId', AuthMiddlewares_1.authVerifyApiToken, incidentController.notificationState);
+exports.incidentApiRouter.post('/handleStatus/:incidentId', AuthMiddlewares_1.authVerifyApiToken, incidentController.notificationState);
 // Get incidents reported by user
-exports.incidentRouter.get('/index/user/:userId', AuthMiddlewares_1.authVerifyApiToken, incidentController.getUserIncidents);
+exports.incidentApiRouter.get('/index/user/:userId', AuthMiddlewares_1.authVerifyApiToken, incidentController.getUserIncidents);
