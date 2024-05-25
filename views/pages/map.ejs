@@ -1,15 +1,85 @@
+<!-- Breadcrumb Start -->
 <div
     class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
 >
-    <div id="map">
+    <h2 class="text-title-md2 font-bold text-black dark:text-white">
+    Carte des incidents
+    </h2>
 
+    <nav>
+    <ol class="flex items-center gap-2">
+        <li>
+        <a class="font-medium" href="/dashboard">Dashboard /</a>
+        </li>
+        <li class="font-medium text-primary">Carte</li>
+    </ol>
+    </nav>
+</div>
+<!-- Breadcrumb End -->
+
+<div class="flex flex-col gap-10">
+    <!-- ====== Table Three Start -->
+    <div
+        class="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1"
+    >
+        <div>
+            <div id="map"></div>
+        </div>
     </div>
 </div>
-<script type="text/javascript">
-    var map = L.map('map').setView([6.1690, -0.09], 1.2221);
+<script>
+    var map = L.map('map').setView([6.2059, 1.2288], 12);
+
+    const redIcon = new L.Icon({
+      iconUrl:
+        "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+      shadowUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41]
+    });
+
+    const greenIcon = new L.Icon({
+      iconUrl:
+        "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
+      shadowUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41]
+    });
+
+    const yellowIcon = new L.Icon({
+      iconUrl:
+        "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png",
+      shadowUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41]
+    });
+
+    let icon;
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
+    <% incidents.forEach(incident => { %>
+        <% if (incident.status == 'En cours') { %>
+            icon = yellowIcon;
+        <% } else if (incident.status == 'En attente') { %>
+            icon = redIcon;
+        <% } else if (incident.status == 'Résolu') {%>
+            icon = greenIcon;
+        <% } %>
+        L.marker([<%= incident.location.latitude %>, <%= incident.location.longitude %>], {
+            icon: icon
+        })
+            .addTo(map);
+    <% }) %>
 </script>

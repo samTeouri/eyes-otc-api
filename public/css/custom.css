@@ -14,4 +14,4 @@ p.description:hover + .more-description {
     display: none;
 }
 
-#map { height: 180px; }
+#map { height: 600px; }
