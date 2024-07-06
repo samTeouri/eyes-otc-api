@@ -13,7 +13,10 @@ exports.handleIncident = void 0;
 const RequestValidationService_1 = require("../../services/RequestValidationService");
 const Incident_1 = require("../../models/Incident");
 const Notification_1 = require("../../models/Notification");
+const FirebaseService_1 = require("../../services/FirebaseService");
+const IncidentHandleNotification_1 = require("../../notifications/IncidentHandleNotification");
 const requestValidationService = new RequestValidationService_1.RequestValidationService();
+const fcmService = new FirebaseService_1.FirebaseCloudMessagingService();
 const handleIncident = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Get session data
@@ -41,6 +44,8 @@ const handleIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
                         yield incident.supportCenters.push(supportCenter);
                         notification.state = 'prise en charge en cours';
                         yield notification.save();
+                        const notificationObject = new IncidentHandleNotification_1.IncidentHandleNotification(supportCenter);
+                        fcmService.sendNotification(incident.user.fcmToken, notificationObject);
                         req.session.successMessage = 'Incident pris en charge';
                         return res.redirect('/incidents');
                     }
@@ -65,6 +70,8 @@ const handleIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 }, {
                     state: 'résolu'
                 });
+                const notificationObject = new IncidentHandleNotification_1.IncidentHandleNotification(supportCenter);
+                fcmService.sendNotification(incident.user.fcmToken, notificationObject);
                 req.session.successMessage = 'Incident marqué comme résolu';
                 return res.redirect('/incidents');
             }
