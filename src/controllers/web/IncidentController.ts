@@ -5,6 +5,7 @@ import { Notification } from "../../models/Notification";
 import { ISupportCenter } from "../../models/SupportCenter";
 import { FirebaseCloudMessagingService } from "../../services/FirebaseService";
 import { IncidentHandleNotification } from "../../notifications/IncidentHandleNotification";
+import { IncidentResolvedNotification } from "../../notifications/IncidentResolvedNotification";
 
 const requestValidationService = new RequestValidationService();
 const fcmService = new FirebaseCloudMessagingService();
@@ -76,7 +77,7 @@ export const handleIncident = async (req: Request, res: Response) => {
                     }
                 );
 
-                const notificationObject = new IncidentHandleNotification(supportCenter);
+                const notificationObject = new IncidentResolvedNotification();
 
                 fcmService.sendNotification(incident.user.fcmToken,  notificationObject);
 

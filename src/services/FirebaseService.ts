@@ -16,35 +16,54 @@ const messaging: admin.messaging.Messaging = admin.messaging(app);
 export class FirebaseCloudMessagingService {
     
     sendNotification = async (deviceToken: string, notification: admin.messaging.Notification) => {
-        const message: admin.messaging.Message = {
-            notification: notification,
-            token: deviceToken
-        };
+        try {
+            const message: admin.messaging.Message = {
+                notification: notification,
+                token: deviceToken,
+                webpush: {
+                    fcmOptions: {
+                        link: "http://localhost:3000"
+                    }
+                }
+            };
 
-        return await messaging.send(message)
-            .then((reponse: string) => {
-                console.log(`Notification envoyée : ${reponse}`);
-                
-            })
-            .catch((reason: any) => {
-                console.log(`Error sending notification : ${reason}`);
-            });
-
+            return await messaging.send(message)
+                .then((reponse: string) => {
+                    console.log(`Notification envoyée : ${reponse}`);
+                    
+                })
+                .catch((reason: any) => {
+                    console.log(`Error sending notification : ${reason}`);
+                });
+        } catch (error: any) {
+            throw error;
+        }
     }
 
     sendNotifications = async (devicesTokens: string[], notification: admin.messaging.Notification) => {
-        const message: admin.messaging.MulticastMessage = {
-            notification: notification,
-            tokens: devicesTokens
-        };
+        try {
+            const message: admin.messaging.MulticastMessage = {
+                notification: notification,
+                tokens: devicesTokens,
 
-        return await messaging.sendMulticast(message)
-            .then((reponse: BatchResponse) => {
-                console.log(`Notifications envoyées : ${reponse}`);                
-            })
-            .catch((reason: any) => {
-                console.log(`Error sending notifications : ${reason}`);
-            });
-
+                webpush: {
+                    fcmOptions: {
+                        link: "http://localhost:3000"
+                    }
+                }
+            };
+    
+            if (devicesTokens.length != 0) {
+                return await messaging.sendEachForMulticast(message)
+                    .then((reponse: BatchResponse) => {
+                        console.log(`Notifications envoyées : ${reponse}`);                
+                    })
+                    .catch((reason: any) => {
+                        console.log(`Error sending notifications : ${reason}`);
+                    });
+            }
+        } catch (error: any) {
+            throw error;
+        }
     }
 }

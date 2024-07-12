@@ -16,10 +16,11 @@ const Notification_1 = require("../../models/Notification");
 const SupportCenter_1 = require("../../models/SupportCenter");
 const RequestValidationService_1 = require("../../services/RequestValidationService");
 const Location_1 = require("../../models/Location");
-const RoleService_1 = require("../../services/RoleService");
 const Trouble_1 = require("../../models/Trouble");
+const IncidentReportNotification_1 = require("../../notifications/IncidentReportNotification");
+const FirebaseService_1 = require("../../services/FirebaseService");
 const requestValidationService = new RequestValidationService_1.RequestValidationService();
-const roleService = new RoleService_1.RoleService();
+const firebaseCloudMessagingService = new FirebaseService_1.FirebaseCloudMessagingService();
 const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Validate form values and manage errors
@@ -60,13 +61,28 @@ const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
         // Get concerned support centers
         const supportCenters = yield incident.getConcernedSupportCenters();
         yield Promise.all(supportCenters);
+        incident.supportCenters = supportCenters;
+        const devicesTokens = [];
         // Notify support centers
         for (const supportCenter of supportCenters) {
             yield Notification_1.Notification.create({
                 supportCenter: supportCenter,
                 incident: incident,
             });
+            yield SupportCenter_1.SupportCenter.findById(supportCenter)
+                .then((supportCenterObject) => __awaiter(void 0, void 0, void 0, function* () {
+                yield (supportCenterObject === null || supportCenterObject === void 0 ? void 0 : supportCenterObject.populate('user'));
+                console.log(supportCenterObject);
+                if (supportCenterObject && supportCenterObject.user.fcmToken) {
+                    devicesTokens.push(supportCenterObject.user.fcmToken);
+                }
+            }))
+                .catch((reason) => {
+                console.log(`Error while getting support center user : ${reason}`);
+            });
         }
+        const notificationObject = new IncidentReportNotification_1.IncidentReportNotification(incident.user);
+        firebaseCloudMessagingService.sendNotifications(devicesTokens, notificationObject);
         // Save incident
         yield incident.save();
         yield (user === null || user === void 0 ? void 0 : user.incidents.push(incident));

@@ -20,8 +20,13 @@ if (Notification.permission == 'granted') {
     getToken(messaging, { vapidKey: env.FIREBASE_CLOUD_MESSAGING_PUBLIC_VAPID_KEY })
         .then((currentToken) => {
             if (currentToken) {
-                console.log('Current token:', currentToken);
                 // Envoyer le token au serveur pour l'enregistrer et l'utiliser pour envoyer des notifications
+                axios.post('/api/fcm/set-token', {
+                        fcmToken: currentToken,
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
             } else {
                 console.warn('No registration token available. Request permission to generate one.');
             }
@@ -29,9 +34,6 @@ if (Notification.permission == 'granted') {
         .catch((err) => {
             console.error('An error occurred while retrieving token. ', err);
         });
+} else {
+    Notification.requestPermission();
 }
-
-onMessage(messaging, (payload) => {
-  console.log('Message received. ', payload);
-  // Afficher une notification personnalisée
-});

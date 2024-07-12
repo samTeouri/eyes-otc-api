@@ -15,6 +15,7 @@ const Incident_1 = require("../../models/Incident");
 const Notification_1 = require("../../models/Notification");
 const FirebaseService_1 = require("../../services/FirebaseService");
 const IncidentHandleNotification_1 = require("../../notifications/IncidentHandleNotification");
+const IncidentResolvedNotification_1 = require("../../notifications/IncidentResolvedNotification");
 const requestValidationService = new RequestValidationService_1.RequestValidationService();
 const fcmService = new FirebaseService_1.FirebaseCloudMessagingService();
 const handleIncident = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -70,7 +71,7 @@ const handleIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 }, {
                     state: 'résolu'
                 });
-                const notificationObject = new IncidentHandleNotification_1.IncidentHandleNotification(supportCenter);
+                const notificationObject = new IncidentResolvedNotification_1.IncidentResolvedNotification();
                 fcmService.sendNotification(incident.user.fcmToken, notificationObject);
                 req.session.successMessage = 'Incident marqué comme résolu';
                 return res.redirect('/incidents');

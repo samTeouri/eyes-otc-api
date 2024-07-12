@@ -1,5 +1,4 @@
 import { Notification } from "firebase-admin/lib/messaging/messaging-api";
-import { ISupportCenter } from "../models/SupportCenter";
 
 export class IncidentResolvedNotification implements Notification {
     #title: string;

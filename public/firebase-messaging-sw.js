@@ -24,6 +24,8 @@ messaging.onBackgroundMessage((payload) => {
     const notificationTitle = payload.notification.title;
     const notificationOptions = {
         body: payload.notification.body,
+        icon: 'http://localhost:3000/images/favicon.ico',
+        tag: 'Edu Nyui'
     };
     return self.registration.showNotification(notificationTitle, notificationOptions);
 });
