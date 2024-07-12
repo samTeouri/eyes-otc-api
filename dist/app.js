@@ -51,6 +51,7 @@ const ViewsRoutes_1 = require("./routes/web/ViewsRoutes");
 const AuthMiddlewares_1 = require("./middlewares/AuthMiddlewares");
 const FlashMessagesMiddleware_1 = require("./middlewares/FlashMessagesMiddleware");
 const IncidentRoutes_2 = require("./routes/web/IncidentRoutes");
+const FirebaseCloudMessagingRoutes_1 = require("./routes/api/FirebaseCloudMessagingRoutes");
 (() => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Connect to the database
@@ -96,6 +97,8 @@ exports.app.use('/api/troubles', TroubleRoutes_1.troubleRouter);
 exports.app.use('/api/supportCenter', SupportCenterRoutes_1.supportCenterRouter);
 // Users routes
 exports.app.use('/api/user', UserRoutes_1.userRouter);
+// Firebase Cloud Messaging routes
+exports.app.use('/api/fcm', FirebaseCloudMessagingRoutes_1.firebaseCloudMessagingRouter);
 // Web Routes
 // Authentication Routes
 exports.app.use('/auth', AuthRoutes_2.adminAuthRoutes);

@@ -15,6 +15,7 @@ import { ISupportCenter } from './models/SupportCenter';
 import { isAuthenticated } from './middlewares/AuthMiddlewares';
 import { setFlashMessages } from './middlewares/FlashMessagesMiddleware';
 import { incidentWebRouter } from './routes/web/IncidentRoutes';
+import { firebaseCloudMessagingRouter } from './routes/api/FirebaseCloudMessagingRoutes';
 
 declare module 'express-session' {
     interface SessionData {
@@ -90,6 +91,9 @@ app.use('/api/supportCenter', supportCenterRouter);
 
 // Users routes
 app.use('/api/user', userRouter);
+
+// Firebase Cloud Messaging routes
+app.use('/api/fcm', firebaseCloudMessagingRouter);
 
 // Web Routes
 // Authentication Routes

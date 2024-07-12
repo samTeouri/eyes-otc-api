@@ -10,6 +10,7 @@ const userSchema = new mongoose_1.Schema({
     email: { type: String, unique: true },
     address: { type: String },
     password: { type: String, required: true },
+    fcmToken: { type: String, default: null },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     roles: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'Role' }],

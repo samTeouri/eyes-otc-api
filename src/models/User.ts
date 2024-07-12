@@ -10,6 +10,7 @@ export interface IUser extends Document {
     email?: string;
     address?: string;
     password: string;
+    fcmToken: string;
     createdAt: Date;
     updatedAt: Date;
     roles: IRole[];
@@ -24,6 +25,7 @@ const userSchema: Schema<IUser> = new Schema({
     email: { type: String, unique: true },
     address: { type: String },
     password: { type: String, required: true },
+    fcmToken: { type: String, default: null },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     roles: [{ type: Schema.Types.ObjectId, ref: 'Role' }],

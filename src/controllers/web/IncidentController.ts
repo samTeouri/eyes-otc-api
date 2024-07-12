@@ -3,8 +3,12 @@ import { RequestValidationService } from "../../services/RequestValidationServic
 import { Incident } from "../../models/Incident";
 import { Notification } from "../../models/Notification";
 import { ISupportCenter } from "../../models/SupportCenter";
+import { FirebaseCloudMessagingService } from "../../services/FirebaseService";
+import { IncidentHandleNotification } from "../../notifications/IncidentHandleNotification";
+import { IncidentResolvedNotification } from "../../notifications/IncidentResolvedNotification";
 
 const requestValidationService = new RequestValidationService();
+const fcmService = new FirebaseCloudMessagingService();
 
 export const handleIncident = async (req: Request, res: Response) => {
     try {
@@ -22,7 +26,7 @@ export const handleIncident = async (req: Request, res: Response) => {
 
         if (incident) {
             // Get Connected supportCenter
-            const supportCenter = session.supportCenter
+            const supportCenter: ISupportCenter = session.supportCenter
             
             if (isHandled != 2) {
                 // Update incident notification
@@ -42,6 +46,11 @@ export const handleIncident = async (req: Request, res: Response) => {
                         await incident.supportCenters.push(supportCenter as ISupportCenter);
                         notification.state = 'prise en charge en cours';
                         await notification.save();
+
+                        const notificationObject = new IncidentHandleNotification(supportCenter);
+
+                        fcmService.sendNotification(incident.user.fcmToken,  notificationObject);
+
                         req.session.successMessage = 'Incident pris en charge';
                         return res.redirect('/incidents');
                     } else  if (isHandled == 0) {
@@ -67,6 +76,11 @@ export const handleIncident = async (req: Request, res: Response) => {
                         state: 'résolu'
                     }
                 );
+
+                const notificationObject = new IncidentResolvedNotification();
+
+                fcmService.sendNotification(incident.user.fcmToken,  notificationObject);
+
                 req.session.successMessage = 'Incident marqué comme résolu';
                 return res.redirect('/incidents');
             }

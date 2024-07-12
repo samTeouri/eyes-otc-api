@@ -1,15 +1,17 @@
 import { Request, Response } from 'express';
 import { Incident } from '../../models/Incident';
-import { User } from '../../models/User';
+import { IUser, User } from '../../models/User';
 import { Notification } from '../../models/Notification';
-import { SupportCenter } from '../../models/SupportCenter';
+import { ISupportCenter, SupportCenter } from '../../models/SupportCenter';
 import { RequestValidationService } from '../../services/RequestValidationService';
 import { Location } from '../../models/Location';
 import { RoleService } from '../../services/RoleService';
 import { ITrouble, Trouble } from '../../models/Trouble';
+import { IncidentReportNotification } from '../../notifications/IncidentReportNotification';
+import { FirebaseCloudMessagingService } from '../../services/FirebaseService';
 
 const requestValidationService = new RequestValidationService();
-const roleService = new RoleService();
+const firebaseCloudMessagingService = new FirebaseCloudMessagingService();
 
 export const reportIncident = async (req: Request, res: Response) => {
     try {
@@ -61,9 +63,13 @@ export const reportIncident = async (req: Request, res: Response) => {
         }
 
         // Get concerned support centers
-        const supportCenters = await incident.getConcernedSupportCenters();
+        const supportCenters: ISupportCenter[] | null = await incident.getConcernedSupportCenters();
 
         await Promise.all(supportCenters);
+
+        incident.supportCenters = supportCenters;
+
+        const devicesTokens : string [] = [];
 
         // Notify support centers
         for (const supportCenter of supportCenters) {
@@ -71,7 +77,23 @@ export const reportIncident = async (req: Request, res: Response) => {
                 supportCenter: supportCenter,
                 incident: incident,
             });
-        }
+
+            await SupportCenter.findById(supportCenter)
+                .then(async (supportCenterObject: ISupportCenter | null) => {
+                    await supportCenterObject?.populate('user');
+                    console.log(supportCenterObject);
+                    if (supportCenterObject && supportCenterObject.user.fcmToken) {
+                        devicesTokens.push(supportCenterObject.user.fcmToken);
+                    }
+                })
+                .catch((reason: any) => {
+                    console.log(`Error while getting support center user : ${reason}`);
+                });
+       }
+
+        const notificationObject: IncidentReportNotification = new IncidentReportNotification(incident.user);
+
+        firebaseCloudMessagingService.sendNotifications(devicesTokens, notificationObject);
 
         // Save incident
         await incident.save();
