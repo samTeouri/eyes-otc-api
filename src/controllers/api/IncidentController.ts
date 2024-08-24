@@ -50,16 +50,18 @@ export const reportIncident = async (req: Request, res: Response) => {
         });
 
         // Create incident
-        if (files['audio']) {
-            incident.audio = files['audio'][0].filename;
-        }
-        
-        if (files['picture']) {
-            incident.video = files['video'][0].filename;
-        }
-        
-        if (files['video']) {
-            incident.video = files['video'][0].filename;
+        if (files) {
+            if (files['audio']) {
+                incident.audio = files['audio'][0].filename;
+            }
+            
+            if (files['picture']) {
+                incident.video = files['video'][0].filename;
+            }
+            
+            if (files['video']) {
+                incident.video = files['video'][0].filename;
+            }
         }
 
         // Get concerned support centers

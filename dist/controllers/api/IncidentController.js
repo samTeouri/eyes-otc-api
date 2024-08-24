@@ -49,14 +49,16 @@ const reportIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
             troubles: troublesArray,
         });
         // Create incident
-        if (files['audio']) {
-            incident.audio = files['audio'][0].filename;
-        }
-        if (files['picture']) {
-            incident.video = files['video'][0].filename;
-        }
-        if (files['video']) {
-            incident.video = files['video'][0].filename;
+        if (files) {
+            if (files['audio']) {
+                incident.audio = files['audio'][0].filename;
+            }
+            if (files['picture']) {
+                incident.video = files['video'][0].filename;
+            }
+            if (files['video']) {
+                incident.video = files['video'][0].filename;
+            }
         }
         // Get concerned support centers
         const supportCenters = yield incident.getConcernedSupportCenters();
