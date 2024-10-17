@@ -1,11 +1,12 @@
 import { Schema, model, Document, Types } from 'mongoose';
-import { ISupportCenter } from './SupportCenter';
+import { ISupportCenter, SupportCenter } from './SupportCenter';
 import { OSMRoutingService } from '../services/OSMRoutingService';
 import { ILocation, Location } from './Location';
 import { IUser } from './User';
 import { ITrouble, Trouble } from './Trouble';
 import { Service } from './Service';
 import { delay } from '../utils/Tools';
+import { Support } from './Support';
 
 // Interface pour représenter les données d'un incident
 export interface IIncident extends Document {
@@ -78,13 +79,14 @@ incidentSchema.methods.getNearestSupportCenter = async function (this: IIncident
 };
 
 incidentSchema.methods.getNextNearestSupportCenter = async function (this: IIncident, supportCenter: ISupportCenter): Promise<ISupportCenter | null> {
-    let distance = await this.getDistanceToSupportCenter(supportCenter);
-    let nearestSupportCenter: ISupportCenter | null = null;
-    const service = await Service.findOne({ id: supportCenter.service });
+    let distance = Number.MAX_VALUE;
+    let nearestSupportCenter: ISupportCenter | null = null;    
+    const service = await Service.findOne({ _id: supportCenter.service }).populate('supportCenters');
 
     if (service) {
         for (let _supportCenter of service.supportCenters) {
-            const distanceToSupportCenter = await this.getDistanceToSupportCenter(_supportCenter.id);
+            const distanceToSupportCenter = await this.getDistanceToSupportCenter(await _supportCenter.populate('location'));
+            await delay(1000);
             if (distanceToSupportCenter < distance && !this.supportCenters.includes(_supportCenter)) {
                 distance = distanceToSupportCenter;
                 nearestSupportCenter = supportCenter;
