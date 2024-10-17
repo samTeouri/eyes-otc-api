@@ -1,12 +1,37 @@
 import ejs from "ejs";
-import { Request, Response } from "express"
+import { NextFunction, Request, Response } from "express"
 import path from "path";
-import { IIncident, Incident } from "../../models/Incident";
-import { Notification } from "../../models/Notification";
+import { Incident } from "../../models/Incident";
+import { INotification, Notification } from "../../models/Notification";
+import { User } from "../../models/User";
 
-export const getDashboard = async (req: Request, res: Response) => {
-    return res.render('pages/main', {
-        content: await ejs.renderFile(path.join(__dirname, '../../../views/pages', 'dashboard.ejs'))
+export const getDashboard = async (req: Request, res: Response, next: NextFunction) => {
+    // Données statistiques du dashboard
+    if (req.session.supportCenter) {
+        let supportCenterNotifications: INotification[] | null = await Notification.find({ supportCenter: req.session.supportCenter });
+
+        let incidentsCount: number = supportCenterNotifications.length;
+        let incidentsResolved: number = supportCenterNotifications.filter(notification => notification.state === 'résolu').length;
+        let incidentsInCharge: number = supportCenterNotifications.filter(notification => notification.state === 'prise en charge en cours').length;
+        let usersCount: number = (await User.find()).length;
+
+        let dashboardData = {
+            incidentsCount: incidentsCount,
+            incidentsResolved: incidentsResolved,
+            incidentsInCharge: incidentsInCharge,
+            usersCount: usersCount
+        }
+    
+        return res.render('pages/main', {
+            content: await ejs.renderFile(path.join(__dirname, '../../../views/pages', 'dashboard.ejs'), dashboardData),
+        });
+    }
+
+    req.session.destroy(err => {
+        if (err) {
+            return next(err);
+        }
+        res.redirect('/auth/login');
     });
 }
 
