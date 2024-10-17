@@ -17,9 +17,30 @@ const ejs_1 = __importDefault(require("ejs"));
 const path_1 = __importDefault(require("path"));
 const Incident_1 = require("../../models/Incident");
 const Notification_1 = require("../../models/Notification");
-const getDashboard = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    return res.render('pages/main', {
-        content: yield ejs_1.default.renderFile(path_1.default.join(__dirname, '../../../views/pages', 'dashboard.ejs'))
+const User_1 = require("../../models/User");
+const getDashboard = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    // Données statistiques du dashboard
+    if (req.session.supportCenter) {
+        let supportCenterNotifications = yield Notification_1.Notification.find({ supportCenter: req.session.supportCenter });
+        let incidentsCount = supportCenterNotifications.length;
+        let incidentsResolved = supportCenterNotifications.filter(notification => notification.state === 'résolu').length;
+        let incidentsInCharge = supportCenterNotifications.filter(notification => notification.state === 'prise en charge en cours').length;
+        let usersCount = (yield User_1.User.find()).length;
+        let dashboardData = {
+            incidentsCount: incidentsCount,
+            incidentsResolved: incidentsResolved,
+            incidentsInCharge: incidentsInCharge,
+            usersCount: usersCount
+        };
+        return res.render('pages/main', {
+            content: yield ejs_1.default.renderFile(path_1.default.join(__dirname, '../../../views/pages', 'dashboard.ejs'), dashboardData),
+        });
+    }
+    req.session.destroy(err => {
+        if (err) {
+            return next(err);
+        }
+        res.redirect('/auth/login');
     });
 });
 exports.getDashboard = getDashboard;
