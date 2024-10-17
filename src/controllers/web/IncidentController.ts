@@ -86,6 +86,7 @@ export const handleIncident = async (req: Request, res: Response) => {
             }
         }
     } catch (error) {
+        console.log(error);
         req.session.errorMessage = 'Erreur lors de la résolution de l\'incident';
         return res.redirect('/incidents');
     }

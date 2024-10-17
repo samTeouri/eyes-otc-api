@@ -65,12 +65,13 @@ incidentSchema.methods.getNearestSupportCenter = function (supportCenters) {
 };
 incidentSchema.methods.getNextNearestSupportCenter = function (supportCenter) {
     return __awaiter(this, void 0, void 0, function* () {
-        let distance = yield this.getDistanceToSupportCenter(supportCenter);
+        let distance = Number.MAX_VALUE;
         let nearestSupportCenter = null;
-        const service = yield Service_1.Service.findOne({ id: supportCenter.service });
+        const service = yield Service_1.Service.findOne({ _id: supportCenter.service }).populate('supportCenters');
         if (service) {
             for (let _supportCenter of service.supportCenters) {
-                const distanceToSupportCenter = yield this.getDistanceToSupportCenter(_supportCenter.id);
+                const distanceToSupportCenter = yield this.getDistanceToSupportCenter(yield _supportCenter.populate('location'));
+                yield (0, Tools_1.delay)(1000);
                 if (distanceToSupportCenter < distance && !this.supportCenters.includes(_supportCenter)) {
                     distance = distanceToSupportCenter;
                     nearestSupportCenter = supportCenter;

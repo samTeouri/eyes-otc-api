@@ -79,6 +79,7 @@ const handleIncident = (req, res) => __awaiter(void 0, void 0, void 0, function*
         }
     }
     catch (error) {
+        console.log(error);
         req.session.errorMessage = 'Erreur lors de la résolution de l\'incident';
         return res.redirect('/incidents');
     }
