@@ -1,6 +1,6 @@
 # Eyes On The City API
 
-Une API TypeScript/Node.js pour un jeu de quiz utilisant MongoDB comme base de données.
+Une API TypeScript/Node.js pour le signalement des incidents dans une commune
 
 ## Installation
 
